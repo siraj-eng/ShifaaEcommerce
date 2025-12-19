@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="dashboard">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ current_user.name }} (Admin).</p>
+    <div class="dashboard-grid">
+        <div class="card">
+            <h2>Manage Products</h2>
+            <p>Coming soon: create, edit, and organize herbal products.</p>
+        </div>
+        <div class="card">
+            <h2>Orders</h2>
+            <p>Track and manage customer orders from one place.</p>
+        </div>
+        <div class="card">
+            <h2>Users</h2>
+            <p>View and manage registered users and their roles.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+

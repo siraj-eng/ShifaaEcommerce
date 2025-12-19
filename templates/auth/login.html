@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shifaa Herbal | Authenticate</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: #0c1a0f;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Full-Screen Honey Background */
+        .honey-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(12, 26, 15, 0.9), rgba(26, 46, 28, 0.95)),
+                url('https://images.unsplash.com/photo-1587049352851-8d4e89133924?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        
+        /* Logo */
+        .logo {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 100;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+            color: #FFD700;
+        }
+        
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+            letter-spacing: 1px;
+        }
+        
+        /* Main Container */
+        .auth-container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px 20px;
+        }
+        
+        /* Compact Authentication Card */
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+        }
+        
+        .auth-card::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .auth-card::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .auth-card::-webkit-scrollbar-thumb {
+            background: #2e7d32;
+            border-radius: 3px;
+        }
+        
+        /* Auth Header - COMPACT */
+        .auth-header {
+            padding: 10px 30px 5px;
+            text-align: center;
+        }
+        
+        .auth-icon {
+            display: none;
+        }
+        
+        .auth-title {
+            display: none;
+        }
+        
+        .auth-subtitle {
+            display: none;
+        }
+        
+        /* Mode Toggle - COMPACT */
+        .mode-toggle {
+            display: flex;
+            margin: 0 30px 20px;
+            background: rgba(248, 245, 240, 0.5);
+            padding: 4px;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            z-index: 1;
+        }
+        
+        .mode-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .mode-btn.active {
+            color: #1b5e20;
+        }
+        
+        /* Role Selection - COMPACT */
+        .role-selection {
+            display: flex;
+            gap: 10px;
+            margin: 0 30px 20px;
+        }
+        
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e8e4dd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 500;
+            color: #666;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+        }
+        
+        .role-btn.active {
+            border-color: #2e7d32;
+            background: rgba(46, 125, 50, 0.05);
+            color: #1b5e20;
+        }
+        
+        .role-btn i {
+            font-size: 18px;
+        }
+        
+        /* Form Container - COMPACT */
+        .form-container {
+            padding: 0 30px 30px;
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Form Styles - COMPACT */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            color: #1b5e20;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            border: 2px solid #e8e4dd;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            background: white;
+        }
+        
+        .form-input:focus {
+            border-color: #2e7d32;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+        }
+        
+        /* Password Strength - COMPACT */
+        .password-strength {
+            margin-top: 8px;
+            height: 3px;
+            background: #e8e4dd;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        
+        .strength-text {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            text-align: right;
+        }
+        
+        /* Terms - COMPACT */
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 15px 0 20px;
+            padding: 15px;
+            background: rgba(248, 245, 240, 0.5);
+            border-radius: 10px;
+        }
+        
+        .terms input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: #2e7d32;
+        }
+        
+        .terms label {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .terms a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Submit Button - COMPACT */
+        .auth-btn-submit {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            width: 100%;
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .auth-btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+        
+        /* Footer Links - COMPACT */
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #e8e4dd;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .auth-footer a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-height: 700px) {
+            .auth-container {
+                padding-top: 70px;
+            }
+            
+            .auth-card {
+                max-height: 80vh;
+            }
+            
+            .auth-header {
+                padding: 20px 30px 15px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .auth-card {
+                max-width: 95%;
+                max-height: 85vh;
+            }
+            
+            .auth-header,
+            .form-container {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .role-selection {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+            
+            .form-input {
+                padding: 12px 12px 12px 40px;
+            }
+        }
+        
+        /* Hide scrollbar on very tall screens */
+        @media (min-height: 800px) {
+            .auth-card {
+                max-height: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-Screen Honey Background -->
+    <div class="honey-background"></div>
+    
+    <!-- Logo -->
+    <div class="logo">
+        <i class="fas fa-seedling logo-icon"></i>
+        <span class="logo-text">SHIFAA HERBAL</span>
+    </div>
+    
+    <!-- Main Authentication Container -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <div class="auth-icon" id="authIcon">
+                    <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <h2 class="auth-title" id="authTitle">Welcome</h2>
+                <p class="auth-subtitle" id="authSubtitle">Sign in to your account</p>
+            </div>
+            
+            <!-- Mode Toggle -->
+            <div class="mode-toggle">
+                <div class="mode-slider" id="modeSlider"></div>
+                <button type="button" class="mode-btn active" data-mode="login">Login</button>
+                <button type="button" class="mode-btn" data-mode="register">Register</button>
+            </div>
+            
+            <!-- Role Selection -->
+            <div class="role-selection" id="roleSelection">
+                <button type="button" class="role-btn active" data-role="admin">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin</span>
+                </button>
+                <button type="button" class="role-btn" data-role="user">
+                    <i class="fas fa-user"></i>
+                    <span>User</span>
+                </button>
+            </div>
+            
+            <!-- Forms Container -->
+            <div class="form-container">
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="form-input" placeholder="admin@shifaaherbal.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" id="loginPassword" class="form-input" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" data-target="loginPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn-submit">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Sign In</span>
+                    </button>
+                    
+                    <div class="auth-footer">
+                        <p>Need an account? <a href="#" class="switch-mode" data-mode="register">Register here</a></p>
+                    </div>
+                </form>
+                
+                <!-- Register Form -->
+                <form class="auth-form" id="registerForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" name="name" class="form-input" placeholder="John Doe" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" name="email" class="form-input" placeholder="john@example.com" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="password" id="registerPassword" class="form-input" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" data-target="registerPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-meter" id="strengthMeter"></div>
+                        </div>
+                        <div class="strength-text" id="strengthText"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" name="confirm_password" id="confirmPassword" class="form-input" placeholder="••••••••" required>
+                            <button type="button" class="password-toggle" data-target="confirmPassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div id="passwordMatch" class="strength-text"></div>
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">
+                            I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn-submit">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Create Account</span>
+                    </button>
+                    
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="#" class="switch-mode" data-mode="login">Sign in here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const modeSlider = document.getElementById('modeSlider');
+        const modeBtns = document.querySelectorAll('.mode-btn');
+        const forms = document.querySelectorAll('.auth-form');
+        const roleSelection = document.getElementById('roleSelection');
+        const roleBtns = document.querySelectorAll('.role-btn');
+        const authIcon = document.getElementById('authIcon');
+        const authTitle = document.getElementById('authTitle');
+        const authSubtitle = document.getElementById('authSubtitle');
+        
+        // Mode Toggle Functionality
+        modeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const mode = this.getAttribute('data-mode');
+                
+                // Update active button
+                modeBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Move slider
+                modeSlider.style.transform = mode === 'login' ? 'translateX(0)' : 'translateX(100%)';
+                
+                // Switch forms
+                forms.forEach(form => form.classList.remove('active'));
+                document.getElementById(mode + 'Form').classList.add('active');
+                
+                // Show/hide role selection
+                roleSelection.style.display = mode === 'login' ? 'flex' : 'none';
+                
+                // Update header content
+                updateHeaderContent(mode);
+                
+                // Scroll to top of card
+                document.querySelector('.auth-card').scrollTop = 0;
+            });
+        });
+        
+        // Update header content based on mode
+        function updateHeaderContent(mode) {
+            if (mode === 'login') {
+                authIcon.innerHTML = '<i class="fas fa-sign-in-alt"></i>';
+                authTitle.textContent = 'Welcome';
+                authSubtitle.textContent = 'Sign in to your account';
+            } else {
+                authIcon.innerHTML = '<i class="fas fa-user-plus"></i>';
+                authTitle.textContent = 'Join Us';
+                authSubtitle.textContent = 'Create your account';
+            }
+        }
+        
+        // Role Selection
+        roleBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                roleBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const role = this.getAttribute('data-role');
+                const emailInput = document.querySelector('#loginForm input[name="email"]');
+                
+                if (role === 'admin') {
+                    emailInput.placeholder = 'admin@shifaaherbal.com';
+                } else {
+                    emailInput.placeholder = 'user@example.com';
+                }
+            });
+        });
+        
+        // Password toggle functionality
+        document.querySelectorAll('.password-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                
+                passwordInput.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+            });
+        });
+        
+        // Password strength indicator
+        const registerPassword = document.getElementById('registerPassword');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const strengthText = document.getElementById('strengthText');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const passwordMatch = document.getElementById('passwordMatch');
+        
+        if (registerPassword) {
+            registerPassword.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 8) strength += 25;
+                if (password.length >= 12) strength += 10;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[a-z]/.test(password)) strength += 15;
+                if (/[0-9]/.test(password)) strength += 20;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 15;
+                
+                strength = Math.min(strength, 100);
+                strengthMeter.style.width = strength + '%';
+                
+                if (password.length === 0) {
+                    strengthText.textContent = '';
+                } else if (strength < 40) {
+                    strengthText.textContent = 'Weak';
+                    strengthText.style.color = '#dc3545';
+                } else if (strength < 70) {
+                    strengthText.textContent = 'Fair';
+                    strengthText.style.color = '#ffc107';
+                } else {
+                    strengthText.textContent = 'Strong';
+                    strengthText.style.color = '#28a745';
+                }
+                
+                checkPasswordMatch();
+            });
+        }
+        
+        // Password match checker
+        function checkPasswordMatch() {
+            const password = registerPassword.value;
+            const confirm = confirmPasswordInput.value;
+            
+            if (!confirm) {
+                passwordMatch.textContent = '';
+                return;
+            }
+            
+            if (password === confirm) {
+                passwordMatch.textContent = '✓ Match';
+                passwordMatch.style.color = '#28a745';
+            } else {
+                passwordMatch.textContent = '✗ No match';
+                passwordMatch.style.color = '#dc3545';
+            }
+        }
+        
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+        }
+        
+        // Quick mode switch
+        document.querySelectorAll('.switch-mode').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const mode = this.getAttribute('data-mode');
+                const btn = document.querySelector(`.mode-btn[data-mode="${mode}"]`);
+                if (btn) btn.click();
+            });
+        });
+        
+        // Form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = this.querySelector('input[name="email"]').value;
+            const password = this.querySelector('input[name="password"]').value;
+            
+            if (!email || !password) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            alert(`Login attempted for: ${email}\n(Press OK to continue)`);
+        });
+        
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = this.querySelector('input[name="name"]').value;
+            const email = this.querySelector('input[name="email"]').value;
+            const password = registerPassword.value;
+            const confirm = confirmPasswordInput.value;
+            const terms = document.getElementById('terms').checked;
+            
+            if (!name || !email || !password || !confirm) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            if (!terms) {
+                alert('Please agree to the Terms and Privacy Policy');
+                return;
+            }
+            
+            if (password !== confirm) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            alert(`Account created for: ${name}\nEmail: ${email}\n(Press OK to continue)`);
+            
+            // Switch to login mode
+            document.querySelector('.mode-btn[data-mode="login"]').click();
+        });
+        
+        // Input focus effects
+        document.querySelectorAll('.form-input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#2e7d32';
+                this.style.background = 'rgba(46, 125, 50, 0.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.style.borderColor = '#e8e4dd';
+                this.style.background = 'white';
+            });
+        });
+    </script>
+</body>
+</html>

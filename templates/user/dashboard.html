@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="dashboard">
+    <h1>User Dashboard</h1>
+    <p>Welcome, {{ current_user.name }}.</p>
+    <div class="dashboard-grid">
+        <div class="card">
+            <h2>Browse Remedies</h2>
+            <p>Explore herbal products tailored to different health goals.</p>
+        </div>
+        <div class="card">
+            <h2>Your Orders</h2>
+            <p>View your previous purchases and order details.</p>
+        </div>
+        <div class="card">
+            <h2>Profile</h2>
+            <p>Update your personal information and preferences.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
