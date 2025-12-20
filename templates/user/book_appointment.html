@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="book-appointment-page">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{{ url_for('practitioner_detail', practitioner_id=practitioner.id) }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="booking-form-card">
+                    <h1>Book Appointment with {{ practitioner.name }}</h1>
+                    
+                    <form method="POST" action="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}">
+                        <div class="mb-3">
+                            <label for="appointment_type" class="form-label">Consultation Type</label>
+                            <select name="appointment_type" id="appointment_type" class="form-select" required>
+                                <option value="general advice">General Advice</option>
+                                <option value="follow-up">Follow-up Consultation</option>
+                                <option value="initial consultation">Initial Consultation</option>
+                                <option value="herbal prescription">Herbal Prescription</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_date" class="form-label">Date</label>
+                                <input type="date" name="appointment_date" id="appointment_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="appointment_time" class="form-label">Time</label>
+                                <input type="time" name="appointment_time" id="appointment_time" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes (Optional)</label>
+                            <textarea name="notes" id="notes" class="form-control" rows="4" placeholder="Any specific concerns or questions you'd like to discuss..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-calendar-check"></i> Book Appointment
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="practitioner-info-card">
+                    <h4>{{ practitioner.name }}</h4>
+                    {% if practitioner.title %}
+                    <p class="text-muted">{{ practitioner.title }}</p>
+                    {% endif %}
+                    {% if practitioner.specialties %}
+                    <p><strong>Specialties:</strong> {{ practitioner.specialties }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.book-appointment-page {
+    padding: 2rem 0;
+}
+
+.booking-form-card,
+.practitioner-info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.booking-form-card h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 2rem;
+}
+
+.practitioner-info-card {
+    position: sticky;
+    top: 20px;
+}
+
+.practitioner-info-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+

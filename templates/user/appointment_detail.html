@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="appointment-detail-page">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{{ url_for('appointments') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Appointments
+            </a>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="appointment-detail-card">
+                    <h1>Appointment Details</h1>
+                    
+                    <div class="appointment-info-section">
+                        <h3>Practitioner</h3>
+                        <p><strong>{{ appointment.practitioner.name }}</strong></p>
+                        {% if appointment.practitioner.title %}
+                        <p class="text-muted">{{ appointment.practitioner.title }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="appointment-info-section">
+                        <h3>Date & Time</h3>
+                        <p>
+                            <i class="bi bi-calendar"></i> {{ appointment.appointment_date.strftime('%B %d, %Y') }}<br>
+                            <i class="bi bi-clock"></i> {{ appointment.appointment_date.strftime('%I:%M %p') }}
+                        </p>
+                    </div>
+                    
+                    <div class="appointment-info-section">
+                        <h3>Consultation Type</h3>
+                        <p>{{ appointment.appointment_type|title }}</p>
+                    </div>
+                    
+                    <div class="appointment-info-section">
+                        <h3>Status</h3>
+                        <span class="badge bg-{{ 'success' if appointment.status == 'completed' else 'warning' if appointment.status == 'scheduled' else 'secondary' }} fs-6">
+                            {{ appointment.status|title }}
+                        </span>
+                    </div>
+                    
+                    {% if appointment.notes %}
+                    <div class="appointment-info-section">
+                        <h3>Notes</h3>
+                        <p>{{ appointment.notes }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="appointment-actions-card">
+                    <h4>Actions</h4>
+                    <a href="{{ url_for('practitioner_detail', practitioner_id=appointment.practitioner.id) }}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bi bi-person"></i> View Practitioner Profile
+                    </a>
+                    <a href="{{ url_for('book_appointment', practitioner_id=appointment.practitioner.id) }}" class="btn btn-primary w-100">
+                        <i class="bi bi-calendar-plus"></i> Book Another Appointment
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.appointment-detail-page {
+    padding: 2rem 0;
+}
+
+.appointment-detail-card,
+.appointment-actions-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.appointment-detail-card h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 2rem;
+}
+
+.appointment-info-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.appointment-info-section:last-child {
+    border-bottom: none;
+}
+
+.appointment-info-section h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 0.75rem;
+}
+
+.appointment-actions-card {
+    position: sticky;
+    top: 20px;
+}
+
+.appointment-actions-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+

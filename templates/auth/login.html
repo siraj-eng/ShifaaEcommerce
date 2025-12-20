@@ -128,7 +128,7 @@
         /* Mode Toggle - COMPACT */
         .mode-toggle {
             display: flex;
-            margin: 0 30px 20px;
+            margin: 0 30px 15px;
             background: rgba(248, 245, 240, 0.5);
             padding: 4px;
             border-radius: 10px;
@@ -169,7 +169,7 @@
         .role-selection {
             display: flex;
             gap: 10px;
-            margin: 0 30px 20px;
+            margin: 0 30px 15px;
         }
         
         .role-btn {
@@ -202,7 +202,7 @@
         
         /* Form Container - COMPACT */
         .form-container {
-            padding: 0 30px 30px;
+            padding: 0 30px 20px;
         }
         
         .auth-form {
@@ -216,14 +216,14 @@
         
         /* Form Styles - COMPACT */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .form-label {
             display: block;
             color: #1b5e20;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-size: 13px;
         }
         
@@ -242,7 +242,7 @@
         
         .form-input {
             width: 100%;
-            padding: 14px 14px 14px 45px;
+            padding: 12px 35px 12px 45px;
             border: 2px solid #e8e4dd;
             border-radius: 10px;
             font-size: 14px;
@@ -259,18 +259,19 @@
         
         .password-toggle {
             position: absolute;
-            right: 15px;
+            right: 10px;
             background: none;
             border: none;
             color: #666;
             cursor: pointer;
             font-size: 16px;
             padding: 4px;
+            z-index: 2;
         }
         
         /* Password Strength - COMPACT */
         .password-strength {
-            margin-top: 8px;
+            margin-top: 6px;
             height: 3px;
             background: #e8e4dd;
             border-radius: 2px;
@@ -288,7 +289,7 @@
         .strength-text {
             font-size: 11px;
             color: #666;
-            margin-top: 4px;
+            margin-top: 3px;
             text-align: right;
         }
         
@@ -297,8 +298,8 @@
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            margin: 15px 0 20px;
-            padding: 15px;
+            margin: 12px 0 15px;
+            padding: 12px;
             background: rgba(248, 245, 240, 0.5);
             border-radius: 10px;
         }
@@ -325,7 +326,7 @@
             background: linear-gradient(135deg, #2e7d32, #1b5e20);
             color: white;
             border: none;
-            padding: 16px;
+            padding: 14px;
             border-radius: 10px;
             font-weight: 600;
             font-size: 15px;
@@ -346,8 +347,8 @@
         /* Footer Links - COMPACT */
         .auth-footer {
             text-align: center;
-            margin-top: 20px;
-            padding-top: 15px;
+            margin-top: 15px;
+            padding-top: 12px;
             border-top: 1px solid #e8e4dd;
             color: #666;
             font-size: 13px;
@@ -458,7 +459,7 @@
             <!-- Forms Container -->
             <div class="form-container">
                 <!-- Login Form -->
-                <form class="auth-form active" id="loginForm">
+                <form class="auth-form active" id="loginForm" method="POST" action="/login">
                     <div class="form-group">
                         <label class="form-label">Email Address</label>
                         <div class="input-wrapper">
@@ -489,7 +490,7 @@
                 </form>
                 
                 <!-- Register Form -->
-                <form class="auth-form" id="registerForm">
+                <form class="auth-form" id="registerForm" method="POST" action="/register">
                     <div class="form-group">
                         <label class="form-label">Full Name</label>
                         <div class="input-wrapper">
@@ -703,50 +704,6 @@
                 const btn = document.querySelector(`.mode-btn[data-mode="${mode}"]`);
                 if (btn) btn.click();
             });
-        });
-        
-        // Form submission
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = this.querySelector('input[name="email"]').value;
-            const password = this.querySelector('input[name="password"]').value;
-            
-            if (!email || !password) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            alert(`Login attempted for: ${email}\n(Press OK to continue)`);
-        });
-        
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const name = this.querySelector('input[name="name"]').value;
-            const email = this.querySelector('input[name="email"]').value;
-            const password = registerPassword.value;
-            const confirm = confirmPasswordInput.value;
-            const terms = document.getElementById('terms').checked;
-            
-            if (!name || !email || !password || !confirm) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            if (!terms) {
-                alert('Please agree to the Terms and Privacy Policy');
-                return;
-            }
-            
-            if (password !== confirm) {
-                alert('Passwords do not match!');
-                return;
-            }
-            
-            alert(`Account created for: ${name}\nEmail: ${email}\n(Press OK to continue)`);
-            
-            // Switch to login mode
-            document.querySelector('.mode-btn[data-mode="login"]').click();
         });
         
         // Input focus effects

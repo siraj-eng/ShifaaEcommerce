@@ -1,24 +1,459 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="dashboard">
-    <h1>User Dashboard</h1>
-    <p>Welcome, {{ current_user.name }}.</p>
-    <div class="dashboard-grid">
-        <div class="card">
-            <h2>Browse Remedies</h2>
-            <p>Explore herbal products tailored to different health goals.</p>
+<div class="user-dashboard-container">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            <div class="user-sidebar">
+                <div class="sidebar-header">
+                    <div class="user-avatar-large">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <h5>{{ current_user.name }}</h5>
+                    <p class="text-muted">{{ current_user.email }}</p>
+                </div>
+                
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="{{ url_for('dashboard') }}" class="nav-link active">
+                                <i class="bi bi-speedometer2"></i>
+                                <span>My Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('products') }}" class="nav-link">
+                                <i class="bi bi-capsule"></i>
+                                <span>Products</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('cart') }}" class="nav-link">
+                                <i class="bi bi-basket"></i>
+                                <span>Cart & Checkout</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('orders') }}" class="nav-link">
+                                <i class="bi bi-box-seam"></i>
+                                <span>My Orders</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('practitioners') }}" class="nav-link">
+                                <i class="bi bi-person-badge"></i>
+                                <span>Consult a Practitioner</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('appointments') }}" class="nav-link">
+                                <i class="bi bi-calendar-check"></i>
+                                <span>My Appointments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('health_info') }}" class="nav-link">
+                                <i class="bi bi-journal-text"></i>
+                                <span>Health Information</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('community') }}" class="nav-link">
+                                <i class="bi bi-people"></i>
+                                <span>Community</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('support') }}" class="nav-link">
+                                <i class="bi bi-headset"></i>
+                                <span>Support</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('profile') }}" class="nav-link">
+                                <i class="bi bi-gear"></i>
+                                <span>Profile Settings</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ url_for('logout') }}" class="nav-link logout-link">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div class="card">
-            <h2>Your Orders</h2>
-            <p>View your previous purchases and order details.</p>
-        </div>
-        <div class="card">
-            <h2>Profile</h2>
-            <p>Update your personal information and preferences.</p>
+        
+        <!-- Main Content -->
+        <div class="col-lg-9">
+            <div class="dashboard-content">
+                <div class="dashboard-header">
+                    <h1>Welcome back, {{ current_user.name }}!</h1>
+                    <p class="text-muted">Here's an overview of your account</p>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-box-seam"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ recent_orders|length }}</h3>
+                                <p>Recent Orders</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ upcoming_appointments|length }}</h3>
+                                <p>Upcoming Appointments</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="bi bi-basket"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>{{ cart_count }}</h3>
+                                <p>Items in Cart</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Orders -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3>Recent Orders</h3>
+                        <a href="{{ url_for('orders') }}" class="view-all-link">View All</a>
+                    </div>
+                    {% if recent_orders %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Order Number</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in recent_orders %}
+                                <tr>
+                                    <td>#{{ order.order_number }}</td>
+                                    <td>{{ order.created_at.strftime('%Y-%m-%d') }}</td>
+                                    <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                                    <td><span class="badge bg-{{ 'success' if order.status == 'delivered' else 'warning' if order.status == 'pending' else 'info' }}">{{ order.status|title }}</span></td>
+                                    <td><a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No orders yet. <a href="{{ url_for('products') }}">Start shopping!</a></p>
+                    {% endif %}
+                </div>
+                
+                <!-- Upcoming Appointments -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h3>Upcoming Appointments</h3>
+                        <a href="{{ url_for('appointments') }}" class="view-all-link">View All</a>
+                    </div>
+                    {% if upcoming_appointments %}
+                    <div class="appointments-list">
+                        {% for appointment in upcoming_appointments %}
+                        <div class="appointment-card">
+                            <div class="appointment-date">
+                                <i class="bi bi-calendar"></i>
+                                <span>{{ appointment.appointment_date.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                            </div>
+                            <div class="appointment-info">
+                                <h5>{{ appointment.practitioner.name }}</h5>
+                                <p class="text-muted">{{ appointment.appointment_type|title }}</p>
+                            </div>
+                            <div class="appointment-action">
+                                <a href="{{ url_for('appointment_detail', appointment_id=appointment.id) }}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No upcoming appointments. <a href="{{ url_for('practitioners') }}">Book a consultation!</a></p>
+                    {% endif %}
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="dashboard-section">
+                    <h3>Quick Actions</h3>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('products') }}" class="quick-action-card">
+                                <i class="bi bi-capsule"></i>
+                                <h5>Browse Products</h5>
+                                <p>Explore our herbal remedies</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('practitioners') }}" class="quick-action-card">
+                                <i class="bi bi-person-badge"></i>
+                                <h5>Book Consultation</h5>
+                                <p>Schedule with a practitioner</p>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="{{ url_for('health_info') }}" class="quick-action-card">
+                                <i class="bi bi-journal-text"></i>
+                                <h5>Learn More</h5>
+                                <p>Herbal education & guidelines</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</section>
+</div>
 {% endblock %}
 
+{% block extra_css %}
+<style>
+.user-dashboard-container {
+    padding: 2rem 0;
+    min-height: 80vh;
+}
 
+.user-sidebar {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 1.5rem;
+}
+
+.user-avatar-large {
+    font-size: 4rem;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.sidebar-header h5 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav .nav-item {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-nav .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    color: #555;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-family: 'Raleway', sans-serif;
+}
+
+.sidebar-nav .nav-link i {
+    margin-right: 0.75rem;
+    font-size: 1.2rem;
+    width: 20px;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    color: white;
+}
+
+.sidebar-nav .logout-link {
+    color: #dc3545;
+}
+
+.sidebar-nav .logout-link:hover {
+    background: #dc3545;
+    color: white;
+}
+
+.dashboard-content {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 2rem;
+}
+
+.dashboard-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.dashboard-header h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 10px rgba(46, 125, 50, 0.3);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-right: 1.5rem;
+    opacity: 0.9;
+}
+
+.stat-info h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Marcellus', serif;
+}
+
+.stat-info p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.dashboard-section {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+.dashboard-section:last-child {
+    border-bottom: none;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin: 0;
+}
+
+.view-all-link {
+    color: #2e7d32;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+.appointments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.appointment-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-left: 4px solid #2e7d32;
+}
+
+.appointment-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #2e7d32;
+    font-weight: 500;
+    min-width: 200px;
+}
+
+.appointment-info {
+    flex: 1;
+    margin-left: 1.5rem;
+}
+
+.appointment-info h5 {
+    margin-bottom: 0.25rem;
+    color: #1b5e20;
+}
+
+.quick-action-card {
+    display: block;
+    background: #f8f9fa;
+    padding: 2rem;
+    border-radius: 10px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.quick-action-card:hover {
+    border-color: #2e7d32;
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(46, 125, 50, 0.2);
+    color: inherit;
+}
+
+.quick-action-card i {
+    font-size: 3rem;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.quick-action-card h5 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.quick-action-card p {
+    color: #666;
+    margin: 0;
+}
+</style>
+{% endblock %}

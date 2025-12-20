@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="support-page">
+    <div class="container">
+        <h1 class="mb-4">Support</h1>
+        
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="bi bi-telephone"></i>
+                    </div>
+                    <h3>Contact Information</h3>
+                    <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+                    <p><strong>Email:</strong> support@shifaaherbal.com</p>
+                    <p><strong>Hours:</strong> Monday - Saturday, 9:00 AM - 6:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 mb-4">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="bi bi-whatsapp"></i>
+                    </div>
+                    <h3>WhatsApp Support</h3>
+                    <p>Get instant help via WhatsApp</p>
+                    <a href="https://wa.me/15551234567" class="btn btn-success" target="_blank">
+                        <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-12 mb-4">
+                <div class="support-card">
+                    <div class="support-icon">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h3>Location & Hours</h3>
+                    <p><strong>Address:</strong> 123 Botanical Gardens Lane, Herbal District, City, State 12345</p>
+                    <p><strong>Store Hours:</strong></p>
+                    <ul>
+                        <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
+                        <li>Saturday: 9:00 AM - 5:00 PM</li>
+                        <li>Sunday: Closed</li>
+                    </ul>
+                    <p><strong>Moon Hours (Special Consultations):</strong> 7:00 PM - 9:00 PM (By Appointment)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.support-page {
+    padding: 2rem 0;
+}
+
+.support-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    height: 100%;
+}
+
+.support-icon {
+    font-size: 3rem;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.support-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+
+.support-card p {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.support-card ul {
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+}
+</style>
+{% endblock %}
+

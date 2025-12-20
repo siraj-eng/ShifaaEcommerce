@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="profile-page">
+    <div class="container">
+        <h1 class="mb-4">Profile Settings</h1>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="profile-form-card">
+                    <form method="POST" action="{{ url_for('profile') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="name" class="form-control" value="{{ current_user.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" id="email" class="form-control" value="{{ current_user.email }}" disabled>
+                            <small class="text-muted">Email cannot be changed</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" name="phone" id="phone" class="form-control" value="{{ current_user.phone or '' }}">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea name="address" id="address" class="form-control" rows="3">{{ current_user.address or '' }}</textarea>
+                        </div>
+                        
+                        <hr>
+                        
+                        <h4 class="mb-3">Change Password</h4>
+                        <div class="mb-3">
+                            <label for="new_password" class="form-label">New Password</label>
+                            <input type="password" name="new_password" id="new_password" class="form-control" placeholder="Leave blank to keep current password">
+                            <small class="text-muted">Minimum 6 characters</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-check-circle"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="profile-info-card">
+                    <h4>Account Information</h4>
+                    <div class="info-item">
+                        <strong>Member Since:</strong>
+                        <p>{{ current_user.created_at.strftime('%B %Y') if current_user.created_at else 'N/A' }}</p>
+                    </div>
+                    <div class="info-item">
+                        <strong>Role:</strong>
+                        <p>{{ current_user.role|title }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-page {
+    padding: 2rem 0;
+}
+
+.profile-form-card,
+.profile-info-card {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.profile-form-card h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 2rem;
+}
+
+.profile-info-card {
+    position: sticky;
+    top: 20px;
+}
+
+.profile-info-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1.5rem;
+}
+
+.info-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item strong {
+    color: #1b5e20;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.info-item p {
+    margin: 0;
+    color: #666;
+}
+</style>
+{% endblock %}
+

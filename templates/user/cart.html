@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="cart-page">
+    <div class="container">
+        <h1 class="mb-4">Shopping Cart</h1>
+        
+        {% if cart_items %}
+        <div class="row">
+            <div class="col-md-8">
+                <div class="cart-items">
+                    {% for item in cart_items %}
+                    <div class="cart-item-card">
+                        <div class="cart-item-image">
+                            {% if item.product.image_url %}
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                            <div class="cart-placeholder">
+                                <i class="bi bi-capsule"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="cart-item-info">
+                            <h5>{{ item.product.name }}</h5>
+                            <p class="text-muted">${{ "%.2f"|format(item.product.price) }} each</p>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}" class="d-inline">
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="form-control form-control-sm" style="width: 80px;" onchange="this.form.submit()">
+                            </form>
+                        </div>
+                        <div class="cart-item-price">
+                            <strong>${{ "%.2f"|format(item.product.price * item.quantity) }}</strong>
+                        </div>
+                        <div class="cart-item-actions">
+                            <form method="POST" action="{{ url_for('remove_from_cart', item_id=item.id) }}" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="cart-summary">
+                    <h4>Order Summary</h4>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>Calculated at checkout</span>
+                    </div>
+                    <hr>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-lg w-100 mt-3">
+                        <i class="bi bi-arrow-right"></i> Proceed to Checkout
+                    </a>
+                    <a href="{{ url_for('products') }}" class="btn btn-outline-secondary w-100 mt-2">
+                        Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-cart text-center py-5">
+            <i class="bi bi-basket" style="font-size: 5rem; color: #ccc;"></i>
+            <h3 class="mt-3">Your cart is empty</h3>
+            <p class="text-muted">Start adding products to your cart!</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-capsule"></i> Browse Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.cart-page {
+    padding: 2rem 0;
+}
+
+.cart-item-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.cart-item-image {
+    width: 100px;
+    height: 100px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cart-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-placeholder {
+    font-size: 2rem;
+    color: #2e7d32;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info h5 {
+    margin-bottom: 0.25rem;
+    color: #1b5e20;
+}
+
+.cart-item-price {
+    font-size: 1.2rem;
+    color: #2e7d32;
+    min-width: 100px;
+    text-align: right;
+}
+
+.cart-summary {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
+}
+
+.cart-summary h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1.5rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.summary-row.total {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #1b5e20;
+}
+
+.empty-cart {
+    background: white;
+    border-radius: 10px;
+    padding: 4rem;
+}
+</style>
+{% endblock %}
+

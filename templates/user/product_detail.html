@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="product-detail-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="product-image-large">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-fluid">
+                    {% else %}
+                    <div class="product-placeholder-large">
+                        <i class="bi bi-capsule"></i>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="product-detail-info">
+                    <h1>{{ product.name }}</h1>
+                    <p class="product-price-large">${{ "%.2f"|format(product.price) }}</p>
+                    
+                    {% if product.category %}
+                    <span class="badge bg-primary mb-3">{{ product.category }}</span>
+                    {% endif %}
+                    
+                    <div class="product-description-full">
+                        <h4>Description</h4>
+                        <p>{{ product.description or "No description available." }}</p>
+                    </div>
+                    
+                    {% if product.usage_instructions %}
+                    <div class="product-usage">
+                        <h4>Usage Instructions</h4>
+                        <p>{{ product.usage_instructions }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if product.warnings %}
+                    <div class="product-warnings">
+                        <h4><i class="bi bi-exclamation-triangle"></i> Warnings</h4>
+                        <p>{{ product.warnings }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="product-stock mb-3">
+                        {% if product.stock > 0 %}
+                        <span class="text-success"><i class="bi bi-check-circle"></i> In Stock ({{ product.stock }} available)</span>
+                        {% else %}
+                        <span class="text-danger"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                        {% endif %}
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-to-cart-form">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="quantity" class="form-label">Quantity</label>
+                                <input type="number" name="quantity" id="quantity" class="form-control" value="1" min="1" max="{{ product.stock if product.stock > 0 else 1 }}">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg" {{ 'disabled' if product.stock == 0 }}>
+                            <i class="bi bi-cart-plus"></i> Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.product-detail-page {
+    padding: 2rem 0;
+}
+
+.product-image-large {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+}
+
+.product-image-large img {
+    max-width: 100%;
+    border-radius: 10px;
+}
+
+.product-placeholder-large {
+    font-size: 8rem;
+    color: #2e7d32;
+}
+
+.product-detail-info {
+    padding: 2rem;
+}
+
+.product-detail-info h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+
+.product-price-large {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2e7d32;
+    margin-bottom: 1.5rem;
+}
+
+.product-description-full,
+.product-usage {
+    margin-bottom: 2rem;
+}
+
+.product-description-full h4,
+.product-usage h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.product-warnings {
+    background: #fff3cd;
+    padding: 1rem;
+    border-radius: 5px;
+    border-left: 4px solid #ffc107;
+    margin-bottom: 2rem;
+}
+
+.product-warnings h4 {
+    color: #856404;
+    margin-bottom: 0.5rem;
+}
+
+.add-to-cart-form {
+    margin-top: 2rem;
+}
+</style>
+{% endblock %}
+

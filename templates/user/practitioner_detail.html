@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="practitioner-detail-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="practitioner-profile">
+                    <div class="practitioner-image-large">
+                        {% if practitioner.image_url %}
+                        <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}" class="img-fluid">
+                        {% else %}
+                        <div class="practitioner-placeholder-large">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn btn-primary btn-lg w-100 mt-3">
+                        <i class="bi bi-calendar-check"></i> Book Appointment
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="practitioner-details">
+                    <h1>{{ practitioner.name }}</h1>
+                    {% if practitioner.title %}
+                    <p class="practitioner-title-large">{{ practitioner.title }}</p>
+                    {% endif %}
+                    
+                    {% if practitioner.bio %}
+                    <div class="practitioner-bio-section">
+                        <h3>About</h3>
+                        <p>{{ practitioner.bio }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if practitioner.specialties %}
+                    <div class="practitioner-specialties-section">
+                        <h3>Specialties</h3>
+                        <p>{{ practitioner.specialties }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if practitioner.email or practitioner.phone %}
+                    <div class="practitioner-contact">
+                        <h3>Contact</h3>
+                        {% if practitioner.email %}
+                        <p><i class="bi bi-envelope"></i> {{ practitioner.email }}</p>
+                        {% endif %}
+                        {% if practitioner.phone %}
+                        <p><i class="bi bi-telephone"></i> {{ practitioner.phone }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.practitioner-detail-page {
+    padding: 2rem 0;
+}
+
+.practitioner-profile {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.practitioner-image-large {
+    margin-bottom: 1.5rem;
+}
+
+.practitioner-image-large img {
+    border-radius: 10px;
+    max-width: 100%;
+}
+
+.practitioner-placeholder-large {
+    font-size: 8rem;
+    color: #2e7d32;
+}
+
+.practitioner-details {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.practitioner-details h1 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.practitioner-title-large {
+    font-size: 1.3rem;
+    color: #2e7d32;
+    font-weight: 500;
+    margin-bottom: 2rem;
+}
+
+.practitioner-bio-section,
+.practitioner-specialties-section,
+.practitioner-contact {
+    margin-bottom: 2rem;
+}
+
+.practitioner-details h3 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+</style>
+{% endblock %}
+

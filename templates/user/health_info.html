@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="health-info-page">
+    <div class="container">
+        <h1 class="mb-4">Health Information</h1>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="info-sidebar">
+                    <h5>Categories</h5>
+                    <ul class="info-nav">
+                        <li><a href="#herbal-education">Herbal Education</a></li>
+                        <li><a href="#usage-guidelines">Usage Guidelines</a></li>
+                        <li><a href="#faqs">FAQs</a></li>
+                        <li><a href="#disclaimers">Disclaimers</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="info-content">
+                    <section id="herbal-education" class="info-section">
+                        <h2>Herbal Education</h2>
+                        <p>Learn about the traditional uses and modern applications of herbal medicine. Our educational resources cover:</p>
+                        <ul>
+                            <li>History and tradition of herbal medicine</li>
+                            <li>Common herbs and their properties</li>
+                            <li>How to prepare and use herbal remedies</li>
+                            <li>Safety considerations</li>
+                        </ul>
+                    </section>
+                    
+                    <section id="usage-guidelines" class="info-section">
+                        <h2>Usage Guidelines</h2>
+                        <p>Proper usage is essential for safety and effectiveness:</p>
+                        <ul>
+                            <li>Always follow recommended dosages</li>
+                            <li>Consult with a practitioner for personalized advice</li>
+                            <li>Be aware of potential interactions with medications</li>
+                            <li>Store herbs properly to maintain potency</li>
+                            <li>Start with small doses when trying new herbs</li>
+                        </ul>
+                    </section>
+                    
+                    <section id="faqs" class="info-section">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="faq-item">
+                            <h5>Are your products safe?</h5>
+                            <p>All our products are sourced from reputable suppliers and tested for quality. However, always consult with a healthcare practitioner before use, especially if you have existing health conditions.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h5>How should I store herbal products?</h5>
+                            <p>Store in a cool, dry place away from direct sunlight. Keep containers tightly sealed to maintain freshness and potency.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h5>Can I use herbs with prescription medications?</h5>
+                            <p>Some herbs may interact with medications. Always inform your healthcare provider about any herbal supplements you're taking.</p>
+                        </div>
+                    </section>
+                    
+                    <section id="disclaimers" class="info-section">
+                        <h2>Disclaimers</h2>
+                        <div class="disclaimer-box">
+                            <p><strong>Important:</strong> The information provided on this website is for educational purposes only and is not intended as medical advice. Herbal products are not intended to diagnose, treat, cure, or prevent any disease.</p>
+                            <p>Always consult with a qualified healthcare practitioner before starting any herbal treatment, especially if you are pregnant, nursing, have a medical condition, or are taking prescription medications.</p>
+                            <p>Individual results may vary, and we do not guarantee specific outcomes from the use of our products.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.health-info-page {
+    padding: 2rem 0;
+}
+
+.info-sidebar {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 20px;
+}
+
+.info-sidebar h5 {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+
+.info-nav {
+    list-style: none;
+    padding: 0;
+}
+
+.info-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.info-nav a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.info-nav a:hover {
+    color: #2e7d32;
+}
+
+.info-content {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.info-section {
+    margin-bottom: 3rem;
+}
+
+.info-section h2 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 1rem;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.faq-item:last-child {
+    border-bottom: none;
+}
+
+.faq-item h5 {
+    color: #2e7d32;
+    margin-bottom: 0.5rem;
+}
+
+.disclaimer-box {
+    background: #fff3cd;
+    border-left: 4px solid #ffc107;
+    padding: 1.5rem;
+    border-radius: 5px;
+}
+
+.disclaimer-box p {
+    margin-bottom: 1rem;
+}
+
+.disclaimer-box p:last-child {
+    margin-bottom: 0;
+}
+</style>
+{% endblock %}
+

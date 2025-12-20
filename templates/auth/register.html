@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="register-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="register-card">
+                    <div class="register-header">
+                        <div class="register-icon">
+                            <i class="bi bi-person-plus"></i>
+                        </div>
+                        <h2>Begin Your Journey</h2>
+                        <p class="text-muted">Create your Shifaa Herbal account</p>
+                    </div>
+                    
+                    <form method="POST" action="{{ url_for('register') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <input type="email" name="email" id="email" class="form-control" placeholder="yourname" required>
+                                <span class="input-group-text">@shifaaherbal.com</span>
+                            </div>
+                            <small class="text-muted">Your email must be from @shifaaherbal.com domain</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Minimum 6 characters" required minlength="6">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm Password</label>
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Re-enter your password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-person-plus"></i> Create Account
+                        </button>
+                    </form>
+                    
+                    <div class="register-footer mt-3 text-center">
+                        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.register-page {
+    padding: 4rem 0;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+}
+
+.register-card {
+    background: white;
+    border-radius: 10px;
+    padding: 3rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.register-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.register-icon {
+    font-size: 4rem;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.register-header h2 {
+    font-family: 'Marcellus', serif;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 5px;
+    padding: 0.75rem;
+}
+
+.form-control:focus {
+    border-color: #2e7d32;
+    box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
+}
+
+.input-group-text {
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-left: none;
+    color: #666;
+}
+
+.register-footer a {
+    color: #2e7d32;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.register-footer a:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}
+
