@@ -1,144 +1,605 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="appointments-page">
-    <div class="container">
-        <div class="page-header mb-4">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - HerbalCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --secondary-color: #1b5e20;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-color);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+        }
+        
+        /* Action Header */
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .header-title h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .header-title p {
+            color: var(--gray-500);
+            margin: 0.25rem 0 0 0;
+            font-size: 14px;
+        }
+        
+        .btn-book {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 0.875rem 1.75rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Appointment Tabs */
+        .appointment-tabs {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 0;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tabs-nav {
+            display: flex;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .tab-btn {
+            padding: 1.25rem 2rem;
+            background: transparent;
+            border: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s;
+        }
+        
+        .tab-btn:hover {
+            color: var(--primary-color);
+            background: var(--gray-100);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+        }
+        
+        /* Appointments Timeline */
+        .timeline-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .timeline-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .timeline-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .timeline-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--primary-color);
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .timeline-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: white;
+            border-color: var(--primary-color);
+        }
+        
+        .timeline-marker {
+            position: relative;
+            width: 80px;
+            flex-shrink: 0;
+        }
+        
+        .appointment-date {
+            text-align: center;
+            background: white;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .date-day {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+        
+        .date-month {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .timeline-content {
+            flex: 1;
+        }
+        
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+        
+        .practitioner-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .appointment-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+        
+        .appointment-details {
+            margin-bottom: 1rem;
+        }
+        
+        .appointment-type {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .appointment-notes {
+            color: var(--gray-600);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .appointment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-scheduled {
+            background: rgba(255, 209, 102, 0.15);
+            color: #b45309;
+            border: 1px solid var(--warning-color);
+        }
+        
+        .status-completed {
+            background: rgba(6, 214, 160, 0.15);
+            color: #047857;
+            border: 1px solid var(--success-color);
+        }
+        
+        .status-cancelled {
+            background: rgba(239, 71, 111, 0.15);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+        
+        .btn-view {
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-view:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem 2rem;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .action-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .btn-book {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .timeline-marker {
+                width: 100%;
+            }
+            
+            .appointment-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .appointment-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+            
+            .btn-view {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .timeline-item {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
             <h1>My Appointments</h1>
-            <a href="{{ url_for('practitioners') }}" class="btn btn-primary">
+            <p>Manage your consultations and wellness sessions</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Action Header -->
+        <div class="action-header">
+            <div class="header-title">
+                <h2>Upcoming Consultations</h2>
+                <p>Track and manage all your appointments</p>
+            </div>
+            <a href="{{ url_for('practitioners') }}" class="btn-book">
                 <i class="bi bi-calendar-plus"></i> Book New Appointment
             </a>
         </div>
-        
-        <div class="row">
-            <div class="col-md-12">
-                {% if appointments %}
-                <div class="appointments-list">
-                    {% for appointment in appointments %}
-                    <div class="appointment-card-full">
-                        <div class="appointment-date-section">
-                            <div class="appointment-date-large">
-                                <span class="date-day">{{ appointment.appointment_date.strftime('%d') }}</span>
-                                <span class="date-month">{{ appointment.appointment_date.strftime('%b') }}</span>
-                            </div>
+
+        <!-- Tabs -->
+        <div class="appointment-tabs">
+            <nav class="tabs-nav">
+                <button class="tab-btn active" onclick="filterAppointments('all')">All Appointments</button>
+                <button class="tab-btn" onclick="filterAppointments('upcoming')">Upcoming</button>
+                <button class="tab-btn" onclick="filterAppointments('past')">Past</button>
+                <button class="tab-btn" onclick="filterAppointments('cancelled')">Cancelled</button>
+            </nav>
+        </div>
+
+        <!-- Appointments Timeline -->
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <h3>Appointment History</h3>
+            </div>
+            
+            {% if appointments %}
+            <div class="timeline" id="appointmentsList">
+                {% for appointment in appointments %}
+                <div class="timeline-item" data-status="{{ appointment.status }}" data-date="{{ appointment.appointment_date.strftime('%Y-%m-%d') }}">
+                    <div class="timeline-marker">
+                        <div class="appointment-date">
+                            <div class="date-day">{{ appointment.appointment_date.strftime('%d') }}</div>
+                            <div class="date-month">{{ appointment.appointment_date.strftime('%b') }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-content">
+                        <div class="appointment-header">
+                            <h4 class="practitioner-name">{{ appointment.practitioner.name }}</h4>
                             <div class="appointment-time">
                                 <i class="bi bi-clock"></i>
                                 {{ appointment.appointment_date.strftime('%I:%M %p') }}
                             </div>
                         </div>
+                        
                         <div class="appointment-details">
-                            <h4>{{ appointment.practitioner.name }}</h4>
-                            <p class="appointment-type">{{ appointment.appointment_type|title }}</p>
+                            <span class="appointment-type">{{ appointment.appointment_type|title }}</span>
                             {% if appointment.notes %}
                             <p class="appointment-notes">{{ appointment.notes }}</p>
                             {% endif %}
-                            <span class="badge bg-{{ 'success' if appointment.status == 'completed' else 'warning' if appointment.status == 'scheduled' else 'secondary' }}">
-                                {{ appointment.status|title }}
-                            </span>
                         </div>
-                        <div class="appointment-actions">
-                            <a href="{{ url_for('appointment_detail', appointment_id=appointment.id) }}" class="btn btn-outline-primary">
-                                View Details
+                        
+                        <div class="appointment-footer">
+                            <div class="status-badge status-{{ appointment.status }}">
+                                {{ appointment.status|title }}
+                            </div>
+                            <a href="{{ url_for('appointment_detail', appointment_id=appointment.id) }}" class="btn-view">
+                                <i class="bi bi-eye"></i> View Details
                             </a>
                         </div>
                     </div>
-                    {% endfor %}
                 </div>
-                {% else %}
-                <div class="empty-state text-center py-5">
-                    <i class="bi bi-calendar-x" style="font-size: 5rem; color: #ccc;"></i>
-                    <h3 class="mt-3">No appointments yet</h3>
-                    <p class="text-muted">Book your first consultation with one of our practitioners!</p>
-                    <a href="{{ url_for('practitioners') }}" class="btn btn-primary btn-lg mt-3">
-                        <i class="bi bi-calendar-plus"></i> Book Appointment
-                    </a>
-                </div>
-                {% endif %}
+                {% endfor %}
             </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h3>No Appointments Scheduled</h3>
+                <p>Book your first consultation with one of our expert herbal practitioners</p>
+                <a href="{{ url_for('practitioners') }}" class="btn-book" style="max-width: 300px; margin: 0 auto;">
+                    <i class="bi bi-calendar-plus"></i> Book Appointment
+                </a>
+            </div>
+            {% endif %}
         </div>
-    </div>
-</div>
-{% endblock %}
+    </main>
 
-{% block extra_css %}
-<style>
-.appointments-page {
-    padding: 2rem 0;
-}
-
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.appointments-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.appointment-card-full {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.appointment-date-section {
-    text-align: center;
-    min-width: 100px;
-}
-
-.appointment-date-large {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.date-day {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #2e7d32;
-    line-height: 1;
-}
-
-.date-month {
-    font-size: 1rem;
-    color: #666;
-    text-transform: uppercase;
-}
-
-.appointment-time {
-    margin-top: 0.5rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.appointment-details {
-    flex: 1;
-}
-
-.appointment-details h4 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 0.5rem;
-}
-
-.appointment-type {
-    color: #2e7d32;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.appointment-notes {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // Filter appointments by status
+        function filterAppointments(filter) {
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const appointmentItems = document.querySelectorAll('.timeline-item');
+            const now = new Date();
+            
+            // Update active tab
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter items
+            appointmentItems.forEach(item => {
+                const status = item.dataset.status;
+                const date = new Date(item.dataset.date);
+                let show = false;
+                
+                switch(filter) {
+                    case 'upcoming':
+                        show = status === 'scheduled' && date >= now;
+                        break;
+                    case 'past':
+                        show = (status === 'completed' || status === 'cancelled') || (status === 'scheduled' && date < now);
+                        break;
+                    case 'cancelled':
+                        show = status === 'cancelled';
+                        break;
+                    default:
+                        show = true;
+                }
+                
+                if (show) {
+                    item.style.display = 'flex';
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        item.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+        
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const appointmentItems = document.querySelectorAll('.timeline-item');
+            
+            // Add animation delays
+            appointmentItems.forEach((item, index) => {
+                item.style.animationDelay = `${index * 0.1}s`;
+            });
+            
+            // Update status badge colors
+            const statusBadges = document.querySelectorAll('.status-badge');
+            statusBadges.forEach(badge => {
+                const status = badge.classList[1].replace('status-', '');
+                badge.classList.add(`status-${status}`);
+            });
+        });
+    </script>
+</body>
+</html>

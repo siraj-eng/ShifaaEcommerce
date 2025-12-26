@@ -37,7 +37,7 @@ def create_app():
         # Redirect authenticated users to dashboard
         if current_user.is_authenticated:
             return redirect(url_for("dashboard"))
-        return render_template("index.html")
+        return render_template("base.html")
 
     @app.route("/register", methods=["GET", "POST"])
     def register():
@@ -434,10 +434,10 @@ def create_app():
 
 
 if __name__ == "__main__":
-    # Prefer running via: flask --app app:create_app run
+    # Development mode with debug enabled
     app = create_app()
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 

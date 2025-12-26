@@ -1,134 +1,651 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="practitioners-page">
-    <div class="container">
-        <div class="page-header mb-4">
-            <h1>Our Practitioners</h1>
-            <p class="text-muted">Expert guidance for your wellness journey</p>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Practitioners - HerbalCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --secondary-color: #1b5e20;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
         
-        <div class="row">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-color);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .header-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+        }
+        
+        /* Search and Filter */
+        .search-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .search-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .search-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+        
+        .specialty-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        
+        .specialty-btn {
+            padding: 0.5rem 1.25rem;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            border-radius: 20px;
+            color: var(--gray-700);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .specialty-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .specialty-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Practitioners Grid */
+        .practitioners-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .practitioner-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .practitioner-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+        
+        .card-header {
+            padding: 2rem 2rem 0;
+            position: relative;
+        }
+        
+        .availability-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 2;
+        }
+        
+        .availability-badge.unavailable {
+            background: var(--gray-400);
+        }
+        
+        .practitioner-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .practitioner-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .practitioner-image i {
+            font-size: 3rem;
+            color: var(--gray-500);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .practitioner-info {
+            padding: 0 2rem 2rem;
+        }
+        
+        .practitioner-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .practitioner-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .practitioner-specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        
+        .specialty-tag {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .practitioner-bio {
+            color: var(--gray-600);
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .practitioner-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .btn-view {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-sm);
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-view:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        .btn-book {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            border: none;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-book:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 3rem;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--gray-300);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.5rem;
+        }
+        
+        .empty-state p {
+            color: var(--gray-500);
+            margin-bottom: 1.5rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem 2rem;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .search-container {
+                flex-direction: column;
+            }
+            
+            .search-btn {
+                justify-content: center;
+            }
+            
+            .practitioners-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .practitioners-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .practitioner-card {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .practitioner-card:nth-child(1) { animation-delay: 0.1s; }
+        .practitioner-card:nth-child(2) { animation-delay: 0.2s; }
+        .practitioner-card:nth-child(3) { animation-delay: 0.3s; }
+        .practitioner-card:nth-child(4) { animation-delay: 0.4s; }
+        .practitioner-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Our Practitioners</h1>
+            <p>Expert guidance from certified herbal medicine specialists dedicated to your wellness journey</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Search and Filter -->
+        <section class="search-section">
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    placeholder="Search practitioners by name, specialty, or expertise..."
+                    id="searchInput"
+                >
+                <button type="button" class="search-btn">
+                    <i class="bi bi-search"></i> Search
+                </button>
+            </div>
+            
+            <div class="specialty-filters">
+                <button class="specialty-btn active" data-specialty="all">All Specialties</button>
+                <button class="specialty-btn" data-specialty="herbal">Herbal Medicine</button>
+                <button class="specialty-btn" data-specialty="nutrition">Nutrition</button>
+                <button class="specialty-btn" data-specialty="stress">Stress Management</button>
+                <button class="specialty-btn" data-specialty="digestive">Digestive Health</button>
+                <button class="specialty-btn" data-specialty="skin">Skin Health</button>
+                <button class="specialty-btn" data-specialty="womens">Women's Health</button>
+            </div>
+        </section>
+
+        <!-- Practitioners Grid -->
+        <section class="practitioners-grid">
             {% for practitioner in practitioners %}
-            <div class="col-md-4 mb-4">
-                <div class="practitioner-card">
+            <div class="practitioner-card" data-specialties="{{ practitioner.specialties|lower if practitioner.specialties else '' }}">
+                <div class="card-header">
+                    <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
+                        <i class="bi bi-circle-fill"></i>
+                        {% if practitioner.available %}Available{% else %}Unavailable{% endif %}
+                    </div>
+                    
                     <div class="practitioner-image">
                         {% if practitioner.image_url %}
                         <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}">
                         {% else %}
-                        <div class="practitioner-placeholder">
-                            <i class="bi bi-person-circle"></i>
-                        </div>
+                        <i class="bi bi-person-circle"></i>
                         {% endif %}
                     </div>
-                    <div class="practitioner-info">
-                        <h4>{{ practitioner.name }}</h4>
-                        {% if practitioner.title %}
-                        <p class="practitioner-title">{{ practitioner.title }}</p>
-                        {% endif %}
-                        {% if practitioner.specialties %}
-                        <p class="practitioner-specialties">
-                            <i class="bi bi-star"></i> {{ practitioner.specialties }}
-                        </p>
-                        {% endif %}
-                        {% if practitioner.bio %}
-                        <p class="practitioner-bio">{{ practitioner.bio[:150] }}...</p>
-                        {% endif %}
-                        <div class="practitioner-actions mt-3">
-                            <a href="{{ url_for('practitioner_detail', practitioner_id=practitioner.id) }}" class="btn btn-outline-primary">
-                                View Profile
-                            </a>
-                            {% if current_user.is_authenticated %}
-                            <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn btn-primary">
-                                Book Appointment
-                            </a>
-                            {% endif %}
+                </div>
+                
+                <div class="practitioner-info">
+                    <h3 class="practitioner-name">{{ practitioner.name }}</h3>
+                    <p class="practitioner-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
+                    
+                    {% if practitioner.specialties %}
+                    <div class="practitioner-specialties">
+                        {% for specialty in practitioner.specialties.split(',') %}
+                        <span class="specialty-tag">{{ specialty.strip() }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if practitioner.bio %}
+                    <p class="practitioner-bio">
+                        {{ practitioner.bio[:200] }}{% if practitioner.bio|length > 200 %}...{% endif %}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="practitioner-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">{{ practitioner.experience_years or '5+' }}</span>
+                            <span class="stat-label">Years</span>
                         </div>
+                        <div class="stat-item">
+                            <span class="stat-value">{{ practitioner.rating or '4.9' }}</span>
+                            <span class="stat-label">Rating</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">{{ practitioner.appointments or '50+' }}</span>
+                            <span class="stat-label">Patients</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-actions">
+                        <a href="{{ url_for('practitioner_detail', practitioner_id=practitioner.id) }}" class="btn-view">
+                            <i class="bi bi-eye"></i> View Profile
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn-book" {% if not practitioner.available %}style="opacity: 0.6; pointer-events: none;"{% endif %}>
+                            <i class="bi bi-calendar-check"></i> Book Now
+                        </a>
+                        {% else %}
+                        <a href="{{ url_for('login') }}" class="btn-book">
+                            <i class="bi bi-calendar-check"></i> Book Now
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
             {% else %}
-            <div class="col-12">
-                <p class="text-center text-muted">No practitioners available at the moment.</p>
+            <div class="empty-state">
+                <i class="bi bi-person-x"></i>
+                <h3>No Practitioners Available</h3>
+                <p>Our specialists are currently fully booked. Please check back later or contact support for assistance.</p>
             </div>
             {% endfor %}
-        </div>
-    </div>
-</div>
-{% endblock %}
+        </section>
+    </main>
 
-{% block extra_css %}
-<style>
-.practitioners-page {
-    padding: 2rem 0;
-}
-
-.practitioner-card {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease;
-    height: 100%;
-}
-
-.practitioner-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-}
-
-.practitioner-image {
-    height: 250px;
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.practitioner-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.practitioner-placeholder {
-    font-size: 6rem;
-    color: #2e7d32;
-}
-
-.practitioner-info {
-    padding: 1.5rem;
-}
-
-.practitioner-info h4 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 0.5rem;
-}
-
-.practitioner-title {
-    color: #2e7d32;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.practitioner-specialties {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-}
-
-.practitioner-bio {
-    color: #666;
-    font-size: 0.9rem;
-    line-height: 1.6;
-}
-
-.practitioner-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // Filter practitioners by specialty
+        const specialtyButtons = document.querySelectorAll('.specialty-btn');
+        const practitionerCards = document.querySelectorAll('.practitioner-card');
+        const searchInput = document.getElementById('searchInput');
+        
+        specialtyButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const specialty = this.dataset.specialty;
+                
+                // Update active button
+                specialtyButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter cards
+                practitionerCards.forEach(card => {
+                    const specialties = card.dataset.specialties;
+                    
+                    if (specialty === 'all' || 
+                        (specialties && specialties.includes(specialty)) ||
+                        searchInput.value.trim() === '') {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            });
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            const activeSpecialty = document.querySelector('.specialty-btn.active').dataset.specialty;
+            
+            practitionerCards.forEach(card => {
+                const name = card.querySelector('.practitioner-name').textContent.toLowerCase();
+                const title = card.querySelector('.practitioner-title').textContent.toLowerCase();
+                const bio = card.querySelector('.practitioner-bio')?.textContent.toLowerCase() || '';
+                const specialties = card.dataset.specialties;
+                
+                const matchesSearch = name.includes(searchTerm) || 
+                                   title.includes(searchTerm) || 
+                                   bio.includes(searchTerm);
+                const matchesSpecialty = activeSpecialty === 'all' || 
+                                       (specialties && specialties.includes(activeSpecialty));
+                
+                if ((searchTerm === '' || matchesSearch) && matchesSpecialty) {
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 50);
+                } else {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+        
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            practitionerCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

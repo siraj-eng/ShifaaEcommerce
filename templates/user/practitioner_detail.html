@@ -1,125 +1,788 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ practitioner.name }} - HerbalCare Practitioner</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --secondary-color: #1b5e20;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-color);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2.5rem 0;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .header-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-content p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Navigation */
+        .page-nav {
+            margin-bottom: 2rem;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            background: white;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .back-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            transform: translateX(-4px);
+            border-color: var(--primary-color);
+        }
+        
+        /* Practitioner Layout */
+        .practitioner-layout {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+        }
+        
+        /* Sidebar */
+        .practitioner-sidebar {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 6px solid white;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-image i {
+            font-size: 4rem;
+            color: var(--gray-500);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .profile-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .profile-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+        
+        .availability-badge.unavailable {
+            background: var(--gray-400);
+        }
+        
+        /* Contact Info */
+        .contact-info {
+            margin-bottom: 2rem;
+        }
+        
+        .contact-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .contact-title i {
+            color: var(--primary-color);
+        }
+        
+        .contact-list {
+            list-style: none;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        
+        .contact-item:hover {
+            background: var(--gray-100);
+        }
+        
+        .contact-item i {
+            width: 20px;
+            color: var(--gray-500);
+        }
+        
+        .contact-item a {
+            color: var(--gray-700);
+            text-decoration: none;
+            flex: 1;
+        }
+        
+        .contact-item a:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Book Button */
+        .book-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin-top: 1.5rem;
+        }
+        
+        .book-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            color: white;
+        }
+        
+        .book-btn:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Main Content */
+        .practitioner-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        /* Section Styling */
+        .content-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .section-content {
+            color: var(--gray-700);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+        
+        /* Specialties */
+        .specialties-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .specialty-card {
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .specialty-card:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        .specialty-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+        
+        .specialty-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .specialty-content p {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin: 0;
+        }
+        
+        /* Qualifications */
+        .qualifications-list {
+            list-style: none;
+        }
+        
+        .qualification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .qualification-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            margin-top: 0.25rem;
+            flex-shrink: 0;
+        }
+        
+        .qualification-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .qualification-content p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin: 0;
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary-light), white);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .practitioner-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .practitioner-sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            .specialties-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .specialty-card {
+                min-width: 100%;
+            }
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .practitioner-sidebar,
+        .practitioner-content {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .practitioner-sidebar {
+            animation-delay: 0.1s;
+        }
+        
+        .practitioner-content {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Practitioner Profile</h1>
+            <p>Expert guidance for your wellness journey</p>
+        </div>
+    </header>
 
-{% block content %}
-<div class="practitioner-detail-page">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="practitioner-profile">
-                    <div class="practitioner-image-large">
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Navigation -->
+        <nav class="page-nav">
+            <a href="{{ url_for('practitioners') }}" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Back to Practitioners
+            </a>
+        </nav>
+
+        <!-- Practitioner Layout -->
+        <div class="practitioner-layout">
+            <!-- Sidebar -->
+            <aside class="practitioner-sidebar">
+                <div class="profile-header">
+                    <div class="profile-image">
                         {% if practitioner.image_url %}
-                        <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}" class="img-fluid">
+                        <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}">
                         {% else %}
-                        <div class="practitioner-placeholder-large">
-                            <i class="bi bi-person-circle"></i>
+                        <i class="bi bi-person-circle"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <h2>{{ practitioner.name }}</h2>
+                    <p class="profile-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
+                    
+                    <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
+                        <i class="bi bi-circle-fill"></i>
+                        {% if practitioner.available %}Available for Consultations{% else %}Currently Unavailable{% endif %}
+                    </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h3 class="contact-title">
+                        <i class="bi bi-info-circle"></i>
+                        Contact Information
+                    </h3>
+                    <ul class="contact-list">
+                        {% if practitioner.email %}
+                        <li class="contact-item">
+                            <i class="bi bi-envelope"></i>
+                            <a href="mailto:{{ practitioner.email }}">{{ practitioner.email }}</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% if practitioner.phone %}
+                        <li class="contact-item">
+                            <i class="bi bi-telephone"></i>
+                            <a href="tel:{{ practitioner.phone }}">{{ practitioner.phone }}</a>
+                        </li>
+                        {% endif %}
+                        
+                        <li class="contact-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Response time: 24-48 hours</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Consultation Info -->
+                <div class="contact-info">
+                    <h3 class="contact-title">
+                        <i class="bi bi-calendar-check"></i>
+                        Consultation Details
+                    </h3>
+                    <ul class="contact-list">
+                        <li class="contact-item">
+                            <i class="bi bi-camera-video"></i>
+                            <span>Virtual consultations available</span>
+                        </li>
+                        <li class="contact-item">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Sessions: 30-60 minutes</span>
+                        </li>
+                        <li class="contact-item">
+                            <i class="bi bi-currency-dollar"></i>
+                            <span>From $75 per session</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Book Button -->
+                {% if current_user.is_authenticated %}
+                <a 
+                    href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" 
+                    class="book-btn"
+                    {% if not practitioner.available %}style="opacity: 0.6; pointer-events: none;"{% endif %}
+                >
+                    <i class="bi bi-calendar-check"></i>
+                    {% if practitioner.available %}Book Appointment{% else %}Not Available{% endif %}
+                </a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="book-btn">
+                    <i class="bi bi-calendar-check"></i> Book Appointment
+                </a>
+                {% endif %}
+            </aside>
+
+            <!-- Main Content -->
+            <div class="practitioner-content">
+                <!-- About Section -->
+                <section class="content-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        <h3 class="section-title">About {{ practitioner.name.split(' ')[0] }}</h3>
+                    </div>
+                    
+                    <div class="section-content">
+                        {% if practitioner.bio %}
+                        <p>{{ practitioner.bio }}</p>
+                        {% else %}
+                        <p>With extensive experience in herbal medicine and holistic wellness, {{ practitioner.name }} is dedicated to helping clients achieve optimal health through natural remedies and personalized treatment plans. Their approach combines traditional herbal knowledge with modern scientific understanding.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Specialties Section -->
+                <section class="content-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        <h3 class="section-title">Areas of Expertise</h3>
+                    </div>
+                    
+                    <div class="specialties-grid">
+                        {% if practitioner.specialties %}
+                        {% for specialty in practitioner.specialties.split(',') %}
+                        <div class="specialty-card">
+                            <div class="specialty-icon">
+                                <i class="bi bi-heart-pulse"></i>
+                            </div>
+                            <div class="specialty-content">
+                                <h4>{{ specialty.strip() }}</h4>
+                                <p>Personalized treatment plans</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="specialty-card">
+                            <div class="specialty-icon">
+                                <i class="bi bi-capsule"></i>
+                            </div>
+                            <div class="specialty-content">
+                                <h4>Herbal Medicine</h4>
+                                <p>Custom herbal formulations</p>
+                            </div>
+                        </div>
+                        <div class="specialty-card">
+                            <div class="specialty-icon">
+                                <i class="bi bi-nutrition"></i>
+                            </div>
+                            <div class="specialty-content">
+                                <h4>Nutrition</h4>
+                                <p>Dietary guidance & supplements</p>
+                            </div>
+                        </div>
+                        <div class="specialty-card">
+                            <div class="specialty-icon">
+                                <i class="bi bi-flower1"></i>
+                            </div>
+                            <div class="specialty-content">
+                                <h4>Stress Management</h4>
+                                <p>Holistic stress relief techniques</p>
+                            </div>
                         </div>
                         {% endif %}
                     </div>
-                    {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn btn-primary btn-lg w-100 mt-3">
-                        <i class="bi bi-calendar-check"></i> Book Appointment
-                    </a>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="practitioner-details">
-                    <h1>{{ practitioner.name }}</h1>
-                    {% if practitioner.title %}
-                    <p class="practitioner-title-large">{{ practitioner.title }}</p>
-                    {% endif %}
-                    
-                    {% if practitioner.bio %}
-                    <div class="practitioner-bio-section">
-                        <h3>About</h3>
-                        <p>{{ practitioner.bio }}</p>
+                </section>
+
+                <!-- Qualifications Section -->
+                <section class="content-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <h3 class="section-title">Qualifications & Certifications</h3>
                     </div>
-                    {% endif %}
                     
-                    {% if practitioner.specialties %}
-                    <div class="practitioner-specialties-section">
-                        <h3>Specialties</h3>
-                        <p>{{ practitioner.specialties }}</p>
+                    <ul class="qualifications-list">
+                        <li class="qualification-item">
+                            <div class="qualification-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <div class="qualification-content">
+                                <h4>Certified Herbalist</h4>
+                                <p>International Association of Herbal Practitioners</p>
+                            </div>
+                        </li>
+                        <li class="qualification-item">
+                            <div class="qualification-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <div class="qualification-content">
+                                <h4>Advanced Nutrition Certification</h4>
+                                <p>Institute for Functional Medicine</p>
+                            </div>
+                        </li>
+                        <li class="qualification-item">
+                            <div class="qualification-icon">
+                                <i class="bi bi-check"></i>
+                            </div>
+                            <div class="qualification-content">
+                                <h4>Traditional Medicine Training</h4>
+                                <p>10+ years of practical experience</p>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- Statistics -->
+                <section class="content-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h3 class="section-title">Practice Statistics</h3>
                     </div>
-                    {% endif %}
                     
-                    {% if practitioner.email or practitioner.phone %}
-                    <div class="practitioner-contact">
-                        <h3>Contact</h3>
-                        {% if practitioner.email %}
-                        <p><i class="bi bi-envelope"></i> {{ practitioner.email }}</p>
-                        {% endif %}
-                        {% if practitioner.phone %}
-                        <p><i class="bi bi-telephone"></i> {{ practitioner.phone }}</p>
-                        {% endif %}
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.experience_years or '10+' }}</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.rating or '4.9' }}</div>
+                            <div class="stat-label">Patient Rating</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.appointments or '500+' }}</div>
+                            <div class="stat-label">Consultations</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">98%</div>
+                            <div class="stat-label">Satisfaction Rate</div>
+                        </div>
                     </div>
-                    {% endif %}
-                </div>
+                </section>
             </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+    </main>
 
-{% block extra_css %}
-<style>
-.practitioner-detail-page {
-    padding: 2rem 0;
-}
-
-.practitioner-profile {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-.practitioner-image-large {
-    margin-bottom: 1.5rem;
-}
-
-.practitioner-image-large img {
-    border-radius: 10px;
-    max-width: 100%;
-}
-
-.practitioner-placeholder-large {
-    font-size: 8rem;
-    color: #2e7d32;
-}
-
-.practitioner-details {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.practitioner-details h1 {
-    font-family: 'Marcellus', serif;
-    color: #1b5e20;
-    margin-bottom: 0.5rem;
-}
-
-.practitioner-title-large {
-    font-size: 1.3rem;
-    color: #2e7d32;
-    font-weight: 500;
-    margin-bottom: 2rem;
-}
-
-.practitioner-bio-section,
-.practitioner-specialties-section,
-.practitioner-contact {
-    margin-bottom: 2rem;
-}
-
-.practitioner-details h3 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 1rem;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // Add animation to specialty cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const specialtyCards = document.querySelectorAll('.specialty-card');
+            const statCards = document.querySelectorAll('.stat-card');
+            
+            // Initialize animations
+            specialtyCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 300 + (index * 100));
+            });
+            
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 600 + (index * 100));
+            });
+        });
+    </script>
+</body>
+</html>

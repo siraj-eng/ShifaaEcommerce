@@ -1,98 +1,789 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="book-appointment-page">
-    <div class="container">
-        <div class="mb-4">
-            <a href="{{ url_for('practitioner_detail', practitioner_id=practitioner.id) }}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back to Profile
-            </a>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - HerbalCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --secondary-color: #1b5e20;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
         
-        <div class="row">
-            <div class="col-md-8">
-                <div class="booking-form-card">
-                    <h1>Book Appointment with {{ practitioner.name }}</h1>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--light-color);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2.5rem 0;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .header-content h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header-content p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Navigation */
+        .page-nav {
+            margin-bottom: 2rem;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+            background: white;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .back-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            transform: translateX(-4px);
+            border-color: var(--primary-color);
+        }
+        
+        /* Booking Layout */
+        .booking-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+        }
+        
+        /* Booking Form */
+        .booking-form {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .form-header {
+            margin-bottom: 2.5rem;
+        }
+        
+        .form-header h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-header p {
+            color: var(--gray-500);
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        /* Consultation Type */
+        .consultation-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .consultation-option {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .consultation-option:hover {
+            border-color: var(--primary-light);
+            background: var(--gray-100);
+        }
+        
+        .consultation-option.selected {
+            border-color: var(--primary-color);
+            background: var(--primary-light);
+        }
+        
+        .option-radio {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .option-content h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .option-content p {
+            font-size: 13px;
+            color: var(--gray-500);
+            margin-bottom: 0.5rem;
+        }
+        
+        .option-duration {
+            font-size: 12px;
+            color: var(--gray-600);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        /* Date and Time */
+        .datetime-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-label .required {
+            color: var(--danger-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: white;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Notes Section */
+        .notes-section {
+            margin-top: 2rem;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 2rem;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Practitioner Sidebar */
+        .practitioner-sidebar {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .practitioner-profile {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
+            margin: 0 auto 1.5rem;
+            overflow: hidden;
+            border: 4px solid white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-image i {
+            font-size: 3rem;
+            color: var(--gray-500);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .practitioner-profile h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .practitioner-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Availability Info */
+        .availability-info {
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-list {
+            list-style: none;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+        
+        .info-item i {
+            color: var(--success-color);
+            width: 16px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .booking-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .practitioner-sidebar {
+                position: relative;
+                top: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            .header-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .datetime-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .consultation-types {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Success Modal */
+        .success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .success-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+        
+        .success-modal.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--success-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-text {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Book Appointment</h1>
+            <p>Schedule your consultation with our expert practitioner</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Navigation -->
+        <nav class="page-nav">
+            <a href="{{ url_for('practitioner_detail', practitioner_id=practitioner.id) }}" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Back to Practitioner Profile
+            </a>
+        </nav>
+
+        <!-- Booking Layout -->
+        <div class="booking-layout">
+            <!-- Booking Form -->
+            <div class="booking-form">
+                <div class="form-header">
+                    <h2>Schedule Consultation with {{ practitioner.name }}</h2>
+                    <p>Fill in the details below to book your appointment</p>
+                </div>
+                
+                <form method="POST" action="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" id="bookingForm">
+                    <!-- Consultation Type -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="bi bi-heart-pulse"></i>
+                            Consultation Type
+                        </h3>
+                        
+                        <div class="consultation-types">
+                            <label class="consultation-option selected">
+                                <input type="radio" name="appointment_type" value="initial consultation" class="option-radio" checked>
+                                <div class="option-content">
+                                    <h4>Initial Consultation</h4>
+                                    <p>Comprehensive health assessment and personalized plan</p>
+                                    <div class="option-duration">
+                                        <i class="bi bi-clock"></i> 60 minutes
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="consultation-option">
+                                <input type="radio" name="appointment_type" value="follow-up" class="option-radio">
+                                <div class="option-content">
+                                    <h4>Follow-up Session</h4>
+                                    <p>Progress review and treatment adjustment</p>
+                                    <div class="option-duration">
+                                        <i class="bi bi-clock"></i> 30 minutes
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="consultation-option">
+                                <input type="radio" name="appointment_type" value="herbal prescription" class="option-radio">
+                                <div class="option-content">
+                                    <h4>Herbal Prescription</h4>
+                                    <p>Custom herbal formula consultation</p>
+                                    <div class="option-duration">
+                                        <i class="bi bi-clock"></i> 45 minutes
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <label class="consultation-option">
+                                <input type="radio" name="appointment_type" value="general advice" class="option-radio">
+                                <div class="option-content">
+                                    <h4>General Advice</h4>
+                                    <p>Quick questions and general guidance</p>
+                                    <div class="option-duration">
+                                        <i class="bi bi-clock"></i> 20 minutes
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                     
-                    <form method="POST" action="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}">
-                        <div class="mb-3">
-                            <label for="appointment_type" class="form-label">Consultation Type</label>
-                            <select name="appointment_type" id="appointment_type" class="form-select" required>
-                                <option value="general advice">General Advice</option>
-                                <option value="follow-up">Follow-up Consultation</option>
-                                <option value="initial consultation">Initial Consultation</option>
-                                <option value="herbal prescription">Herbal Prescription</option>
-                            </select>
-                        </div>
+                    <!-- Date and Time -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="bi bi-calendar"></i>
+                            Date & Time
+                        </h3>
                         
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_date" class="form-label">Date</label>
-                                <input type="date" name="appointment_date" id="appointment_date" class="form-control" required>
+                        <div class="datetime-grid">
+                            <div class="form-group">
+                                <label for="appointment_date" class="form-label">
+                                    Date <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="date" 
+                                    name="appointment_date" 
+                                    id="appointment_date" 
+                                    class="form-control" 
+                                    required
+                                    min="{{ today }}"
+                                >
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="appointment_time" class="form-label">Time</label>
-                                <input type="time" name="appointment_time" id="appointment_time" class="form-control" required>
+                            
+                            <div class="form-group">
+                                <label for="appointment_time" class="form-label">
+                                    Time <span class="required">*</span>
+                                </label>
+                                <input 
+                                    type="time" 
+                                    name="appointment_time" 
+                                    id="appointment_time" 
+                                    class="form-control" 
+                                    required
+                                    min="09:00"
+                                    max="17:00"
+                                >
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div class="notes-section">
+                        <h3 class="section-title">
+                            <i class="bi bi-journal-text"></i>
+                            Additional Information
+                        </h3>
                         
-                        <div class="mb-3">
+                        <div class="form-group">
                             <label for="notes" class="form-label">Notes (Optional)</label>
-                            <textarea name="notes" id="notes" class="form-control" rows="4" placeholder="Any specific concerns or questions you'd like to discuss..."></textarea>
+                            <textarea 
+                                name="notes" 
+                                id="notes" 
+                                class="form-control form-textarea" 
+                                placeholder="Any specific health concerns, symptoms, or questions you'd like to discuss during the consultation..."
+                            ></textarea>
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-calendar-check"></i> Book Appointment
-                        </button>
-                    </form>
-                </div>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="bi bi-calendar-check"></i> Book Appointment
+                    </button>
+                </form>
             </div>
-            <div class="col-md-4">
-                <div class="practitioner-info-card">
-                    <h4>{{ practitioner.name }}</h4>
-                    {% if practitioner.title %}
-                    <p class="text-muted">{{ practitioner.title }}</p>
-                    {% endif %}
-                    {% if practitioner.specialties %}
-                    <p><strong>Specialties:</strong> {{ practitioner.specialties }}</p>
-                    {% endif %}
+
+            <!-- Practitioner Sidebar -->
+            <aside class="practitioner-sidebar">
+                <div class="practitioner-profile">
+                    <div class="profile-image">
+                        {% if practitioner.image_url %}
+                        <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}">
+                        {% else %}
+                        <i class="bi bi-person-circle"></i>
+                        {% endif %}
+                    </div>
+                    
+                    <h3>{{ practitioner.name }}</h3>
+                    <p class="practitioner-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
                 </div>
+                
+                <div class="availability-info">
+                    <h4 class="info-title">
+                        <i class="bi bi-info-circle"></i>
+                        Availability
+                    </h4>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Monday - Friday: 9 AM - 5 PM</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Virtual consultations available</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-check-circle"></i>
+                            <span>24-hour cancellation policy</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-check-circle"></i>
+                            <span>Response within 24 hours</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="availability-info">
+                    <h4 class="info-title">
+                        <i class="bi bi-currency-dollar"></i>
+                        Pricing
+                    </h4>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Initial Consultation: $120</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Follow-up Session: $75</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Herbal Prescription: $95</span>
+                        </li>
+                        <li class="info-item">
+                            <i class="bi bi-clock"></i>
+                            <span>General Advice: $45</span>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <h3 class="modal-title">Appointment Booked!</h3>
+            <p class="modal-text">
+                Your consultation with {{ practitioner.name }} has been scheduled successfully.
+                You will receive a confirmation email with all the details.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="{{ url_for('appointments') }}" class="submit-btn" style="max-width: 200px;">
+                    View Appointments
+                </a>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_css %}
-<style>
-.book-appointment-page {
-    padding: 2rem 0;
-}
-
-.booking-form-card,
-.practitioner-info-card {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.booking-form-card h1 {
-    font-family: 'Marcellus', serif;
-    color: #1b5e20;
-    margin-bottom: 2rem;
-}
-
-.practitioner-info-card {
-    position: sticky;
-    top: 20px;
-}
-
-.practitioner-info-card h4 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 1rem;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // Consultation type selection
+        document.querySelectorAll('.consultation-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove selected class from all options
+                document.querySelectorAll('.consultation-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Check the radio input
+                const radio = this.querySelector('.option-radio');
+                radio.checked = true;
+            });
+        });
+        
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('appointment_date');
+        dateInput.min = today;
+        
+        // Set initial date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        dateInput.valueAsDate = tomorrow;
+        
+        // Set default time to next available slot
+        const timeInput = document.getElementById('appointment_time');
+        const now = new Date();
+        const hours = now.getHours();
+        
+        if (hours < 17) {
+            timeInput.value = '09:00';
+        }
+        
+        // Form validation and submission
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            const appointmentDate = dateInput.value;
+            const appointmentTime = timeInput.value;
+            
+            if (!appointmentDate) {
+                alert('Please select a date for your appointment');
+                dateInput.focus();
+                return;
+            }
+            
+            if (!appointmentTime) {
+                alert('Please select a time for your appointment');
+                timeInput.focus();
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Scheduling...';
+            submitBtn.disabled = true;
+            
+            // Show success modal after delay
+            setTimeout(() => {
+                document.getElementById('successModal').classList.add('active');
+            }, 1500);
+            
+            // Actually submit the form after showing modal
+            setTimeout(() => {
+                this.submit();
+            }, 3000);
+        });
+        
+        // Add CSS for spinner
+        const style = document.createElement('style');
+        style.textContent = `
+            .spin {
+                animation: spin 1s linear infinite;
+            }
+            
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
