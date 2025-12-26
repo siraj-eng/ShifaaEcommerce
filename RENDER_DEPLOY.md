@@ -15,11 +15,11 @@
    - **Environment**: `Python 3`
    - **Build Command**: 
      ```bash
-     pip install -r requirements.txt && flask --app app:create_app init-db
+     pip install -r requirements.txt
      ```
    - **Start Command**: 
      ```bash
-     gunicorn wsgi:app
+     gunicorn --bind 0.0.0.0:$PORT wsgi:app
      ```
 
 4. **Set Environment Variables**
