@@ -1,119 +1,1118 @@
-{% extends "dashboard_base.html" %}
-
-{% block content %}
-<div class="profile-page">
-    <div class="container">
-        <h1 class="mb-4">Profile Settings</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - {{ current_user.name }} | HerbalCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --primary-dark: #1b5e20;
+            --secondary-color: #4a7c59;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         
-        <div class="row">
-            <div class="col-md-8">
-                <div class="profile-form-card">
-                    <form method="POST" action="{{ url_for('profile') }}">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" name="name" id="name" class="form-control" value="{{ current_user.name }}" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" value="{{ current_user.email }}" disabled>
-                            <small class="text-muted">Email cannot be changed</small>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" name="phone" id="phone" class="form-control" value="{{ current_user.phone or '' }}">
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea name="address" id="address" class="form-control" rows="3">{{ current_user.address or '' }}</textarea>
-                        </div>
-                        
-                        <hr>
-                        
-                        <h4 class="mb-3">Change Password</h4>
-                        <div class="mb-3">
-                            <label for="new_password" class="form-label">New Password</label>
-                            <input type="password" name="new_password" id="new_password" class="form-control" placeholder="Leave blank to keep current password">
-                            <small class="text-muted">Minimum 6 characters</small>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle"></i> Save Changes
-                        </button>
-                    </form>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f7f0 0%, #f8fafc 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.025em;
+        }
+        
+        .header-title p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .dashboard-back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-smooth);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .dashboard-back-btn:hover {
+            background: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            border-color: white;
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Profile Layout */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        @media (max-width: 992px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Profile Form Card */
+        .profile-form-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+        
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+        
+        .form-section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .form-section-title i {
+            color: var(--primary-color);
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-base);
+            background: var(--gray-50);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .form-control:disabled {
+            background: var(--gray-100);
+            color: var(--gray-500);
+            cursor: not-allowed;
+        }
+        
+        .form-text {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+            margin-top: 0.25rem;
+            display: block;
+        }
+        
+        .form-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--gray-300), transparent);
+            margin: 2rem 0;
+        }
+        
+        /* Submit Button */
+        .submit-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 6px rgba(46, 125, 50, 0.2);
+        }
+        
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .submit-btn:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Profile Info Card */
+        .profile-info-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            position: sticky;
+            top: 2rem;
+        }
+        
+        .profile-info-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .profile-email {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+        
+        .info-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .info-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+        
+        .info-value.success {
+            color: var(--success-color);
+        }
+        
+        .info-value.warning {
+            color: var(--warning-color);
+        }
+        
+        /* Stats Cards */
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: var(--transition-base);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+        
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease forwards;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .alert-success {
+            background: rgba(6, 214, 160, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .alert-danger {
+            background: rgba(239, 71, 111, 0.1);
+            border: 1px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+        
+        .alert-warning {
+            background: rgba(255, 209, 102, 0.1);
+            border: 1px solid var(--warning-color);
+            color: #b45309;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .profile-form-card {
+                padding: 1.5rem;
+            }
+            
+            .profile-info-card {
+                position: relative;
+                top: 0;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Focus States */
+        :focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+        
+        /* Loading States */
+        .loading {
+            position: relative;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 10;
+            border-radius: var(--radius-md);
+        }
+        
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 30px;
+            height: 30px;
+            border: 3px solid var(--gray-300);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 11;
+        }
+        
+        @keyframes spin {
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header" role="banner">
+        <div class="header-container">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>Profile Settings</h1>
+                    <p>Manage your personal information and preferences</p>
+                </div>
+                <div class="header-actions">
+                    <a href="{{ url_for('dashboard') }}" class="dashboard-back-btn">
+                        <i class="bi bi-arrow-left-circle"></i>
+                        Back to Dashboard
+                    </a>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="profile-info-card">
-                    <h4>Account Information</h4>
-                    <div class="info-item">
-                        <strong>Member Since:</strong>
-                        <p>{{ current_user.created_at.strftime('%B %Y') if current_user.created_at else 'N/A' }}</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container" id="main-content">
+        <!-- Alert Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        <i class="bi 
+                            {% if category == 'success' %}bi-check-circle-fill
+                            {% elif category == 'danger' %}bi-exclamation-circle-fill
+                            {% elif category == 'warning' %}bi-exclamation-triangle-fill
+                            {% else %}bi-info-circle-fill{% endif %}">
+                        </i>
+                        {{ message }}
                     </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Profile Layout -->
+        <div class="profile-layout">
+            <!-- Left Column: Profile Form -->
+            <div class="profile-form-card">
+                <form method="POST" action="{{ url_for('profile') }}" id="profileForm">
+                    <!-- Personal Information Section -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <i class="bi bi-person-circle"></i>
+                            Personal Information
+                        </h2>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    id="name" 
+                                    class="form-control" 
+                                    value="{{ current_user.name }}" 
+                                    required
+                                    minlength="2"
+                                    maxlength="100"
+                                    aria-label="Full name"
+                                >
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    class="form-control" 
+                                    value="{{ current_user.email }}" 
+                                    disabled
+                                    aria-label="Email address (read-only)"
+                                >
+                                <small class="form-text">Email cannot be changed for security reasons</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mt-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input 
+                                    type="tel" 
+                                    name="phone" 
+                                    id="phone" 
+                                    class="form-control" 
+                                    value="{{ current_user.phone or '' }}"
+                                    pattern="[0-9\s\-\(\)\+]+"
+                                    aria-label="Phone number"
+                                >
+                                <small class="form-text">Format: +1 (555) 123-4567</small>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="date_of_birth" class="form-label">Date of Birth</label>
+                                <input 
+                                    type="date" 
+                                    name="date_of_birth" 
+                                    id="date_of_birth" 
+                                    class="form-control" 
+                                    value="{{ current_user.date_of_birth or '' }}"
+                                    aria-label="Date of birth"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <label for="address" class="form-label">Full Address</label>
+                            <textarea 
+                                name="address" 
+                                id="address" 
+                                class="form-control" 
+                                rows="3"
+                                maxlength="500"
+                                aria-label="Full address"
+                            >{{ current_user.address or '' }}</textarea>
+                            <small class="form-text">Street, City, State, ZIP Code</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-divider"></div>
+                    
+                    <!-- Account Security Section -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <i class="bi bi-shield-check"></i>
+                            Account Security
+                        </h2>
+                        
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Current Password</label>
+                            <input 
+                                type="password" 
+                                name="current_password" 
+                                id="current_password" 
+                                class="form-control"
+                                aria-label="Current password"
+                            >
+                            <small class="form-text">Required only if changing password</small>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="new_password" class="form-label">New Password</label>
+                                <input 
+                                    type="password" 
+                                    name="new_password" 
+                                    id="new_password" 
+                                    class="form-control"
+                                    minlength="6"
+                                    aria-label="New password"
+                                >
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                <input 
+                                    type="password" 
+                                    name="confirm_password" 
+                                    id="confirm_password" 
+                                    class="form-control"
+                                    minlength="6"
+                                    aria-label="Confirm new password"
+                                >
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="two_factor_enabled" 
+                                    id="two_factor_enabled" 
+                                    class="form-check-input"
+                                    {% if current_user.two_factor_enabled %}checked{% endif %}
+                                    aria-label="Enable two-factor authentication"
+                                >
+                                <label for="two_factor_enabled" class="form-check-label">
+                                    Enable Two-Factor Authentication
+                                </label>
+                            </div>
+                            <small class="form-text">Adds an extra layer of security to your account</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-divider"></div>
+                    
+                    <!-- Preferences Section -->
+                    <div class="form-section">
+                        <h2 class="form-section-title">
+                            <i class="bi bi-gear"></i>
+                            Preferences
+                        </h2>
+                        
+                        <div class="mb-3">
+                            <label for="notification_preferences" class="form-label">Notification Preferences</label>
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="email_notifications" 
+                                    id="email_notifications" 
+                                    class="form-check-input"
+                                    {% if current_user.email_notifications %}checked{% endif %}
+                                    aria-label="Enable email notifications"
+                                >
+                                <label for="email_notifications" class="form-check-label">
+                                    Email Notifications
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="sms_notifications" 
+                                    id="sms_notifications" 
+                                    class="form-check-input"
+                                    {% if current_user.sms_notifications %}checked{% endif %}
+                                    aria-label="Enable SMS notifications"
+                                >
+                                <label for="sms_notifications" class="form-check-label">
+                                    SMS Notifications
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input 
+                                    type="checkbox" 
+                                    name="marketing_emails" 
+                                    id="marketing_emails" 
+                                    class="form-check-input"
+                                    {% if current_user.marketing_emails %}checked{% endif %}
+                                    aria-label="Enable marketing emails"
+                                >
+                                <label for="marketing_emails" class="form-check-label">
+                                    Marketing Emails
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="communication_language" class="form-label">Preferred Language</label>
+                            <select 
+                                name="communication_language" 
+                                id="communication_language" 
+                                class="form-control"
+                                aria-label="Preferred language"
+                            >
+                                <option value="en" {% if current_user.communication_language == 'en' %}selected{% endif %}>English</option>
+                                <option value="es" {% if current_user.communication_language == 'es' %}selected{% endif %}>Spanish</option>
+                                <option value="fr" {% if current_user.communication_language == 'fr' %}selected{% endif %}>French</option>
+                                <option value="de" {% if current_user.communication_language == 'de' %}selected{% endif %}>German</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-divider"></div>
+                    
+                    <!-- Form Actions -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <i class="bi bi-check-circle"></i>
+                            Save Changes
+                        </button>
+                        
+                        <button type="button" class="btn btn-outline-danger" id="discardBtn">
+                            <i class="bi bi-x-circle"></i>
+                            Discard Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Right Column: Profile Information -->
+            <div class="profile-info-card">
+                <div class="profile-info-header">
+                    <div class="profile-avatar" aria-hidden="true">
+                        {{ current_user.name[0]|upper }}
+                    </div>
+                    <h2 class="profile-name">{{ current_user.name }}</h2>
+                    <p class="profile-email">{{ current_user.email }}</p>
+                </div>
+                
+                <div class="info-items">
                     <div class="info-item">
-                        <strong>Role:</strong>
-                        <p>{{ current_user.role|title }}</p>
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value">
+                            {% if current_user.created_at %}
+                                {{ current_user.created_at.strftime('%B %d, %Y') }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Account Status</span>
+                        <span class="info-value success">
+                            <i class="bi bi-check-circle"></i>
+                            Active
+                        </span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">User Role</span>
+                        <span class="info-value">{{ current_user.role|title }}</span>
+                    </div>
+                    
+                    <div class="info-item">
+                        <span class="info-label">Last Login</span>
+                        <span class="info-value">
+                            {% if current_user.last_login %}
+                                {{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Profile Stats -->
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div class="stat-number">{{ recent_orders|length }}</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+                        <div class="stat-number">{{ upcoming_appointments|length }}</div>
+                        <div class="stat-label">Appointments</div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-4">
+                    <h3 class="form-section-title" style="border-bottom: none; margin-bottom: 1rem;">
+                        <i class="bi bi-lightning"></i>
+                        Quick Actions
+                    </h3>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('orders') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-box-seam"></i>
+                            View Order History
+                        </a>
+                        <a href="{{ url_for('appointments') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-calendar-check"></i>
+                            Manage Appointments
+                        </a>
+                        <button type="button" class="btn btn-outline-danger" id="deleteAccountBtn">
+                            <i class="bi bi-trash"></i>
+                            Delete Account
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
+
+    <!-- Success Notification -->
+    <div class="success-notification" id="successNotification" role="alert" aria-live="polite" aria-atomic="true" style="display: none;">
+        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+        <div class="notification-content">
+            <strong>Profile Updated!</strong>
+            <span>Your changes have been saved successfully.</span>
+        </div>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_css %}
-<style>
-.profile-page {
-    padding: 2rem 0;
-}
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                    <p class="text-danger"><strong>Warning:</strong> All your data, orders, and appointments will be permanently deleted.</p>
+                    
+                    <div class="mb-3">
+                        <label for="confirmDeletePassword" class="form-label">Enter your password to confirm:</label>
+                        <input type="password" id="confirmDeletePassword" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Account</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-.profile-form-card,
-.profile-info-card {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.profile-form-card h1 {
-    font-family: 'Marcellus', serif;
-    color: #1b5e20;
-    margin-bottom: 2rem;
-}
-
-.profile-info-card {
-    position: sticky;
-    top: 20px;
-}
-
-.profile-info-card h4 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 1.5rem;
-}
-
-.info-item {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #eee;
-}
-
-.info-item:last-child {
-    border-bottom: none;
-}
-
-.info-item strong {
-    color: #1b5e20;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.info-item p {
-    margin: 0;
-    color: #666;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // Form validation and submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const profileForm = document.getElementById('profileForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const discardBtn = document.getElementById('discardBtn');
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            const deleteAccountModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            
+            // Track form changes
+            const originalFormData = new FormData(profileForm);
+            let formChanged = false;
+            
+            profileForm.addEventListener('input', function() {
+                formChanged = true;
+                discardBtn.disabled = false;
+            });
+            
+            // Discard changes
+            discardBtn.addEventListener('click', function() {
+                if (formChanged) {
+                    if (confirm('Are you sure you want to discard all changes?')) {
+                        profileForm.reset();
+                        formChanged = false;
+                        discardBtn.disabled = true;
+                    }
+                }
+            });
+            
+            // Form submission
+            profileForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate password fields
+                const newPassword = document.getElementById('new_password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+                const currentPassword = document.getElementById('current_password').value;
+                
+                if (newPassword && !currentPassword) {
+                    alert('Please enter your current password to change your password.');
+                    return;
+                }
+                
+                if (newPassword && newPassword !== confirmPassword) {
+                    alert('New password and confirmation do not match.');
+                    return;
+                }
+                
+                if (newPassword && newPassword.length < 6) {
+                    alert('Password must be at least 6 characters long.');
+                    return;
+                }
+                
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Saving...';
+                submitBtn.classList.add('loading');
+                
+                try {
+                    // Submit form data
+                    const formData = new FormData(profileForm);
+                    
+                    // Simulate API call (replace with actual fetch)
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // Show success notification
+                    const notification = document.getElementById('successNotification');
+                    notification.style.display = 'flex';
+                    notification.classList.add('show');
+                    
+                    // Hide notification after 3 seconds
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.style.display = 'none';
+                        }, 300);
+                    }, 3000);
+                    
+                    // Reset form changed state
+                    formChanged = false;
+                    discardBtn.disabled = true;
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to save changes. Please try again.');
+                } finally {
+                    // Reset button state
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Save Changes';
+                    submitBtn.classList.remove('loading');
+                }
+            });
+            
+            // Delete account functionality
+            deleteAccountBtn.addEventListener('click', function() {
+                deleteAccountModal.show();
+            });
+            
+            confirmDeleteBtn.addEventListener('click', function() {
+                const password = document.getElementById('confirmDeletePassword').value;
+                
+                if (!password) {
+                    alert('Please enter your password to confirm account deletion.');
+                    return;
+                }
+                
+                // In a real application, you would send this to your backend
+                if (confirm('Are you absolutely sure? This action is irreversible!')) {
+                    console.log('Account deletion requested with password verification');
+                    deleteAccountModal.hide();
+                    
+                    // Show warning message
+                    const warning = document.createElement('div');
+                    warning.className = 'alert alert-warning';
+                    warning.innerHTML = `
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Account deletion request has been sent. Our team will contact you shortly.
+                    `;
+                    document.getElementById('main-content').prepend(warning);
+                    
+                    setTimeout(() => {
+                        warning.remove();
+                    }, 5000);
+                }
+            });
+            
+            // Phone number formatting
+            const phoneInput = document.getElementById('phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length > 0) {
+                        value = value.match(new RegExp('.{1,3}', 'g')).join('-');
+                        if (value.length > 12) {
+                            value = value.substring(0, 12);
+                        }
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
+            
+            // Password strength indicator
+            const newPasswordInput = document.getElementById('new_password');
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', function(e) {
+                    const password = e.target.value;
+                    const strengthIndicator = document.getElementById('passwordStrength');
+                    
+                    if (!strengthIndicator) {
+                        const indicator = document.createElement('div');
+                        indicator.id = 'passwordStrength';
+                        indicator.className = 'mt-2';
+                        newPasswordInput.parentNode.appendChild(indicator);
+                    }
+                    
+                    updatePasswordStrength(password);
+                });
+            }
+            
+            function updatePasswordStrength(password) {
+                let strength = 0;
+                let text = '';
+                let color = '';
+                
+                if (password.length >= 8) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+                
+                switch(strength) {
+                    case 0:
+                        text = 'Very Weak';
+                        color = '#ef476f';
+                        break;
+                    case 1:
+                        text = 'Weak';
+                        color = '#ff9a76';
+                        break;
+                    case 2:
+                        text = 'Fair';
+                        color = '#ffd166';
+                        break;
+                    case 3:
+                        text = 'Good';
+                        color = '#06d6a0';
+                        break;
+                    case 4:
+                        text = 'Strong';
+                        color = '#118ab2';
+                        break;
+                }
+                
+                const indicator = document.getElementById('passwordStrength');
+                indicator.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div style="flex: 1; height: 4px; background: var(--gray-200); border-radius: 2px; overflow: hidden;">
+                            <div style="width: ${strength * 25}%; height: 100%; background: ${color};"></div>
+                        </div>
+                        <span style="font-size: 0.75rem; color: ${color}; font-weight: 600;">${text}</span>
+                    </div>
+                `;
+            }
+            
+            // Auto-save draft (optional)
+            let saveTimeout;
+            profileForm.addEventListener('input', function() {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    // In a real app, you might want to save form data as draft
+                    console.log('Form auto-save triggered');
+                }, 2000);
+            });
+            
+            // Alert animation
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach((alert, index) => {
+                setTimeout(() => {
+                    alert.style.opacity = '1';
+                    alert.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Remove alerts after 5 seconds
+            setTimeout(() => {
+                alerts.forEach(alert => {
+                    alert.style.transition = 'opacity 0.3s ease';
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                });
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

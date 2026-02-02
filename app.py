@@ -478,7 +478,12 @@ def create_app():
             flash("Profile updated successfully.", "success")
             return redirect(url_for("profile"))
         
-        return render_template("user/profile.html")
+        # Fetch user's orders and appointments
+        from models import Order, Appointment
+        recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
+        upcoming_appointments = Appointment.query.filter_by(user_id=current_user.id).filter(Appointment.appointment_date >= datetime.utcnow()).order_by(Appointment.appointment_date.asc()).limit(5).all()
+        
+        return render_template("user/profile.html", recent_orders=recent_orders, upcoming_appointments=upcoming_appointments)
     
     # Health Information
     @app.route("/health-info")

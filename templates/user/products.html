@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products - HerbalCare</title>
+    <title>Natural Herbal Products | HerbalCare Store</title>
+    <meta name="description" content="Browse our premium collection of natural herbal remedies, supplements, and wellness products">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -11,12 +12,14 @@
         :root {
             --primary-color: #2e7d32;
             --primary-light: #e8f5e8;
-            --secondary-color: #1b5e20;
+            --primary-dark: #1b5e20;
+            --secondary-color: #4a7c59;
             --success-color: #06d6a0;
             --warning-color: #ffd166;
             --danger-color: #ef476f;
             --dark-color: #121826;
             --light-color: #f8fafc;
+            --gray-50: #f9fafb;
             --gray-100: #f1f5f9;
             --gray-200: #e2e8f0;
             --gray-300: #cbd5e1;
@@ -25,13 +28,16 @@
             --gray-600: #475569;
             --gray-700: #334155;
             --gray-800: #1e293b;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         * {
@@ -42,211 +48,361 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-color);
+            background: linear-gradient(135deg, #f0f7f0 0%, #f8fafc 100%);
             color: var(--gray-800);
-            line-height: 1.5;
+            line-height: 1.6;
+            min-height: 100vh;
         }
         
         /* Header */
         .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             padding: 3rem 0;
-            margin-bottom: 2rem;
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231b5e20' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
         }
         
         .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+            max-width: 800px;
         }
         
         .header-content h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
         }
         
         .header-content p {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             opacity: 0.9;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        /* Search Section */
-        .search-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
             margin-bottom: 2rem;
         }
         
-        .search-container {
+        /* Navigation Actions */
+        .navigation-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .back-dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-smooth);
+            border: 2px solid transparent;
+        }
+        
+        .back-dashboard-btn:hover {
+            background: white;
+            border-color: var(--primary-color);
+            transform: translateX(-4px);
+            color: var(--primary-color);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Search & Filter Section */
+        .search-filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .search-wrapper {
             display: flex;
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
         
-        .search-input {
+        .search-input-group {
             flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-sm);
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
             font-family: 'Inter', sans-serif;
-            font-size: 14px;
-            transition: all 0.2s;
+            font-size: 1rem;
+            transition: var(--transition-base);
+            background: var(--gray-50);
         }
         
         .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+            pointer-events: none;
         }
         
         .search-btn {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
+            padding: 0.875rem 2rem;
+            border-radius: var(--radius-md);
             font-weight: 600;
-            font-size: 14px;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: all 0.2s;
+            transition: var(--transition-smooth);
+            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
         }
         
         .search-btn:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
         }
         
         /* Categories */
-        .categories {
+        .categories-section {
+            margin-top: 1.5rem;
+        }
+        
+        .categories-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .categories-list {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
-            margin-top: 1rem;
         }
         
         .category-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.25rem;
             background: var(--gray-100);
-            border: none;
-            border-radius: 20px;
-            font-size: 13px;
+            border: 2px solid transparent;
+            border-radius: 2rem;
+            font-size: 0.875rem;
             font-weight: 500;
             color: var(--gray-700);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-base);
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
         }
         
         .category-btn:hover {
             background: var(--primary-light);
             color: var(--primary-color);
-            transform: translateY(-1px);
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
         }
         
         .category-btn.active {
             background: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
             font-weight: 600;
         }
         
         /* Products Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
         }
         
+        /* Product Card */
         .product-card {
             background: white;
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-smooth);
             border: 1px solid var(--gray-200);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .product-card:hover {
             transform: translateY(-8px);
             box-shadow: var(--shadow-xl);
-            border-color: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+        
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            z-index: 2;
+        }
+        
+        .product-image-container {
+            height: 240px;
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+            position: relative;
+            overflow: hidden;
         }
         
         .product-image {
-            height: 200px;
-            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .product-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
-        .product-card:hover .product-image img {
-            transform: scale(1.05);
+        .product-card:hover .product-image {
+            transform: scale(1.1);
         }
         
         .image-placeholder {
-            font-size: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
             color: var(--primary-color);
-            opacity: 0.5;
+            opacity: 0.3;
+        }
+        
+        .image-placeholder i {
+            font-size: 5rem;
+        }
+        
+        .product-badges {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 3;
         }
         
         .product-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--success-color);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
+            padding: 0.375rem 0.875rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.025em;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+        }
+        
+        .badge-featured {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .badge-low-stock {
+            background: linear-gradient(135deg, var(--warning-color), #ffb142);
+            color: #7c5019;
+        }
+        
+        .badge-new {
+            background: linear-gradient(135deg, var(--success-color), #05c48a);
+            color: #034732;
         }
         
         .product-content {
             padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .product-header {
+            margin-bottom: 1rem;
+        }
+        
+        .product-category {
+            display: inline-block;
+            background: var(--primary-light);
+            color: var(--primary-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
         }
         
         .product-title {
             font-size: 1.25rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 0.75rem;
             line-height: 1.3;
+            margin-bottom: 0.75rem;
         }
         
         .product-description {
             color: var(--gray-600);
-            font-size: 14px;
+            font-size: 0.875rem;
             line-height: 1.5;
             margin-bottom: 1rem;
+            flex: 1;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -254,17 +410,17 @@
         }
         
         .product-footer {
+            margin-top: auto;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--gray-200);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
         }
         
         .product-price {
             font-size: 1.5rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--dark-color);
         }
         
@@ -274,15 +430,15 @@
         }
         
         .btn-view {
-            padding: 0.5rem 1rem;
+            padding: 0.625rem 1.25rem;
             background: transparent;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-sm);
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
             color: var(--gray-700);
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 0.875rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-base);
             text-decoration: none;
             display: inline-flex;
             align-items: center;
@@ -296,40 +452,49 @@
             transform: translateY(-1px);
         }
         
-        .btn-add {
-            padding: 0.5rem 1rem;
-            background: var(--primary-color);
+        .btn-add-to-cart {
+            padding: 0.625rem 1.25rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-md);
             color: white;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 0.875rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: var(--transition-smooth);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
         }
         
-        .btn-add:hover {
-            background: var(--secondary-color);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+        .btn-add-to-cart:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-add-to-cart:disabled {
+            background: var(--gray-400);
+            cursor: not-allowed;
+            opacity: 0.7;
         }
         
         /* Empty State */
         .empty-state {
+            grid-column: 1 / -1;
             text-align: center;
             padding: 4rem 2rem;
             background: white;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-sm);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 2px dashed var(--gray-300);
         }
         
-        .empty-state i {
+        .empty-icon {
             font-size: 4rem;
             color: var(--gray-300);
             margin-bottom: 1.5rem;
+            opacity: 0.5;
         }
         
         .empty-state h3 {
@@ -342,31 +507,79 @@
         .empty-state p {
             color: var(--gray-500);
             margin-bottom: 1.5rem;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Cart Notification */
+        .cart-notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--success-color), #05c48a);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%) scale(0.8);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
+                        opacity 0.3s ease;
+            max-width: 350px;
+        }
+        
+        .cart-notification.show {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+        }
+        
+        .notification-icon {
+            font-size: 1.5rem;
         }
         
         /* Responsive Design */
         @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+            
             .header-content h1 {
                 font-size: 2rem;
             }
             
-            .container {
-                padding: 0 1rem;
+            .header-content p {
+                font-size: 1rem;
             }
             
-            .search-container {
+            .navigation-actions {
+                padding: 1rem;
                 flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
             }
             
-            .search-btn {
-                justify-content: center;
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .search-filter-section {
+                padding: 1.5rem;
+            }
+            
+            .search-wrapper {
+                flex-direction: column;
             }
             
             .products-grid {
                 grid-template-columns: 1fr;
             }
             
-            .categories {
+            .categories-list {
                 justify-content: center;
             }
         }
@@ -377,11 +590,11 @@
             }
         }
         
-        /* Loading Animation */
-        @keyframes fadeIn {
+        /* Animations */
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -390,7 +603,8 @@
         }
         
         .product-card {
-            animation: fadeIn 0.3s ease forwards;
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
         }
         
         .product-card:nth-child(1) { animation-delay: 0.1s; }
@@ -400,113 +614,138 @@
         .product-card:nth-child(5) { animation-delay: 0.5s; }
         .product-card:nth-child(6) { animation-delay: 0.6s; }
         
-        /* Cart Notification */
-        .cart-notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--success-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 1000;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        
-        .cart-notification.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        
-        .cart-notification i {
-            font-size: 1.25rem;
+        /* Focus States */
+        :focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
-    <header class="page-header">
-        <div class="header-content">
-            <h1>Our Herbal Products</h1>
-            <p>Discover nature's healing power with our premium herbal remedies</p>
+    <header class="page-header" role="banner">
+        <div class="header-container">
+            <div class="header-content">
+                <h1>Natural Herbal Remedies</h1>
+                <p>Discover nature's healing power with our premium collection of organic herbal products, carefully sourced and prepared for your wellness journey.</p>
+            </div>
         </div>
     </header>
 
+    <!-- Navigation Actions -->
+    <nav class="navigation-actions" aria-label="Product navigation">
+        <a href="{{ url_for('dashboard') }}" class="back-dashboard-btn">
+            <i class="bi bi-speedometer2"></i>
+            Return to Dashboard
+        </a>
+        <span class="product-count" role="status">
+            {{ products|length }} products found
+        </span>
+    </nav>
+
     <!-- Main Content -->
-    <main class="container">
+    <main class="main-container" id="main-content">
         <!-- Search and Filters -->
-        <section class="search-section">
-            <form method="GET" class="search-container">
-                <input 
-                    type="text" 
-                    name="search" 
-                    class="search-input" 
-                    placeholder="Search products by name or description..." 
-                    value="{{ search }}"
-                >
+        <section class="search-filter-section" aria-label="Product search and filters">
+            <form method="GET" class="search-wrapper">
+                <div class="search-input-group">
+                    <i class="bi bi-search search-icon" aria-hidden="true"></i>
+                    <input 
+                        type="search" 
+                        name="search" 
+                        class="search-input" 
+                        placeholder="Search herbal products by name, description, or benefits..." 
+                        value="{{ search }}"
+                        aria-label="Search products"
+                    >
+                </div>
                 <button type="submit" class="search-btn">
-                    <i class="bi bi-search"></i> Search Products
+                    <i class="bi bi-search" aria-hidden="true"></i> 
+                    <span>Search</span>
                 </button>
             </form>
             
-            <div class="categories">
-                <a 
-                    href="{{ url_for('products') }}" 
-                    class="category-btn {{ 'active' if not current_category else '' }}"
-                >
-                    All Products
-                </a>
-                {% for cat in categories %}
-                <a 
-                    href="{{ url_for('products', category=cat) }}" 
-                    class="category-btn {{ 'active' if current_category == cat else '' }}"
-                >
-                    {{ cat }}
-                </a>
-                {% endfor %}
+            <div class="categories-section">
+                <h2 class="categories-title">Browse Categories</h2>
+                <div class="categories-list" role="tablist">
+                    <a 
+                        href="{{ url_for('products') }}" 
+                        class="category-btn {{ 'active' if not current_category else '' }}"
+                        role="tab"
+                        aria-selected="{{ 'true' if not current_category else 'false' }}"
+                    >
+                        All Products
+                    </a>
+                    {% for cat in categories %}
+                    <a 
+                        href="{{ url_for('products', category=cat) }}" 
+                        class="category-btn {{ 'active' if current_category == cat else '' }}"
+                        role="tab"
+                        aria-selected="{{ 'true' if current_category == cat else 'false' }}"
+                    >
+                        {{ cat }}
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
         </section>
 
         <!-- Products Grid -->
-        <section class="products-grid">
+        <section class="products-grid" aria-label="Products listing">
             {% for product in products %}
-            <div class="product-card">
-                <div class="product-image">
+            <article class="product-card" itemscope itemtype="https://schema.org/Product">
+                <div class="product-image-container">
                     {% if product.image_url %}
-                    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+                    <img 
+                        src="{{ product.image_url }}" 
+                        alt="{{ product.name }}" 
+                        class="product-image" 
+                        loading="lazy"
+                        itemprop="image"
+                    >
                     {% else %}
-                    <div class="image-placeholder">
+                    <div class="image-placeholder" aria-hidden="true">
                         <i class="bi bi-capsule"></i>
                     </div>
                     {% endif %}
                     
-                    {% if product.stock and product.stock < 10 %}
-                    <div class="product-badge">Low Stock</div>
-                    {% elif product.featured %}
-                    <div class="product-badge" style="background: var(--primary-color);">Featured</div>
-                    {% endif %}
+                    <div class="product-badges">
+                        {% if product.featured %}
+                        <span class="product-badge badge-featured" aria-label="Featured product">Featured</span>
+                        {% endif %}
+                        {% if product.stock and product.stock < 10 %}
+                        <span class="product-badge badge-low-stock" aria-label="Low stock">Low Stock</span>
+                        {% endif %}
+                        {% if product.is_new %}
+                        <span class="product-badge badge-new" aria-label="New product">New</span>
+                        {% endif %}
+                    </div>
                 </div>
                 
                 <div class="product-content">
-                    <h3 class="product-title">{{ product.name }}</h3>
-                    <p class="product-description">
-                        {{ product.description[:150] }}{% if product.description|length > 150 %}...{% endif %}
-                    </p>
+                    <div class="product-header">
+                        {% if product.category %}
+                        <span class="product-category" itemprop="category">{{ product.category }}</span>
+                        {% endif %}
+                        <h3 class="product-title" itemprop="name">{{ product.name }}</h3>
+                        <p class="product-description" itemprop="description">
+                            {{ product.description[:150] }}{% if product.description|length > 150 %}...{% endif %}
+                        </p>
+                    </div>
                     
                     <div class="product-footer">
-                        <div class="product-price">{{ product.price|currency }}</div>
+                        <div class="product-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                            <meta itemprop="priceCurrency" content="USD">
+                            <span itemprop="price">{{ product.price|currency }}</span>
+                        </div>
                         <div class="product-actions">
                             <a 
                                 href="{{ url_for('product_detail', product_id=product.id) }}" 
                                 class="btn-view"
+                                aria-label="View details of {{ product.name }}"
                             >
-                                <i class="bi bi-eye"></i> View
+                                <i class="bi bi-eye" aria-hidden="true"></i> 
+                                <span>View</span>
                             </a>
                             <form 
                                 method="POST" 
@@ -515,21 +754,28 @@
                                 data-product-name="{{ product.name }}"
                             >
                                 <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="btn-add">
-                                    <i class="bi bi-cart-plus"></i> Add to Cart
+                                <button 
+                                    type="submit" 
+                                    class="btn-add-to-cart"
+                                    {% if not product.stock or product.stock == 0 %}disabled{% endif %}
+                                    aria-label="Add {{ product.name }} to cart"
+                                >
+                                    <i class="bi bi-cart-plus" aria-hidden="true"></i> 
+                                    <span>Add to Cart</span>
                                 </button>
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
+            </article>
             {% else %}
             <div class="empty-state">
-                <i class="bi bi-search"></i>
+                <i class="bi bi-search empty-icon" aria-hidden="true"></i>
                 <h3>No Products Found</h3>
-                <p>Try adjusting your search or browse all categories</p>
+                <p>Try adjusting your search terms or browse all categories to find what you're looking for.</p>
                 <a href="{{ url_for('products') }}" class="search-btn">
-                    <i class="bi bi-arrow-clockwise"></i> View All Products
+                    <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> 
+                    View All Products
                 </a>
             </div>
             {% endfor %}
@@ -537,23 +783,32 @@
     </main>
 
     <!-- Cart Notification -->
-    <div class="cart-notification" id="cartNotification">
-        <i class="bi bi-check-circle"></i>
-        <span>Product added to cart successfully!</span>
+    <div class="cart-notification" id="cartNotification" role="alert" aria-live="polite" aria-atomic="true">
+        <i class="bi bi-check-circle-fill notification-icon" aria-hidden="true"></i>
+        <div class="notification-content">
+            <strong>Added to cart!</strong>
+            <span id="notificationMessage"></span>
+        </div>
     </div>
 
     <script>
-        // Handle add to cart with notification
+        // Enhanced cart notification system
         document.addEventListener('DOMContentLoaded', function() {
             const forms = document.querySelectorAll('.add-to-cart-form');
             const notification = document.getElementById('cartNotification');
+            const notificationMessage = document.getElementById('notificationMessage');
             
             forms.forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    // Prevent form submission for demo (in real app, this would submit)
+                form.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     
-                    // Show notification
+                    const productName = this.dataset.productName;
+                    const formData = new FormData(this);
+                    
+                    // Update notification message
+                    notificationMessage.textContent = `${productName} has been added to your cart.`;
+                    
+                    // Show notification with animation
                     notification.classList.add('show');
                     
                     // Hide notification after 3 seconds
@@ -561,14 +816,28 @@
                         notification.classList.remove('show');
                     }, 3000);
                     
-                    // Actually submit the form after showing notification
+                    // Submit form after a brief delay
                     setTimeout(() => {
-                        form.submit();
+                        this.submit();
                     }, 100);
                 });
             });
             
-            // Animate product cards on scroll
+            // Search debounce functionality
+            const searchInput = document.querySelector('input[name="search"]');
+            if (searchInput) {
+                let searchTimeout;
+                searchInput.addEventListener('input', function(e) {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        if (this.value.length > 2 || this.value.length === 0) {
+                            this.form.submit();
+                        }
+                    }, 500);
+                });
+            }
+            
+            // Intersection Observer for animations
             const observerOptions = {
                 threshold: 0.1,
                 rootMargin: '0px 0px -50px 0px'
@@ -583,28 +852,81 @@
                 });
             }, observerOptions);
             
+            // Observe product cards
             document.querySelectorAll('.product-card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
                 observer.observe(card);
+            });
+            
+            // Category button interactions
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add loading state
+                    const main = document.getElementById('main-content');
+                    main.classList.add('loading');
+                    
+                    // Remove active class from all buttons
+                    categoryButtons.forEach(btn => {
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-selected', 'false');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    this.setAttribute('aria-selected', 'true');
+                });
+            });
+            
+            // Add loading state
+            document.addEventListener('submit', function(e) {
+                if (e.target.matches('form')) {
+                    const main = document.getElementById('main-content');
+                    main.classList.add('loading');
+                }
             });
         });
         
-        // Handle search with debounce
-        let searchTimeout;
-        const searchInput = document.querySelector('input[name="search"]');
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', function(e) {
-                clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => {
-                    // In a real app, you might want to submit the form or make an AJAX call
-                    // For now, we'll just log the search term
-                    console.log('Searching for:', e.target.value);
-                }, 500);
-            });
-        }
+        // Add loading styles
+        const style = document.createElement('style');
+        style.textContent = `
+            .loading {
+                position: relative;
+            }
+            
+            .loading::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(255, 255, 255, 0.8);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .loading::before {
+                content: '';
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 50px;
+                height: 50px;
+                border: 3px solid var(--gray-300);
+                border-top-color: var(--primary-color);
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+                z-index: 10000;
+            }
+            
+            @keyframes spin {
+                to { transform: translate(-50%, -50%) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>

@@ -1,92 +1,1254 @@
-{% extends "dashboard_base.html" %}
-
-{% block content %}
-<div class="support-page">
-    <div class="container">
-        <h1 class="mb-4">Support</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support Center | Shifaa Herbal Remedies</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #e8f5e8;
+            --primary-dark: #1b5e20;
+            --secondary-color: #4a7c59;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-50: #f9fafb;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.25rem;
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="support-card">
-                    <div class="support-icon">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f0f7f0 0%, #f8fafc 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .support-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .support-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header-content {
+            max-width: 800px;
+            text-align: center;
+            margin: 0 auto;
+        }
+        
+        .header-content h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+        }
+        
+        .header-content p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        /* Navigation Actions */
+        .navigation-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--gray-200);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .back-dashboard-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-smooth);
+            border: 2px solid transparent;
+        }
+        
+        .back-dashboard-btn:hover {
+            background: white;
+            border-color: var(--primary-color);
+            transform: translateX(-4px);
+            color: var(--primary-color);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Quick Help Section */
+        .quick-help-section {
+            margin-bottom: 3rem;
+        }
+        
+        .quick-help-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .help-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+            text-align: center;
+            transition: var(--transition-smooth);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .help-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-xl);
+            color: inherit;
+        }
+        
+        .help-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, var(--primary-light), rgba(46, 125, 50, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.75rem;
+            margin: 0 auto 1.5rem;
+            transition: var(--transition-smooth);
+        }
+        
+        .help-card:hover .help-icon {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+        }
+        
+        .help-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 0.75rem;
+        }
+        
+        .help-card p {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        
+        /* Contact Methods */
+        .contact-methods-section {
+            margin-bottom: 3rem;
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .contact-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+            transition: var(--transition-base);
+        }
+        
+        .contact-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .contact-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            background: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .contact-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
+        .contact-details {
+            margin-bottom: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .contact-item i {
+            color: var(--primary-color);
+            margin-top: 0.25rem;
+        }
+        
+        .contact-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            min-width: 80px;
+        }
+        
+        .contact-value {
+            color: var(--gray-600);
+            flex: 1;
+        }
+        
+        .contact-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: var(--transition-smooth);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
+        }
+        
+        .contact-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+            color: white;
+        }
+        
+        .contact-button.whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+        
+        .contact-button.email {
+            background: linear-gradient(135deg, #EA4335, #D14836);
+        }
+        
+        /* FAQ Section */
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+        
+        .faq-accordion {
+            margin-top: 1.5rem;
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .faq-question {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition-base);
+        }
+        
+        .faq-question:hover {
+            background: var(--gray-50);
+        }
+        
+        .faq-question h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+            flex: 1;
+        }
+        
+        .faq-icon {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            transition: var(--transition-base);
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            max-height: 1000px;
+        }
+        
+        .faq-answer p {
+            color: var(--gray-600);
+            margin: 0;
+        }
+        
+        /* Support Form */
+        .support-form-section {
+            margin-bottom: 3rem;
+        }
+        
+        .support-form-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-base);
+            background: var(--gray-50);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition-base);
+            background: var(--gray-50);
+            cursor: pointer;
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Hours & Location */
+        .hours-location-section {
+            margin-bottom: 3rem;
+        }
+        
+        .info-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            border: 1px solid var(--gray-200);
+        }
+        
+        .info-card h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .info-card h4 i {
+            color: var(--primary-color);
+        }
+        
+        .hours-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .hours-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .hours-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .day {
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+        
+        .time {
+            color: var(--gray-600);
+        }
+        
+        .special-hours {
+            background: var(--primary-light);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin-top: 1rem;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .special-hours strong {
+            color: var(--primary-dark);
+        }
+        
+        .map-container {
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--gray-100);
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+        }
+        
+        /* Live Chat */
+        .live-chat-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 1000;
+        }
+        
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-xl);
+            transition: var(--transition-smooth);
+        }
+        
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .chat-container {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            display: none;
+        }
+        
+        .chat-container.open {
+            display: block;
+            animation: slideUp 0.3s ease forwards;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .chat-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        .chat-messages {
+            padding: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: var(--primary-light);
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.support {
+            background: var(--gray-100);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-input {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+        }
+        
+        .chat-input button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+            
+            .header-content h1 {
+                font-size: 2rem;
+            }
+            
+            .header-content p {
+                font-size: 1rem;
+            }
+            
+            .navigation-actions {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .quick-help-grid,
+            .contact-grid,
+            .info-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .support-form-card {
+                padding: 1.5rem;
+            }
+            
+            .chat-container {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+            }
+        }
+        
+        /* Focus States */
+        :focus-visible {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .navigation-actions,
+            .live-chat-widget,
+            .contact-button {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="support-header" role="banner">
+        <div class="header-container">
+            <div class="header-content">
+                <h1>Help & Support Center</h1>
+                <p>We're here to help you with any questions about our herbal remedies, consultations, or services.</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Actions -->
+    <nav class="navigation-actions" aria-label="Support navigation">
+        <a href="{{ url_for('dashboard') }}" class="back-dashboard-btn">
+            <i class="bi bi-arrow-left-circle"></i>
+            Back to Dashboard
+        </a>
+        <span class="support-status" role="status">
+            <i class="bi bi-circle-fill" style="color: #06d6a0; font-size: 0.75rem;"></i>
+            Support available now
+        </span>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container" id="main-content">
+        <!-- Quick Help Section -->
+        <section class="quick-help-section" aria-labelledby="quick-help-title">
+            <h2 id="quick-help-title" class="section-title">Quick Help</h2>
+            <div class="quick-help-grid">
+                <a href="#faq" class="help-card">
+                    <div class="help-icon">
+                        <i class="bi bi-question-circle"></i>
+                    </div>
+                    <h3>FAQ & Answers</h3>
+                    <p>Find answers to common questions about herbal remedies, consultations, and orders</p>
+                </a>
+                
+                <a href="#contact" class="help-card">
+                    <div class="help-icon">
                         <i class="bi bi-telephone"></i>
                     </div>
-                    <h3>Contact Information</h3>
-                    <p><strong>Phone:</strong> +1 (555) 123-4567</p>
-                    <p><strong>Email:</strong> support@shifaaherbal.com</p>
-                    <p><strong>Hours:</strong> Monday - Saturday, 9:00 AM - 6:00 PM</p>
-                </div>
-            </div>
-            
-            <div class="col-md-6 mb-4">
-                <div class="support-card">
-                    <div class="support-icon">
-                        <i class="bi bi-whatsapp"></i>
+                    <h3>Contact Support</h3>
+                    <p>Get in touch with our expert herbalists and support team</p>
+                </a>
+                
+                <a href="#orders" class="help-card">
+                    <div class="help-icon">
+                        <i class="bi bi-box-seam"></i>
                     </div>
-                    <h3>WhatsApp Support</h3>
-                    <p>Get instant help via WhatsApp</p>
-                    <a href="https://wa.me/15551234567" class="btn btn-success" target="_blank">
-                        <i class="bi bi-whatsapp"></i> Chat on WhatsApp
+                    <h3>Order Support</h3>
+                    <p>Track orders, manage returns, or get shipping information</p>
+                </a>
+                
+                <a href="#appointments" class="help-card">
+                    <div class="help-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3>Appointments</h3>
+                    <p>Schedule, reschedule, or manage consultations with practitioners</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Contact Methods -->
+        <section id="contact" class="contact-methods-section" aria-labelledby="contact-title">
+            <h2 id="contact-title" class="section-title">Contact Methods</h2>
+            <div class="contact-grid">
+                <!-- Phone Support -->
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <div class="contact-icon">
+                            <i class="bi bi-telephone"></i>
+                        </div>
+                        <h3 class="contact-title">Phone Support</h3>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="bi bi-telephone"></i>
+                            <div class="contact-label">Phone:</div>
+                            <div class="contact-value">+1 (800) 555-1234</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-clock"></i>
+                            <div class="contact-label">Hours:</div>
+                            <div class="contact-value">Monday - Saturday, 9:00 AM - 6:00 PM EST</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-info-circle"></i>
+                            <div class="contact-label">Best for:</div>
+                            <div class="contact-value">Urgent inquiries, complex questions, elderly customers</div>
+                        </div>
+                    </div>
+                    <button class="contact-button" onclick="window.location.href='tel:+18005551234'">
+                        <i class="bi bi-telephone"></i>
+                        Call Now
+                    </button>
+                </div>
+
+                <!-- Email Support -->
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <div class="contact-icon">
+                            <i class="bi bi-envelope"></i>
+                        </div>
+                        <h3 class="contact-title">Email Support</h3>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="bi bi-envelope"></i>
+                            <div class="contact-label">Email:</div>
+                            <div class="contact-value">support@shifaaherbal.com</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-clock"></i>
+                            <div class="contact-label">Response:</div>
+                            <div class="contact-value">Within 24 hours</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-info-circle"></i>
+                            <div class="contact-label">Best for:</div>
+                            <div class="contact-value">Detailed inquiries, documentation, non-urgent matters</div>
+                        </div>
+                    </div>
+                    <a href="mailto:support@shifaaherbal.com" class="contact-button email">
+                        <i class="bi bi-envelope"></i>
+                        Send Email
+                    </a>
+                </div>
+
+                <!-- WhatsApp Support -->
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <div class="contact-icon">
+                            <i class="bi bi-whatsapp"></i>
+                        </div>
+                        <h3 class="contact-title">WhatsApp Support</h3>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="bi bi-whatsapp"></i>
+                            <div class="contact-label">WhatsApp:</div>
+                            <div class="contact-value">+1 (555) 123-4567</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-clock"></i>
+                            <div class="contact-label">Hours:</div>
+                            <div class="contact-value">24/7 for existing customers</div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-info-circle"></i>
+                            <div class="contact-label">Best for:</div>
+                            <div class="contact-value">Quick questions, photo sharing, international customers</div>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/15551234567" target="_blank" class="contact-button whatsapp">
+                        <i class="bi bi-whatsapp"></i>
+                        Start Chat
                     </a>
                 </div>
             </div>
-            
-            <div class="col-md-12 mb-4">
-                <div class="support-card">
-                    <div class="support-icon">
-                        <i class="bi bi-geo-alt"></i>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section" aria-labelledby="faq-title">
+            <h2 id="faq-title" class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-accordion">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>How do I choose the right herbal remedy for my condition?</h4>
+                        <i class="bi bi-chevron-down faq-icon"></i>
                     </div>
-                    <h3>Location & Hours</h3>
-                    <p><strong>Address:</strong> 123 Botanical Gardens Lane, Herbal District, City, State 12345</p>
-                    <p><strong>Store Hours:</strong></p>
-                    <ul>
-                        <li>Monday - Friday: 9:00 AM - 6:00 PM</li>
-                        <li>Saturday: 9:00 AM - 5:00 PM</li>
-                        <li>Sunday: Closed</li>
-                    </ul>
-                    <p><strong>Moon Hours (Special Consultations):</strong> 7:00 PM - 9:00 PM (By Appointment)</p>
+                    <div class="faq-answer">
+                        <p>We recommend scheduling a consultation with one of our certified herbal practitioners. They can assess your specific needs and recommend personalized herbal solutions. You can also browse our products by health concern categories on the products page.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>How long does shipping usually take?</h4>
+                        <i class="bi bi-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Standard shipping takes 3-5 business days within the US. Express shipping (2-day) is available for an additional fee. International shipping varies by location but typically takes 7-14 business days. You can track your order from your dashboard.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Are your herbal products safe to use with prescription medications?</h4>
+                        <i class="bi bi-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>While our herbal remedies are natural, some may interact with prescription medications. We strongly recommend consulting with your healthcare provider and our herbal practitioners before starting any new herbal regimen. Always disclose all medications you're taking during consultations.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Can I reschedule or cancel my consultation appointment?</h4>
+                        <i class="bi bi-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can reschedule or cancel appointments up to 24 hours before your scheduled time without any charges. You can manage your appointments from your dashboard or contact our support team for assistance.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>What is your return policy for herbal products?</h4>
+                        <i class="bi bi-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer a 30-day return policy for unopened products in their original packaging. For opened products, we accept returns within 14 days if you're unsatisfied. Herbal consultations are non-refundable but can be rescheduled. Contact our support team to initiate a return.</p>
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Support Form -->
+        <section class="support-form-section" aria-labelledby="support-form-title">
+            <h2 id="support-form-title" class="section-title">Send Us a Message</h2>
+            <div class="support-form-card">
+                <form id="supportForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name</label>
+                                <input type="text" id="name" class="form-control" value="{{ current_user.name }}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" id="email" class="form-control" value="{{ current_user.email }}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category" class="form-label">Category</label>
+                        <select id="category" class="form-select">
+                            <option value="">Select a category</option>
+                            <option value="products">Product Questions</option>
+                            <option value="orders">Order Support</option>
+                            <option value="appointments">Appointments & Consultations</option>
+                            <option value="shipping">Shipping & Delivery</option>
+                            <option value="returns">Returns & Refunds</option>
+                            <option value="account">Account Issues</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject</label>
+                        <input type="text" id="subject" class="form-control" placeholder="Brief summary of your inquiry">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea id="message" class="form-control" placeholder="Please provide detailed information about your question or issue..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachment" class="form-label">Attachments (Optional)</label>
+                        <input type="file" id="attachment" class="form-control" accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                        <small class="form-text">You can attach images or documents related to your inquiry (max 5MB)</small>
+                    </div>
+                    
+                    <button type="submit" class="contact-button" style="width: 100%;">
+                        <i class="bi bi-send"></i>
+                        Send Message
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Hours & Location -->
+        <section class="hours-location-section" aria-labelledby="hours-location-title">
+            <h2 id="hours-location-title" class="section-title">Hours & Location</h2>
+            <div class="info-cards-grid">
+                <div class="info-card">
+                    <h4><i class="bi bi-clock"></i> Business Hours</h4>
+                    <ul class="hours-list">
+                        <li>
+                            <span class="day">Monday - Friday</span>
+                            <span class="time">9:00 AM - 6:00 PM</span>
+                        </li>
+                        <li>
+                            <span class="day">Saturday</span>
+                            <span class="time">9:00 AM - 5:00 PM</span>
+                        </li>
+                        <li>
+                            <span class="day">Sunday</span>
+                            <span class="time">Closed</span>
+                        </li>
+                    </ul>
+                    <div class="special-hours">
+                        <strong>Evening Herbal Consultations:</strong><br>
+                        Available Monday - Thursday, 7:00 PM - 9:00 PM (By Appointment Only)
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h4><i class="bi bi-geo-alt"></i> Our Location</h4>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <div class="contact-label">Address:</div>
+                            <div class="contact-value">
+                                123 Botanical Gardens Lane<br>
+                                Herbal District<br>
+                                City, State 12345<br>
+                                United States
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="bi bi-compass"></i>
+                            <div class="contact-label">Directions:</div>
+                            <div class="contact-value">
+                                Located in the Herbal District, adjacent to the Botanical Gardens
+                            </div>
+                        </div>
+                    </div>
+                    <div class="map-container">
+                        <i class="bi bi-map" style="font-size: 3rem;"></i>
+                        <span style="margin-left: 1rem;">Interactive Map Coming Soon</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Live Chat Widget -->
+    <div class="live-chat-widget">
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-header">
+                <h5>Live Chat Support</h5>
+                <button class="btn btn-sm btn-light" onclick="closeChat()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message support">
+                    <strong>Shifaa Support:</strong><br>
+                    Hello! How can we help you today?
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button onclick="sendMessage()">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
         </div>
+        <button class="chat-toggle" onclick="toggleChat()">
+            <i class="bi bi-chat-dots"></i>
+        </button>
     </div>
-</div>
-{% endblock %}
 
-{% block extra_css %}
-<style>
-.support-page {
-    padding: 2rem 0;
-}
-
-.support-card {
-    background: white;
-    border-radius: 10px;
-    padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    height: 100%;
-}
-
-.support-icon {
-    font-size: 3rem;
-    color: #2e7d32;
-    margin-bottom: 1rem;
-}
-
-.support-card h3 {
-    font-family: 'Cormorant Garamond', serif;
-    color: #1b5e20;
-    margin-bottom: 1rem;
-}
-
-.support-card p {
-    margin-bottom: 0.5rem;
-    color: #666;
-}
-
-.support-card ul {
-    margin-top: 1rem;
-    padding-left: 1.5rem;
-}
-</style>
-{% endblock %}
-
+    <script>
+        // FAQ Accordion
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    // Close other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item && otherItem.classList.contains('active')) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    
+                    // Toggle current item
+                    item.classList.toggle('active');
+                });
+            });
+            
+            // Support form submission
+            const supportForm = document.getElementById('supportForm');
+            if (supportForm) {
+                supportForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const category = document.getElementById('category').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+                    
+                    if (!category || !subject || !message) {
+                        alert('Please fill in all required fields.');
+                        return;
+                    }
+                    
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Sending...';
+                    submitBtn.disabled = true;
+                    
+                    // Simulate API call
+                    setTimeout(() => {
+                        alert('Thank you! Your message has been sent. We\'ll respond within 24 hours.');
+                        supportForm.reset();
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }, 1500);
+                });
+            }
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId !== '#') {
+                        e.preventDefault();
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 100,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Initialize chat
+            initChat();
+        });
+        
+        // Live Chat Functions
+        let chatOpen = false;
+        
+        function toggleChat() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatOpen = !chatOpen;
+            
+            if (chatOpen) {
+                chatContainer.classList.add('open');
+            } else {
+                chatContainer.classList.remove('open');
+            }
+        }
+        
+        function closeChat() {
+            chatOpen = false;
+            document.getElementById('chatContainer').classList.remove('open');
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            if (message) {
+                // Add user message
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user';
+                userMessage.innerHTML = `<strong>You:</strong><br>${message}`;
+                messagesContainer.appendChild(userMessage);
+                
+                // Clear input
+                input.value = '';
+                
+                // Scroll to bottom
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Simulate bot response after delay
+                setTimeout(() => {
+                    const responses = [
+                        "Thank you for your message. How can I assist you further?",
+                        "I understand your concern. Let me check that for you.",
+                        "Our support team will get back to you shortly. Is there anything else I can help with?",
+                        "I recommend checking our FAQ section for similar questions. Would you like me to point you to relevant information?"
+                    ];
+                    
+                    const botResponse = document.createElement('div');
+                    botResponse.className = 'message support';
+                    botResponse.innerHTML = `<strong>Shifaa Support:</strong><br>${responses[Math.floor(Math.random() * responses.length)]}`;
+                    messagesContainer.appendChild(botResponse);
+                    
+                    // Scroll to bottom
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }, 1000);
+            }
+        }
+        
+        function initChat() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        }
+        
+        // Category-specific guidance
+        const categorySelect = document.getElementById('category');
+        const messageTextarea = document.getElementById('message');
+        
+        if (categorySelect && messageTextarea) {
+            categorySelect.addEventListener('change', function() {
+                const guidance = {
+                    'products': 'Please include details about the product you\'re asking about, such as name, dosage, and specific concerns.',
+                    'orders': 'Please provide your order number and describe the issue you\'re experiencing.',
+                    'appointments': 'Include your preferred date/time and practitioner if applicable.',
+                    'shipping': 'Please provide your tracking number and describe the shipping issue.',
+                    'returns': 'Include your order number and reason for return.',
+                    'account': 'Describe the issue you\'re having with your account in detail.',
+                    'other': 'Please provide as much detail as possible about your inquiry.'
+                };
+                
+                const guidanceText = guidance[this.value];
+                if (guidanceText) {
+                    messageTextarea.placeholder = guidanceText;
+                } else {
+                    messageTextarea.placeholder = 'Please provide detailed information about your question or issue...';
+                }
+            });
+        }
+        
+        // Auto-open chat for urgent categories
+        document.querySelectorAll('.contact-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (this.classList.contains('whatsapp') || this.textContent.includes('Call')) {
+                    // For urgent methods, show chat as alternative
+                    if (!chatOpen) {
+                        setTimeout(() => {
+                            if (confirm('Would you like to try our live chat instead?')) {
+                                toggleChat();
+                                document.getElementById('chatInput').focus();
+                            }
+                        }, 1000);
+                    }
+                }
+            });
+        });
+        
+        // Add animation to help cards
+        const helpCards = document.querySelectorAll('.help-card');
+        helpCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
