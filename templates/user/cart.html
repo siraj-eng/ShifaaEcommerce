@@ -623,7 +623,7 @@
                         
                         <div class="item-details">
                             <h3 class="item-name">{{ item.product.name }}</h3>
-                            <div class="item-price">${{ "%.2f"|format(item.product.price) }}</div>
+                            <div class="item-price">{{ item.product.price|currency }}</div>
                             
                             <div class="item-actions">
                                 <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}" class="quantity-form">
@@ -658,7 +658,7 @@
                         </div>
                         
                         <div class="item-total">
-                            <span class="item-total-price">${{ "%.2f"|format(item.product.price * item.quantity) }}</span>
+                            <span class="item-total-price">{{ (item.product.price * item.quantity)|currency }}</span>
                             <span class="item-total-label">Total</span>
                         </div>
                     </div>
@@ -676,7 +676,7 @@
                 <div class="summary-details">
                     <div class="detail-row">
                         <span class="detail-label">Subtotal</span>
-                        <span class="detail-value">${{ "%.2f"|format(total) }}</span>
+                        <span class="detail-value">{{ total|currency }}</span>
                     </div>
                     
                     <div class="detail-row">
@@ -686,12 +686,12 @@
                     
                     <div class="detail-row">
                         <span class="detail-label">Tax</span>
-                        <span class="detail-value">$0.00</span>
+                        <span class="detail-value">{{ currency_symbol }} 0.00</span>
                     </div>
                     
                     <div class="detail-row total">
                         <span class="detail-label">Total</span>
-                        <span class="detail-value">${{ "%.2f"|format(total) }}</span>
+                        <span class="detail-value">{{ total|currency }}</span>
                     </div>
                 </div>
                 
@@ -757,9 +757,9 @@
             // Update item total price
             const cartItem = form.closest('.cart-item');
             const priceElement = cartItem.querySelector('.item-price');
-            const price = parseFloat(priceElement.textContent.replace('$', ''));
+            const price = parseFloat(priceElement.textContent.replace(/[^\d.-]/g, ''));
             const totalElement = cartItem.querySelector('.item-total-price');
-            totalElement.textContent = '$' + (price * quantity).toFixed(2);
+            totalElement.textContent = '{{ currency_symbol }} ' + (price * quantity).toFixed(2);
             
             // Update cart total (simulated)
             updateCartTotal();
@@ -828,15 +828,15 @@
             
             cartItems.forEach(item => {
                 const priceText = item.querySelector('.item-total-price').textContent;
-                const price = parseFloat(priceText.replace('$', ''));
+                const price = parseFloat(priceText.replace(/[^\d.-]/g, ''));
                 subtotal += price;
             });
             
             // Update UI
             const totalElements = document.querySelectorAll('.detail-value');
             if (totalElements.length >= 2) {
-                totalElements[0].textContent = '$' + subtotal.toFixed(2);
-                totalElements[3].textContent = '$' + subtotal.toFixed(2);
+                totalElements[0].textContent = '{{ currency_symbol }} ' + subtotal.toFixed(2);
+                totalElements[3].textContent = '{{ currency_symbol }} ' + subtotal.toFixed(2);
             }
         }
         

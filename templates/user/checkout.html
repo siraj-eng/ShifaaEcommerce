@@ -737,7 +737,7 @@
                                 <div class="option-content">
                                     <div class="option-title">Express Delivery</div>
                                     <div class="option-description">2-3 business days</div>
-                                    <div class="option-price">$9.99</div>
+                                    <div class="option-price">{{ currency_symbol }} 150</div>
                                 </div>
                                 <span class="option-badge">Popular</span>
                             </label>
@@ -833,7 +833,7 @@
                                 <div class="item-name">{{ item.product.name }}</div>
                                 <div class="item-quantity">Quantity: {{ item.quantity }}</div>
                             </div>
-                            <div class="item-price">${{ "%.2f"|format(item.product.price * item.quantity) }}</div>
+                            <div class="item-price">{{ (item.product.price * item.quantity)|currency }}</div>
                         </div>
                         {% endfor %}
                     </div>
@@ -851,17 +851,17 @@
                         
                         <div class="total-row">
                             <span class="total-label">Tax</span>
-                            <span class="total-value">${{ "%.2f"|format(total * 0.08) }}</span>
+                            <span class="total-value">{{ (total * 0.08)|currency }}</span>
                         </div>
                         
                         <div class="total-row grand-total">
                             <span class="total-label">Total</span>
-                            <span class="total-value" id="grandTotal">${{ "%.2f"|format(total * 1.08) }}</span>
+                            <span class="total-value" id="grandTotal">{{ (total * 1.08)|currency }}</span>
                         </div>
                     </div>
                     
                     <button type="submit" class="place-order-btn">
-                        <i class="bi bi-lock"></i> Place Order
+                        <i class="bi bi-arrow-right"></i> Proceed to Payment
                     </button>
                     
                     <!-- Security Badges -->
@@ -936,8 +936,8 @@
             
             switch(option) {
                 case 'express':
-                    shippingCost = 9.99;
-                    shippingElement.textContent = '$9.99';
+                    shippingCost = 150;
+                    shippingElement.textContent = '{{ currency_symbol }} 150';
                     break;
                 case 'pickup':
                     shippingCost = 0;
@@ -952,51 +952,41 @@
             const grandTotal = subtotal + shippingCost + tax;
             
             // Update grand total
-            document.getElementById('grandTotal').textContent = '$' + grandTotal.toFixed(2);
+            document.getElementById('grandTotal').textContent = '{{ currency_symbol }} ' + grandTotal.toFixed(2);
         }
         
         // Form validation and submission
         document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
             // Basic validation
             const shippingAddress = document.getElementById('shipping_address').value.trim();
             const contactName = document.getElementById('contact_name').value.trim();
             const contactEmail = document.getElementById('contact_email').value.trim();
             
             if (!shippingAddress) {
+                e.preventDefault();
                 alert('Please enter your shipping address');
                 document.getElementById('shipping_address').focus();
                 return;
             }
             
             if (!contactName) {
+                e.preventDefault();
                 alert('Please enter your name');
                 document.getElementById('contact_name').focus();
                 return;
             }
             
             if (!contactEmail || !isValidEmail(contactEmail)) {
+                e.preventDefault();
                 alert('Please enter a valid email address');
                 document.getElementById('contact_email').focus();
                 return;
             }
             
-            // Show loading state
+            // Validation passed: show loading state and allow form to submit (server will redirect to payment page)
             const submitBtn = this.querySelector('.place-order-btn');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processing...';
+            submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Proceeding to Payment...';
             submitBtn.disabled = true;
-            
-            // Show success modal after delay (in real app, this would be after successful submission)
-            setTimeout(() => {
-                document.getElementById('successModal').classList.add('active');
-            }, 1500);
-            
-            // Actually submit the form (commented out for demo)
-            // setTimeout(() => {
-            //     this.submit();
-            // }, 2000);
         });
         
         // Email validation

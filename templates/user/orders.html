@@ -468,7 +468,7 @@
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Total Amount</span>
-                            <span class="detail-value">${{ "%.2f"|format(order.total_amount) }}</span>
+                            <span class="detail-value">{{ order.total_amount|currency }}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Delivery</span>

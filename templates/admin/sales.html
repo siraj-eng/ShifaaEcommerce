@@ -1,0 +1,119 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Sales & Revenue{% endblock %}
+{% block page_title %}Sales & Revenue{% endblock %}
+
+{% block content %}
+<div class="card-admin mb-4">
+    <div class="card-header">Filter by date & status</div>
+    <div class="card-body">
+        <form method="get" action="{{ url_for('admin_sales') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">From date</label>
+                <input type="date" name="date_from" class="form-control" value="{{ date_from }}" placeholder="YYYY-MM-DD">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To date</label>
+                <input type="date" name="date_to" class="form-control" value="{{ date_to }}" placeholder="YYYY-MM-DD">
+            </div>
+            <div class="col-md-3">
+                <div class="form-check mt-2">
+                    <input type="checkbox" name="delivered_only" class="form-check-input" id="delivered_only" {% if delivered_only %}checked{% endif %}>
+                    <label class="form-check-label" for="delivered_only">Delivered orders only</label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-admin w-100"><i class="bi bi-calculator"></i> Calculate</button>
+            </div>
+        </form>
+        <p class="text-muted small mt-2 mb-0">Leave dates empty to include all orders. Use “Delivered only” to count realized revenue.</p>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card-admin h-100">
+            <div class="card-header">All time</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Total orders</span>
+                    <strong class="fs-4">{{ total_orders_all_time }}</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Total revenue</span>
+                    <strong class="fs-4 text-success">{{ total_revenue_all_time|currency }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card-admin h-100">
+            <div class="card-header">Filtered period</div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Orders in period</span>
+                    <strong class="fs-4">{{ order_count }}</strong>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Revenue in period</span>
+                    <strong class="fs-4 text-success">{{ revenue|currency }}</strong>
+                </div>
+                {% if date_from or date_to or delivered_only %}
+                <p class="text-muted small mt-3 mb-0">
+                    {% if date_from %}From {{ date_from }}{% endif %}
+                    {% if date_to %} to {{ date_to }}{% endif %}
+                    {% if delivered_only %}{% if date_from or date_to %} · {% endif %}Delivered only{% endif %}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card-admin">
+    <div class="card-header">Orders in period (up to 50)</div>
+    <div class="card-body p-0">
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.order_number }}</strong></td>
+                        <td>{{ order.user.name }}<br><small class="text-muted">{{ order.user.email }}</small></td>
+                        <td>{{ order.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                        <td>{{ order.total_amount|currency }}</td>
+                        <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
+                        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if order_count > 50 %}
+        <div class="card-body border-top">
+            <p class="text-muted small mb-0">Showing first 50 of {{ order_count }} orders. Use filters to narrow results.</p>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-cart-x"></i>
+                <h4>No orders in this period</h4>
+                <p>Change the date range or clear filters to see all orders.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

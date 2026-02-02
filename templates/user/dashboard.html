@@ -865,7 +865,7 @@
                                     <tr>
                                         <td class="order-number">#{{ order.order_number }}</td>
                                         <td class="order-date">{{ order.created_at.strftime('%b %d, %Y') }}</td>
-                                        <td class="order-amount">${{ "%.2f"|format(order.total_amount) }}</td>
+                                        <td class="order-amount">{{ order.total_amount|currency }}</td>
                                         <td>
                                             <span class="status-badge status-{{ order.status }}">
                                                 {{ order.status|title }}

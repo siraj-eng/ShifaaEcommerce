@@ -606,7 +606,7 @@
                 <!-- Price -->
                 <div class="product-price">
                     <span class="price-label">Price:</span>
-                    ${{ "%.2f"|format(product.price) }}
+                    {{ product.price|currency }}
                 </div>
                 
                 <!-- Description -->

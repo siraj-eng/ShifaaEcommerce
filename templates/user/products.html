@@ -500,7 +500,7 @@
                     </p>
                     
                     <div class="product-footer">
-                        <div class="product-price">${{ "%.2f"|format(product.price) }}</div>
+                        <div class="product-price">{{ product.price|currency }}</div>
                         <div class="product-actions">
                             <a 
                                 href="{{ url_for('product_detail', product_id=product.id) }}" 

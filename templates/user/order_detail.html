@@ -277,6 +277,70 @@
             color: var(--dark-color);
         }
         
+        /* Order received & M-Pesa prompt */
+        .order-received-banner {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .order-received-banner .icon-wrap {
+            width: 56px;
+            height: 56px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            flex-shrink: 0;
+        }
+        .order-received-banner .text h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+        }
+        .order-received-banner .text p {
+            color: var(--gray-700);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        .mpesa-till-card {
+            background: white;
+            border: 2px dashed var(--primary-color);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            margin-left: auto;
+            text-align: center;
+            min-width: 200px;
+        }
+        .mpesa-till-card .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            margin-bottom: 0.25rem;
+        }
+        .mpesa-till-card .till-number {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: 0.08em;
+        }
+        .mpesa-till-card .amount {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-top: 0.5rem;
+        }
+        
         .summary-row.total {
             font-size: 1.5rem;
             font-weight: 700;
@@ -468,12 +532,40 @@
 
     <!-- Main Content -->
     <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         <!-- Navigation -->
         <nav class="page-nav">
             <a href="{{ url_for('orders') }}" class="back-btn">
                 <i class="bi bi-arrow-left"></i> Back to Orders
             </a>
         </nav>
+
+        {% if order.status == 'pending' %}
+        <!-- Order received & M-Pesa prompt -->
+        <div class="order-received-banner">
+            <div class="icon-wrap">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="text">
+                <h3>Order received</h3>
+                <p>Thank you! Your order has been received. Complete payment via M-Pesa using the Till Number below.</p>
+            </div>
+            <div class="mpesa-till-card">
+                <div class="label">Pay via M-Pesa · Till Number</div>
+                <div class="till-number">{{ mpesa_till_number }}</div>
+                <div class="amount">Amount: {{ order.total_amount|currency }}</div>
+            </div>
+        </div>
+        {% endif %}
 
         <!-- Order Layout -->
         <div class="order-layout">
@@ -503,7 +595,7 @@
                                 <p class="item-quantity">Quantity: {{ item.quantity }}</p>
                             </div>
                             <div class="item-price">
-                                ${{ "%.2f"|format(item.price * item.quantity) }}
+                                {{ (item.price * item.quantity)|currency }}
                             </div>
                         </div>
                         {% endfor %}
@@ -520,7 +612,7 @@
                 
                 <div class="summary-row">
                     <span class="summary-label">Subtotal</span>
-                    <span class="summary-value">${{ "%.2f"|format(order.total_amount) }}</span>
+                    <span class="summary-value">{{ order.total_amount|currency }}</span>
                 </div>
                 
                 <div class="summary-row">
@@ -530,14 +622,14 @@
                 
                 <div class="summary-row">
                     <span class="summary-label">Tax</span>
-                    <span class="summary-value">$0.00</span>
+                    <span class="summary-value">{{ currency_symbol }} 0.00</span>
                 </div>
                 
                 <hr style="margin: 1.5rem 0; border-color: var(--gray-200);">
                 
                 <div class="summary-row total">
                     <span class="summary-label">Total</span>
-                    <span class="summary-value">${{ "%.2f"|format(order.total_amount) }}</span>
+                    <span class="summary-value">{{ order.total_amount|currency }}</span>
                 </div>
                 
                 <!-- Order Details -->

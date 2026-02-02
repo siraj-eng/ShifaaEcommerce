@@ -1,0 +1,56 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Edit product' if product else 'New product' }}{% endblock %}
+{% block page_title %}{{ 'Edit product' if product else 'New product' }}{% endblock %}
+
+{% block content %}
+<div class="card-admin">
+    <div class="card-header">{{ 'Edit product' if product else 'New product' }}</div>
+    <div class="card-body">
+        <form method="post" class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                <input type="text" name="name" class="form-control" required value="{{ product.name if product else '' }}" placeholder="Product name">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3" placeholder="Product description">{{ product.description if product else '' }}</textarea>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Price</label>
+                <input type="text" name="price" class="form-control" value="{{ "%.2f"|format(product.price) if product else '0.00' }}" placeholder="e.g. 1500 ({{ currency_code }})">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Stock</label>
+                <input type="number" name="stock" class="form-control" min="0" value="{{ product.stock if product else 0 }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Category</label>
+                <input type="text" name="category" class="form-control" value="{{ product.category if product else '' }}" placeholder="e.g. Oils, Teas">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Image URL</label>
+                <input type="url" name="image_url" class="form-control" value="{{ product.image_url if product else '' }}" placeholder="https://...">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Usage instructions</label>
+                <textarea name="usage_instructions" class="form-control" rows="2">{{ product.usage_instructions if product else '' }}</textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Warnings</label>
+                <textarea name="warnings" class="form-control" rows="2">{{ product.warnings if product else '' }}</textarea>
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input type="checkbox" name="is_active" class="form-check-input" id="is_active" {% if not product or product.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">Active (visible in store)</label>
+                </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn-admin">{{ 'Update' if product else 'Create' }} product</button>
+                <a href="{{ url_for('admin_products') }}" class="btn-sm-admin">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

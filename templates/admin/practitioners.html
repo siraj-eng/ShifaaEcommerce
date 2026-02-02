@@ -1,0 +1,62 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Practitioners{% endblock %}
+{% block page_title %}Practitioners{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Manage practitioners</h2>
+    <a href="{{ url_for('admin_practitioner_new') }}" class="btn-admin"><i class="bi bi-plus-lg"></i> Add practitioner</a>
+</div>
+
+<div class="card-admin">
+    <div class="card-body p-0">
+        {% if practitioners %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Title</th>
+                        <th>Contact</th>
+                        <th>Status</th>
+                        <th style="width: 160px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in practitioners %}
+                    <tr>
+                        <td><strong>{{ p.name }}</strong></td>
+                        <td>{{ p.title or '—' }}</td>
+                        <td>
+                            {% if p.email %}{{ p.email }}{% endif %}
+                            {% if p.phone %}<br><small class="text-muted">{{ p.phone }}</small>{% endif %}
+                            {% if not p.email and not p.phone %}—{% endif %}
+                        </td>
+                        <td>
+                            {% if p.is_active %}<span class="badge-status badge-delivered">Active</span>{% else %}<span class="badge-status badge-cancelled">Inactive</span>{% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin_practitioner_edit', practitioner_id=p.id) }}" class="btn-sm-admin"><i class="bi bi-pencil"></i> Edit</a>
+                            <form method="post" action="{{ url_for('admin_practitioner_toggle', practitioner_id=p.id) }}" class="d-inline">
+                                <button type="submit" class="btn-sm-admin">{{ 'Deactivate' if p.is_active else 'Activate' }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-person-badge"></i>
+                <h4>No practitioners</h4>
+                <p>Add practitioners so customers can book consultations.</p>
+                <a href="{{ url_for('admin_practitioner_new') }}" class="btn-admin mt-2"><i class="bi bi-plus-lg"></i> Add practitioner</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

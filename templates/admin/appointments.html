@@ -1,0 +1,55 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Appointments{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+
+{% block content %}
+<form method="get" class="d-flex gap-2 flex-wrap mb-4">
+    <select name="status" class="form-select" style="max-width: 220px;">
+        <option value="">All statuses</option>
+        <option value="scheduled" {% if status_filter == 'scheduled' %}selected{% endif %}>Scheduled</option>
+        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+        <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn-admin"><i class="bi bi-funnel"></i> Filter</button>
+</form>
+
+<div class="card-admin">
+    <div class="card-body p-0">
+        {% if appointments %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Date & time</th>
+                        <th>Customer</th>
+                        <th>Practitioner</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in appointments %}
+                    <tr>
+                        <td>{{ apt.appointment_date.strftime('%b %d, %Y %I:%M %p') }}</td>
+                        <td>{{ apt.user.name }}<br><small class="text-muted">{{ apt.user.email }}</small></td>
+                        <td><strong>{{ apt.practitioner.name }}</strong><br><small class="text-muted">{{ apt.practitioner.title or '—' }}</small></td>
+                        <td>{{ apt.appointment_type|title if apt.appointment_type else '—' }}</td>
+                        <td><span class="badge-status badge-{{ apt.status }}">{{ apt.status|title }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h4>No appointments</h4>
+                <p>Appointments will appear here when customers book consultations.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

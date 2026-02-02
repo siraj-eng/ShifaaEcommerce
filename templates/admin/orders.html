@@ -1,0 +1,59 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Orders{% endblock %}
+{% block page_title %}Orders{% endblock %}
+
+{% block content %}
+<form method="get" class="d-flex gap-2 flex-wrap mb-4">
+    <select name="status" class="form-select" style="max-width: 220px;">
+        <option value="">All statuses</option>
+        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>Processing</option>
+        <option value="shipped" {% if status_filter == 'shipped' %}selected{% endif %}>Shipped</option>
+        <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+        <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn-admin"><i class="bi bi-funnel"></i> Filter</button>
+</form>
+
+<div class="card-admin">
+    <div class="card-body p-0">
+        {% if orders %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th style="width: 100px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td><strong>#{{ order.order_number }}</strong></td>
+                        <td>{{ order.user.name }}<br><small class="text-muted">{{ order.user.email }}</small></td>
+                        <td>{{ order.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                        <td>{{ order.total_amount|currency }}</td>
+                        <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
+                        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-cart-x"></i>
+                <h4>No orders</h4>
+                <p>Orders will appear here when customers place them.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

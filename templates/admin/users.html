@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Users{% endblock %}
+{% block page_title %}Users{% endblock %}
+
+{% block content %}
+<form method="get" class="d-flex gap-2 flex-wrap mb-4">
+    <input type="text" name="search" class="form-control" style="max-width: 280px;" placeholder="Search by name or email..." value="{{ search }}">
+    <button type="submit" class="btn-admin"><i class="bi bi-search"></i> Search</button>
+</form>
+
+<div class="card-admin">
+    <div class="card-body p-0">
+        {% if users %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td><strong>{{ u.name }}</strong></td>
+                        <td>{{ u.email }}</td>
+                        <td><span class="badge-status {% if u.role == 'admin' %}badge-processing{% else %}badge-delivered{% endif %}">{{ u.role|title }}</span></td>
+                        <td>{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-people"></i>
+                <h4>No users found</h4>
+                <p>Try a different search or clear filters.</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

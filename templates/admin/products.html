@@ -1,0 +1,77 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Products{% endblock %}
+{% block page_title %}Products{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Manage products</h2>
+    <a href="{{ url_for('admin_product_new') }}" class="btn-admin"><i class="bi bi-plus-lg"></i> Add product</a>
+</div>
+
+<form method="get" class="d-flex gap-2 flex-wrap mb-4">
+    <input type="text" name="search" class="form-control" style="max-width: 280px;" placeholder="Search by name or description..." value="{{ search }}">
+    <select name="category" class="form-select" style="max-width: 200px;">
+        <option value="">All categories</option>
+        {% for c in categories %}
+        <option value="{{ c }}" {% if c == current_category %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn-admin"><i class="bi bi-search"></i> Filter</button>
+</form>
+
+<div class="card-admin">
+    <div class="card-body p-0">
+        {% if products %}
+        <div class="table-responsive">
+            <table class="table-admin">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th style="width: 140px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td>
+                            <strong>{{ p.name }}</strong>
+                            {% if p.description %}<br><small class="text-muted">{{ p.description[:60] }}{% if p.description|length > 60 %}…{% endif %}</small>{% endif %}
+                        </td>
+                        <td>{{ p.category or '—' }}</td>
+                        <td>{{ p.price|currency }}</td>
+                        <td>
+                            {{ p.stock }}
+                            {% if p.stock > 0 and p.stock < 10 %}<span class="badge bg-warning text-dark ms-1">Low</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if p.is_active %}<span class="badge-status badge-delivered">Active</span>{% else %}<span class="badge-status badge-cancelled">Inactive</span>{% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin_product_edit', product_id=p.id) }}" class="btn-sm-admin"><i class="bi bi-pencil"></i> Edit</a>
+                            <form method="post" action="{{ url_for('admin_product_toggle', product_id=p.id) }}" class="d-inline">
+                                <button type="submit" class="btn-sm-admin">{{ 'Deactivate' if p.is_active else 'Activate' }}</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card-body">
+            <div class="empty-state">
+                <i class="bi bi-box-seam"></i>
+                <h4>No products</h4>
+                <p>Add your first product to start selling.</p>
+                <a href="{{ url_for('admin_product_new') }}" class="btn-admin mt-2"><i class="bi bi-plus-lg"></i> Add product</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

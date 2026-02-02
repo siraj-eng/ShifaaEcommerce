@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Edit practitioner' if practitioner else 'New practitioner' }}{% endblock %}
+{% block page_title %}{{ 'Edit practitioner' if practitioner else 'New practitioner' }}{% endblock %}
+
+{% block content %}
+<div class="card-admin">
+    <div class="card-header">{{ 'Edit practitioner' if practitioner else 'New practitioner' }}</div>
+    <div class="card-body">
+        <form method="post" class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Name <span class="text-danger">*</span></label>
+                <input type="text" name="name" class="form-control" required value="{{ practitioner.name if practitioner else '' }}" placeholder="Full name">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" value="{{ practitioner.title if practitioner else '' }}" placeholder="e.g. Herbalist, Naturopath">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Specialties</label>
+                <input type="text" name="specialties" class="form-control" value="{{ practitioner.specialties if practitioner else '' }}" placeholder="Comma-separated">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Bio</label>
+                <textarea name="bio" class="form-control" rows="4" placeholder="Short bio">{{ practitioner.bio if practitioner else '' }}</textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ practitioner.email if practitioner else '' }}" placeholder="email@example.com">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Phone</label>
+                <input type="text" name="phone" class="form-control" value="{{ practitioner.phone if practitioner else '' }}" placeholder="Phone number">
+            </div>
+            <div class="col-12">
+                <label class="form-label">Image URL</label>
+                <input type="url" name="image_url" class="form-control" value="{{ practitioner.image_url if practitioner else '' }}" placeholder="https://...">
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input type="checkbox" name="is_active" class="form-check-input" id="is_active" {% if not practitioner or practitioner.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">Active (visible for booking)</label>
+                </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn-admin">{{ 'Update' if practitioner else 'Create' }} practitioner</button>
+                <a href="{{ url_for('admin_practitioners') }}" class="btn-sm-admin">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

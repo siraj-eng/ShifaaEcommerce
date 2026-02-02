@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} | Shifaa Herbal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #1b5e20;
+            --admin-primary-light: #e8f5e9;
+            --admin-secondary: #2e7d32;
+            --success-color: #06d6a0;
+            --warning-color: #ffd166;
+            --danger-color: #ef476f;
+            --dark-color: #121826;
+            --light-color: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--light-color); color: var(--gray-800); line-height: 1.5; }
+        .admin-container { display: flex; min-height: 100vh; }
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid var(--gray-200);
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 28px;
+            padding: 0 8px;
+        }
+        .sidebar .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        .sidebar .logo-text { font-weight: 700; font-size: 18px; color: var(--dark-color); }
+        .sidebar .logo-badge {
+            font-size: 10px;
+            background: var(--admin-primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .user-profile {
+            padding: 14px 12px;
+            background: var(--gray-100);
+            border-radius: var(--radius-md);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--admin-primary), var(--admin-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        .user-info h4 { font-weight: 600; font-size: 14px; color: var(--dark-color); margin-bottom: 2px; }
+        .user-info p { font-size: 12px; color: var(--gray-500); }
+        .nav-section { margin-bottom: 20px; }
+        .nav-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--gray-500);
+            margin-bottom: 10px;
+            padding: 0 8px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            color: var(--gray-700);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+        .nav-item:hover { background: var(--gray-100); color: var(--admin-primary); transform: translateX(4px); }
+        .nav-item.active { background: var(--admin-primary-light); color: var(--admin-primary); font-weight: 600; }
+        .nav-item i { font-size: 18px; width: 22px; text-align: center; }
+        .main-content { flex: 1; margin-left: 260px; padding: 0; }
+        .top-bar {
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+            padding: 18px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .top-bar h1 { font-size: 22px; font-weight: 600; color: var(--dark-color); margin: 0; }
+        .top-bar .back-site {
+            color: var(--gray-500);
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .top-bar .back-site:hover { color: var(--admin-primary); }
+        .content-area { padding: 28px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+        .page-header h2 { font-size: 24px; font-weight: 600; color: var(--dark-color); margin: 0; }
+        .btn-admin {
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .btn-admin:hover { background: var(--admin-secondary); color: white; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .card-admin {
+            background: white;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .card-admin .card-header {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--dark-color);
+        }
+        .card-admin .card-body { padding: 24px; }
+        .table-admin { width: 100%; border-collapse: collapse; }
+        .table-admin th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        .table-admin td { padding: 14px 16px; border-bottom: 1px solid var(--gray-200); font-size: 14px; }
+        .table-admin tr:hover { background: var(--gray-100); }
+        .badge-status { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-pending { background: var(--warning-color); color: #854d0e; }
+        .badge-processing { background: var(--admin-primary-light); color: var(--admin-primary); }
+        .badge-shipped { background: #e0e7ff; color: #3730a3; }
+        .badge-delivered, .badge-completed { background: #d1fae5; color: #065f46; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .badge-scheduled { background: #dbeafe; color: #1e40af; }
+        .empty-state { text-align: center; padding: 40px 24px; color: var(--gray-400); }
+        .empty-state i { font-size: 48px; margin-bottom: 12px; opacity: 0.5; display: block; }
+        .empty-state h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--gray-500); }
+        .btn-sm-admin {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--gray-300);
+            background: white;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-sm-admin:hover { background: var(--admin-primary-light); border-color: var(--admin-primary); color: var(--admin-primary); }
+        .btn-sm-danger { border-color: #fecaca; color: #b91c1c; }
+        .btn-sm-danger:hover { background: #fee2e2; border-color: #b91c1c; color: #b91c1c; }
+        .menu-toggle { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: var(--radius-sm); background: var(--gray-100); color: var(--gray-700); cursor: pointer; font-size: 20px; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); width: 280px; transition: transform 0.3s; }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .menu-toggle { display: flex; }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="admin-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-icon"><i class="bi bi-shop"></i></div>
+                <span class="logo-text">Shifaa</span>
+                <span class="logo-badge">Admin</span>
+            </div>
+            <div class="user-profile">
+                <div class="user-avatar"><i class="bi bi-person-badge"></i></div>
+                <div class="user-info">
+                    <h4>{{ current_user.name }}</h4>
+                    <p>{{ current_user.email }}</p>
+                </div>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Manage</div>
+                <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ url_for('admin_products') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('admin_product') %}active{% endif %}">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Products</span>
+                </a>
+                <a href="{{ url_for('admin_orders') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('admin_order') %}active{% endif %}">
+                    <i class="bi bi-cart-check"></i>
+                    <span>Orders</span>
+                </a>
+                <a href="{{ url_for('admin_sales') }}" class="nav-item {% if request.endpoint == 'admin_sales' %}active{% endif %}">
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Sales & revenue</span>
+                </a>
+                <a href="{{ url_for('admin_users') }}" class="nav-item {% if request.endpoint == 'admin_users' %}active{% endif %}">
+                    <i class="bi bi-people"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{{ url_for('admin_practitioners') }}" class="nav-item {% if request.endpoint and request.endpoint.startswith('admin_practitioner') %}active{% endif %}">
+                    <i class="bi bi-person-badge"></i>
+                    <span>Practitioners</span>
+                </a>
+                <a href="{{ url_for('admin_appointments') }}" class="nav-item {% if request.endpoint == 'admin_appointments' %}active{% endif %}">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Appointments</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-title">Account</div>
+                <a href="{{ url_for('index') }}" class="nav-item">
+                    <i class="bi bi-globe"></i>
+                    <span>View site</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-item">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+        <main class="main-content">
+            <div class="top-bar">
+                <h1>{% block page_title %}Admin{% endblock %}</h1>
+                <a href="{{ url_for('index') }}" class="back-site"><i class="bi bi-box-arrow-up-right"></i> Back to site</a>
+                <div class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('active')"><i class="bi bi-list"></i></div>
+            </div>
+            <div class="content-area">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

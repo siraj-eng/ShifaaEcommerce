@@ -1,24 +1,197 @@
-{% extends "base.html" %}
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<section class="dashboard">
-    <h1>Admin Dashboard</h1>
-    <p>Welcome, {{ current_user.name }} (Admin).</p>
-    <div class="dashboard-grid">
-        <div class="card">
-            <h2>Manage Products</h2>
-            <p>Coming soon: create, edit, and organize herbal products.</p>
+<style>
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 28px; }
+    .stat-card {
+        background: white;
+        border-radius: var(--radius-md);
+        padding: 22px;
+        border: 1px solid var(--gray-200);
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s;
+    }
+    .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .stat-card a { text-decoration: none; color: inherit; display: block; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .stat-icon {
+        width: 44px; height: 44px;
+        border-radius: var(--radius-sm);
+        background: var(--admin-primary-light);
+        display: flex; align-items: center; justify-content: center;
+        color: var(--admin-primary); font-size: 20px;
+    }
+    .stat-content h3 { font-size: 28px; font-weight: 700; color: var(--dark-color); margin-bottom: 4px; }
+    .stat-content p { color: var(--gray-500); font-size: 13px; margin: 0; }
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+    @media (max-width: 992px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    .orders-table { width: 100%; }
+    .orders-table th { text-align: left; padding: 10px 0; font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; border-bottom: 1px solid var(--gray-200); }
+    .orders-table td { padding: 12px 0; border-bottom: 1px solid var(--gray-200); font-size: 14px; }
+    .appointments-list { display: flex; flex-direction: column; gap: 12px; }
+    .appointment-item {
+        display: flex; align-items: center; padding: 14px;
+        background: var(--gray-100); border-radius: var(--radius-sm);
+        border-left: 4px solid var(--admin-primary);
+    }
+    .appointment-date { min-width: 48px; margin-right: 14px; text-align: center; }
+    .date-day { font-size: 20px; font-weight: 700; color: var(--dark-color); line-height: 1; }
+    .date-month { font-size: 11px; color: var(--gray-500); text-transform: uppercase; }
+    .empty-state { text-align: center; padding: 32px 20px; color: var(--gray-400); }
+    .empty-state i { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+    .empty-state h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--gray-500); }
+</style>
+
+<div class="stats-grid">
+    <a href="{{ url_for('admin_products') }}" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
         </div>
-        <div class="card">
-            <h2>Orders</h2>
-            <p>Track and manage customer orders from one place.</p>
+        <div class="stat-content">
+            <h3>{{ product_count }}</h3>
+            <p>Products</p>
         </div>
-        <div class="card">
-            <h2>Users</h2>
-            <p>View and manage registered users and their roles.</p>
+    </a>
+    <a href="{{ url_for('admin_orders') }}" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-cart-check"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ order_count }}</h3>
+            <p>Total orders</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_sales') }}" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-cash-stack"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ total_revenue|currency }}</h3>
+            <p>Total revenue</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_orders') }}?status=pending" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ pending_orders }}</h3>
+            <p>Pending orders</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_users') }}" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-people"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ user_count }}</h3>
+            <p>Users</p>
+        </div>
+    </a>
+    <a href="{{ url_for('admin_practitioners') }}" class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-person-badge"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ practitioner_count }}</h3>
+            <p>Practitioners</p>
+        </div>
+    </a>
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-icon"><i class="bi bi-exclamation-triangle"></i></div>
+        </div>
+        <div class="stat-content">
+            <h3>{{ low_stock }}</h3>
+            <p>Low stock (&lt;10)</p>
         </div>
     </div>
-</section>
+</div>
+
+<div class="dashboard-grid">
+    <div class="card-admin">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Recent orders</span>
+            <a href="{{ url_for('admin_orders') }}" class="btn-sm-admin">View all</a>
+        </div>
+        <div class="card-body">
+            {% if recent_orders %}
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td><strong>#{{ order.order_number }}</strong></td>
+                        <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>{{ order.total_amount|currency }}</td>
+                        <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
+                        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-cart-x"></i>
+                <h4>No orders yet</h4>
+                <p>Orders will appear here</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-admin">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Upcoming appointments</span>
+            <a href="{{ url_for('admin_appointments') }}" class="btn-sm-admin">View all</a>
+        </div>
+        <div class="card-body">
+            {% if upcoming_appointments %}
+            <div class="appointments-list">
+                {% for apt in upcoming_appointments %}
+                <div class="appointment-item">
+                    <div class="appointment-date">
+                        <div class="date-day">{{ apt.appointment_date.strftime('%d') }}</div>
+                        <div class="date-month">{{ apt.appointment_date.strftime('%b') }}</div>
+                    </div>
+                    <div class="flex-grow-1">
+                        <strong>{{ apt.practitioner.name }}</strong><br>
+                        <small class="text-muted">{{ apt.appointment_date.strftime('%I:%M %p') }} · {{ apt.appointment_type|title }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h4>No upcoming appointments</h4>
+                <p>Appointments will appear here</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="card-admin">
+    <div class="card-header">Quick actions</div>
+    <div class="card-body">
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('admin_sales') }}" class="btn-admin"><i class="bi bi-cash-stack"></i> Sales & revenue</a>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-admin"><i class="bi bi-plus-lg"></i> Add product</a>
+            <a href="{{ url_for('admin_practitioner_new') }}" class="btn-admin"><i class="bi bi-person-plus"></i> Add practitioner</a>
+            <a href="{{ url_for('admin_orders') }}?status=pending" class="btn-admin"><i class="bi bi-hourglass-split"></i> Pending orders</a>
+            <a href="{{ url_for('admin_products') }}" class="btn-admin"><i class="bi bi-box-seam"></i> Manage products</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
-
-
