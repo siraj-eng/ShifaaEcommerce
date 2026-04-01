@@ -1,125 +1,492 @@
-{% extends "base.html" %}
-
-{% block content %}
-<div class="register-page">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="register-card">
-                    <div class="register-header">
-                        <div class="register-icon">
-                            <i class="bi bi-person-plus"></i>
-                        </div>
-                        <h2>Begin Your Journey</h2>
-                        <p class="text-muted">Create your Shifaa Herbal account</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shifaa Herbal | Register</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Illustration Side */
+        .auth-illustration {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-illustration::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .illustration-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: white;
+        }
+        
+        .illustration-icon {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .illustration-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .illustration-content p {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        /* Form Side */
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem;
+            background: #ffffff;
+        }
+        
+        .auth-form-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        .auth-form-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+        
+        .auth-form-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+        
+        .auth-form-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #111827;
+        }
+        
+        .auth-form-subtitle {
+            color: #6b7280;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 0.75rem;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.25rem;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -0.75rem;
+        }
+        
+        .col-md-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding: 0 0.75rem;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+        
+        .auth-form-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .auth-form-footer a {
+            color: #2e7d32;
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .auth-form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .alert-danger {
+            background: #fee2e2;
+            border-left: 3px solid #dc2626;
+            color: #991b1b;
+        }
+        
+        .alert-success {
+            background: #e6f4ea;
+            border-left: 3px solid #2e7d32;
+            color: #1b5e20;
+        }
+        
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .strength-text {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            text-align: right;
+        }
+        
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-illustration {
+                display: none;
+            }
+            
+            .auth-form {
+                padding: 2rem;
+            }
+            
+            .col-md-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Illustration Side -->
+        <div class="auth-illustration">
+            <div class="illustration-content">
+                <div class="illustration-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h2>Join Our Wellness Community</h2>
+                <p>Start your journey towards natural healing and holistic wellness with Shifaa Herbal.</p>
+            </div>
+        </div>
+        
+        <!-- Form Side -->
+        <div class="auth-form">
+            <div class="auth-form-container">
+                <div class="auth-form-logo">
+                    <div class="auth-form-logo-icon">
+                        <i class="fas fa-leaf"></i>
                     </div>
-                    
-                    <form method="POST" action="{{ url_for('register') }}">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" name="name" id="name" class="form-control" placeholder="Enter your full name" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
-                            <div class="input-group">
-                                <input type="email" name="email" id="email" class="form-control" placeholder="yourname" required>
-                                <span class="input-group-text">@shifaaherbal.com</span>
+                    <span>Shifaa Herbal Remedies</span>
+                </div>
+                
+                <h1 class="auth-form-title">Create Account</h1>
+                <p class="auth-form-subtitle">Join our herbal wellness platform today</p>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" 
+                                           placeholder="John" required>
+                                </div>
                             </div>
-                            <small class="text-muted">Your email must be from @shifaaherbal.com domain</small>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Minimum 6 characters" required minlength="6">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" 
+                                           placeholder="Doe" required>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Confirm Password</label>
-                            <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Re-enter your password" required>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="bi bi-person-plus"></i> Create Account
-                        </button>
-                    </form>
-                    
-                    <div class="register-footer mt-3 text-center">
-                        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="yourname@shifaaherbal.com" required>
+                        </div>
+                        <small style="font-size: 0.7rem; color: #6b7280;">Email must be from @shifaaherbal.com domain</small>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="password" class="form-label">Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="••••••••" required minlength="6">
+                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="strength-meter" id="strengthMeter"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                           placeholder="••••••••" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div id="passwordMatch" style="font-size: 0.7rem; margin-top: 0.25rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="auth-form-footer">
+                    <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a></p>
                 </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-.register-page {
-    padding: 4rem 0;
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-}
-
-.register-card {
-    background: white;
-    border-radius: 10px;
-    padding: 3rem;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-}
-
-.register-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.register-icon {
-    font-size: 4rem;
-    color: #2e7d32;
-    margin-bottom: 1rem;
-}
-
-.register-header h2 {
-    font-family: 'Marcellus', serif;
-    color: #1b5e20;
-    margin-bottom: 0.5rem;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #1b5e20;
-    margin-bottom: 0.5rem;
-}
-
-.form-control {
-    border: 2px solid #e0e0e0;
-    border-radius: 5px;
-    padding: 0.75rem;
-}
-
-.form-control:focus {
-    border-color: #2e7d32;
-    box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
-}
-
-.input-group-text {
-    background: #f8f9fa;
-    border: 2px solid #e0e0e0;
-    border-left: none;
-    color: #666;
-}
-
-.register-footer a {
-    color: #2e7d32;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.register-footer a:hover {
-    text-decoration: underline;
-}
-</style>
-{% endblock %}
-
+    
+    <script>
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const toggle = event.currentTarget;
+            const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+            field.setAttribute('type', type);
+            toggle.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        }
+        
+        // Password strength indicator
+        const passwordInput = document.getElementById('password');
+        const strengthMeter = document.getElementById('strengthMeter');
+        const strengthText = document.getElementById('strengthText');
+        const confirmInput = document.getElementById('confirm_password');
+        const matchText = document.getElementById('passwordMatch');
+        
+        if (passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                let strength = 0;
+                
+                if (password.length >= 6) strength += 20;
+                if (password.length >= 8) strength += 20;
+                if (/[A-Z]/.test(password)) strength += 20;
+                if (/[0-9]/.test(password)) strength += 20;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+                
+                strength = Math.min(strength, 100);
+                strengthMeter.style.width = strength + '%';
+                
+                if (password.length === 0) {
+                    strengthText.textContent = '';
+                    strengthMeter.style.background = '#e5e7eb';
+                } else if (strength < 40) {
+                    strengthText.textContent = 'Weak';
+                    strengthText.style.color = '#dc2626';
+                    strengthMeter.style.background = '#dc2626';
+                } else if (strength < 70) {
+                    strengthText.textContent = 'Fair';
+                    strengthText.style.color = '#f59e0b';
+                    strengthMeter.style.background = '#f59e0b';
+                } else {
+                    strengthText.textContent = 'Strong';
+                    strengthText.style.color = '#10b981';
+                    strengthMeter.style.background = '#10b981';
+                }
+                
+                checkPasswordMatch();
+            });
+        }
+        
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
+            
+            if (!confirm) {
+                matchText.textContent = '';
+                return;
+            }
+            
+            if (password === confirm) {
+                matchText.textContent = '✓ Passwords match';
+                matchText.style.color = '#10b981';
+            } else {
+                matchText.textContent = '✗ Passwords do not match';
+                matchText.style.color = '#dc2626';
+            }
+        }
+        
+        if (confirmInput) {
+            confirmInput.addEventListener('input', checkPasswordMatch);
+        }
+    </script>
+</body>
+</html>
