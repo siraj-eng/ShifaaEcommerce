@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shifaa Herbal | Login</title>
+    <title>Shifaa Herbal | Admin Portal</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -84,13 +84,14 @@
         }
         
         .auth-form-container {
-            max-width: 400px;
+            max-width: 420px;
             width: 100%;
             margin: 0 auto;
             position: relative;
             z-index: 1;
         }
         
+        /* Logo Section */
         .auth-form-logo {
             display: flex;
             flex-direction: column;
@@ -107,29 +108,37 @@
         }
         
         .logo-text {
-            font-size: 1.7rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #2e7d32;
             text-align: center;
         }
         
-        .auth-form-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #111827;
-            text-align: center;
-        }
-        
-        .auth-form-subtitle {
-            color: #6b7280;
+        /* Admin Badge */
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: #f3f4f6;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
             margin-bottom: 2rem;
-            font-size: 0.9rem;
-            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2e7d32;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
         
+        .admin-badge i {
+            font-size: 1rem;
+        }
+        
+        /* Form Styles */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
         
         .form-label {
@@ -156,9 +165,9 @@
         
         .form-control {
             width: 100%;
-            padding: 0.75rem 3rem 0.75rem 2.5rem;
+            padding: 0.875rem 3rem 0.875rem 2.75rem;
             border: 1px solid #e5e7eb;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 0.9rem;
             transition: all 0.2s ease;
             font-family: 'Poppins', sans-serif;
@@ -182,8 +191,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             z-index: 1;
         }
         
@@ -191,15 +200,16 @@
             color: #2e7d32;
         }
         
+        /* Button */
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
+            padding: 0.875rem 1.5rem;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s ease;
             width: 100%;
@@ -217,28 +227,13 @@
             box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
         }
         
-        .auth-form-footer {
-            margin-top: 1.5rem;
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        
-        .auth-form-footer a {
-            color: #2e7d32;
-            font-weight: 500;
-            text-decoration: none;
-        }
-        
-        .auth-form-footer a:hover {
-            text-decoration: underline;
-        }
-        
+        /* Alert Messages - Minimal */
         .alert {
             padding: 0.75rem 1rem;
             border-radius: 10px;
             margin-bottom: 1.5rem;
             font-size: 0.875rem;
+            text-align: center;
         }
         
         .alert-danger {
@@ -253,6 +248,30 @@
             color: #1b5e20;
         }
         
+        .alert-info {
+            background: #e0f2fe;
+            border-left: 3px solid #0284c7;
+            color: #075985;
+        }
+        
+        /* Back Link */
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .back-link a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link a:hover {
+            color: #2e7d32;
+        }
+        
+        /* Responsive */
         @media (max-width: 968px) {
             .auth-container {
                 grid-template-columns: 1fr;
@@ -269,6 +288,10 @@
             .auth-form::before {
                 display: none;
             }
+            
+            .auth-form-container {
+                max-width: 100%;
+            }
         }
         
         @media (max-width: 480px) {
@@ -277,12 +300,16 @@
             }
             
             .logo-image {
-                width: 60px;
-                height: 60px;
+                width: 80px;
+                height: 80px;
             }
             
             .logo-text {
                 font-size: 1.2rem;
+            }
+            
+            .form-control {
+                padding: 0.75rem 3rem 0.75rem 2.5rem;
             }
         }
     </style>
@@ -297,38 +324,46 @@
         <!-- Form Side -->
         <div class="auth-form">
             <div class="auth-form-container">
+                <!-- Logo Section -->
                 <div class="auth-form-logo">
                     <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 150841.png') }}" alt="Shifaa Herbal Logo">
-                    <div class="logo-text">Shifaa Herbal Remedies</div>
+                    <div class="logo-text">Shifaa Herbal Remedies
+                    </div>
                 </div>
                 
-                <h1 class="auth-form-title">Welcome Back</h1>
-                <p class="auth-form-subtitle">Sign in to access your herbal wellness dashboard</p>
+                <!-- Admin Badge -->
+                <div class="admin-badge">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Administrator Portal</span>
+                </div>
                 
+                <!-- Flash Messages - Only errors, no welcome/logout messages -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
                         {% for category, message in messages %}
-                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% if category == 'danger' or category == 'error' %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endwith %}
                 
                 <form method="POST" action="{{ url_for('login') }}">
                     <div class="form-group">
-                        <label for="email" class="form-label">Email Address</label>
+                        <label for="email" class="form-label">Admin Email</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope"></i>
                             <input type="email" class="form-control" id="email" name="email" 
-                                   placeholder="name@shifaaherbal.com" required>
+                                   placeholder="admin@shifaaherbal.com" required autofocus>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Admin Password</label>
                         <div class="input-wrapper">
                             <i class="fas fa-lock"></i>
                             <input type="password" class="form-control" id="password" name="password" 
-                                   placeholder="••••••••" required>
+                                   placeholder="Enter your password" required>
                             <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                 <i class="fas fa-eye"></i>
                             </button>
@@ -338,13 +373,15 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-sign-in-alt"></i>
-                            Sign In
+                            Access Admin Dashboard
                         </button>
                     </div>
                 </form>
                 
-                <div class="auth-form-footer">
-                    <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+                <div class="back-link">
+                    <a href="{{ url_for('login') }}">
+                        <i class="fas fa-arrow-left"></i> Client Portal
+                    </a>
                 </div>
             </div>
         </div>

@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 from functools import wraps
 
-from flask import Flask, render_template, redirect, url_for, flash, request, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -90,7 +90,7 @@ def create_app():
             elif len(password) < 6:
                 flash("Password must be at least 6 characters long.", "error")
             else:
-                # Append @shifaaherbal.com if not already present
+                # Handle email domain
                 if "@" in email_input:
                     email = email_input
                     if not email.endswith("@shifaaherbal.com"):
@@ -120,21 +120,45 @@ def create_app():
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
+        """
+        Handle user login with support for both admin and regular users.
+        - If user is already authenticated, redirect to dashboard
+        - Check URL parameter 'type=admin' to show admin login form
+        - Regular users see the standard login form
+        """
         # Redirect authenticated users to dashboard
         if current_user.is_authenticated:
             return redirect(url_for("dashboard"))
+        
+        # Check if this is an admin login attempt via URL parameter
+        # Example: /login?type=admin
+        is_admin_login = request.args.get('type') == 'admin'
         
         if request.method == "POST":
             email = request.form.get("email", "").strip().lower()
             password = request.form.get("password", "")
             user = User.query.filter_by(email=email).first()
+            
             if user and check_password_hash(user.password_hash, password):
                 login_user(user)
                 flash("Welcome back!", "success")
                 next_page = request.args.get("next")
-                return redirect(next_page or url_for("dashboard"))
+                
+                # Redirect based on user role
+                if user.role == "admin":
+                    return redirect(next_page or url_for("dashboard"))
+                else:
+                    return redirect(next_page or url_for("dashboard"))
+            
             flash("Invalid email or password", "danger")
-        return render_template("auth/login.html")
+        
+        # Render appropriate template based on login type
+        if is_admin_login:
+            # Show admin login form with admin badge
+            return render_template("auth/admin_login.html")
+        else:
+            # Show regular user login form
+            return render_template("auth/login.html")
 
     @app.route("/logout")
     @login_required
@@ -147,16 +171,18 @@ def create_app():
     @login_required
     def dashboard():
         if current_user.role == "admin":
-            from models import Order, Product, Appointment
+            from models import Order, Product, Appointment, Practitioner
             product_count = Product.query.count()
             order_count = Order.query.count()
             user_count = User.query.count()
-            from models import Practitioner
             practitioner_count = Practitioner.query.count()
             pending_orders = Order.query.filter_by(status="pending").count()
             total_revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).scalar() or 0
             recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
-            upcoming_appointments = Appointment.query.filter(Appointment.appointment_date >= datetime.utcnow(), Appointment.status=="scheduled").order_by(Appointment.appointment_date).limit(5).all()
+            upcoming_appointments = Appointment.query.filter(
+                Appointment.appointment_date >= datetime.utcnow(), 
+                Appointment.status == "scheduled"
+            ).order_by(Appointment.appointment_date).limit(5).all()
             low_stock = Product.query.filter(Product.stock > 0, Product.stock < 10).count()
             return render_template(
                 "admin/dashboard.html",
@@ -772,7 +798,7 @@ def create_app():
         from models import User  # local import to avoid circular
 
         db.create_all()
-        admin_email = os.getenv("ADMIN_EMAIL", "admin@shifaa.local")
+        admin_email = os.getenv("ADMIN_EMAIL", "admin@shifaaherbal.com")
         admin_password = os.getenv("ADMIN_PASSWORD", "admin123")
 
         if not User.query.filter_by(email=admin_email).first():
@@ -799,5 +825,3 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(host='127.0.0.1', port=5000, debug=True)
-
-
