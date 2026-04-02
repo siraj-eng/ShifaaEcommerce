@@ -3,38 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - HerbalCare</title>
+    <title>Checkout | Shifaa Herbal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2e7d32;
-            --primary-light: #e8f5e8;
-            --secondary-color: #1b5e20;
-            --success-color: #06d6a0;
-            --warning-color: #ffd166;
-            --danger-color: #ef476f;
-            --dark-color: #121826;
-            --light-color: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -42,269 +15,286 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-color);
-            color: var(--gray-800);
-            line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
         }
         
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        /* Top Navigation Bar */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
-            padding: 2.5rem 0;
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            font-size: 0.75rem;
         }
         
-        .header-content {
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+        }
+        
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
+        }
+        
+        .breadcrumb-bar a:hover {
+            color: #2e7d32;
+        }
+        
+        /* Main Container */
+        .main-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .header-content h1 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .header-content p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem 1.25rem;
         }
         
         /* Checkout Steps */
         .checkout-steps {
             display: flex;
             justify-content: center;
-            margin-bottom: 3rem;
-            padding: 0 2rem;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
         }
         
         .step {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            position: relative;
-            flex: 1;
-            max-width: 200px;
-        }
-        
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--gray-200);
-            color: var(--gray-600);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            z-index: 2;
-            transition: all 0.3s;
-        }
-        
-        .step.active .step-number {
-            background: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
-        }
-        
-        .step.completed .step-number {
-            background: var(--success-color);
-            color: white;
-        }
-        
-        .step.completed .step-number i {
-            display: block;
-        }
-        
-        .step.completed .step-number span {
-            display: none;
-        }
-        
-        .step-label {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--gray-600);
-            text-align: center;
-        }
-        
-        .step.active .step-label {
-            color: var(--primary-color);
-            font-weight: 600;
-        }
-        
-        .step-line {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            width: 100%;
-            height: 2px;
-            background: var(--gray-300);
-            z-index: 1;
-        }
-        
-        .step:last-child .step-line {
-            display: none;
-        }
-        
-        .step.completed .step-line {
-            background: var(--success-color);
-        }
-        
-        /* Checkout Layout */
-        .checkout-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 3rem;
-        }
-        
-        /* Checkout Form */
-        .checkout-form-section {
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
             background: white;
-            border-radius: var(--radius-lg);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #94a3b8;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .step.active {
+            background: #2e7d32;
+            color: white;
+            border-color: #2e7d32;
+        }
+        
+        .step.completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #2e7d32;
+        }
+        
+        .step i {
+            font-size: 0.85rem;
+        }
+        
+        /* Checkout Grid */
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 1.25rem;
+        }
+        
+        /* Checkout Form Card */
+        .checkout-card {
+            background: white;
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
         }
         
         .form-section {
-            margin-bottom: 3rem;
+            padding: 1.25rem;
+            border-bottom: 1px solid #eef2f6;
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
         }
         
         .section-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
         }
         
         .section-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            background: var(--primary-light);
+            width: 40px;
+            height: 40px;
+            background: #e8f5e9;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.5rem;
+            color: #2e7d32;
+            font-size: 1.2rem;
         }
         
-        .section-title {
-            font-size: 1.5rem;
+        .section-header h3 {
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--dark-color);
+            margin: 0;
         }
         
-        .section-subtitle {
-            color: var(--gray-500);
-            font-size: 14px;
+        .section-header p {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin: 0;
         }
         
-        /* Form Groups */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-        
+        /* Form Elements */
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
         
         .form-label {
             display: block;
-            font-size: 14px;
+            font-size: 0.75rem;
             font-weight: 500;
-            color: var(--gray-700);
-            margin-bottom: 0.5rem;
+            color: #334155;
+            margin-bottom: 0.35rem;
         }
         
         .form-label .required {
-            color: var(--danger-color);
+            color: #ef476f;
         }
         
         .form-control {
             width: 100%;
-            padding: 0.875rem 1rem;
-            border: 1px solid var(--gray-300);
-            border-radius: var(--radius-md);
+            padding: 0.6rem 0.85rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
             font-family: 'Inter', sans-serif;
-            font-size: 15px;
             transition: all 0.2s;
-            background: white;
         }
         
         .form-control:focus {
             outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px var(--primary-light);
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
         
-        .form-textarea {
-            min-height: 120px;
+        textarea.form-control {
             resize: vertical;
+            min-height: 80px;
         }
         
-        .select-wrapper {
-            position: relative;
-        }
-        
-        .select-wrapper::after {
-            content: '⌄';
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-500);
-            pointer-events: none;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
         
         /* Delivery Options */
         .delivery-options {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
         }
         
         .delivery-option {
             display: flex;
             align-items: center;
-            padding: 1.5rem;
-            border: 2px solid var(--gray-200);
-            border-radius: var(--radius-md);
+            padding: 0.85rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.65rem;
             cursor: pointer;
             transition: all 0.2s;
-            position: relative;
+            background: white;
         }
         
         .delivery-option:hover {
-            border-color: var(--primary-light);
-            background: var(--gray-100);
+            border-color: #2e7d32;
+            background: #fafcff;
         }
         
         .delivery-option.selected {
-            border-color: var(--primary-color);
-            background: var(--primary-light);
+            border-color: #2e7d32;
+            background: #e8f5e9;
         }
         
         .option-radio {
-            margin-right: 1rem;
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary-color);
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+            accent-color: #2e7d32;
         }
         
         .option-content {
@@ -312,236 +302,353 @@
         }
         
         .option-title {
+            font-size: 0.8rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
+            color: #1e293b;
         }
         
         .option-description {
-            font-size: 14px;
-            color: var(--gray-500);
-            margin-bottom: 0.5rem;
+            font-size: 0.65rem;
+            color: #64748b;
         }
         
         .option-price {
+            font-size: 0.75rem;
             font-weight: 600;
-            color: var(--primary-color);
+            color: #2e7d32;
         }
         
         .option-badge {
-            position: absolute;
-            top: -10px;
-            right: 1rem;
-            background: var(--success-color);
+            background: #2e7d32;
             color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
             font-weight: 600;
+            margin-left: 0.5rem;
         }
         
-        /* Order Summary */
-        .order-summary-section {
+        /* Order Summary Card */
+        .summary-card {
             background: white;
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            padding: 1.25rem;
             position: sticky;
-            top: 2rem;
+            top: 4rem;
+            height: fit-content;
         }
         
-        .summary-header {
-            margin-bottom: 2rem;
-        }
-        
-        .summary-header h3 {
-            font-size: 1.5rem;
+        .summary-title {
+            font-size: 1rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .summary-title i {
+            color: #2e7d32;
         }
         
         .summary-items {
-            margin-bottom: 2rem;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
         }
         
         .summary-item {
             display: flex;
             align-items: center;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #eef2f6;
+            gap: 0.75rem;
         }
         
         .item-image {
-            width: 60px;
-            height: 60px;
-            border-radius: var(--radius-sm);
-            background: var(--gray-100);
+            width: 55px;
+            height: 55px;
+            background: #f8fafc;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 1rem;
             flex-shrink: 0;
+            overflow: hidden;
+            border: 1px solid #eef2f6;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .item-image i {
             font-size: 1.5rem;
-            color: var(--gray-500);
+            color: #cbd5e1;
         }
         
         .item-details {
             flex: 1;
+            min-width: 0;
         }
         
         .item-name {
-            font-weight: 500;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.2rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .item-quantity {
-            font-size: 13px;
-            color: var(--gray-500);
+            font-size: 0.65rem;
+            color: #64748b;
         }
         
         .item-price {
-            font-weight: 600;
-            color: var(--dark-color);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2e7d32;
+            text-align: right;
+            flex-shrink: 0;
         }
         
-        .summary-totals {
-            margin-bottom: 2rem;
-        }
-        
-        .total-row {
+        .summary-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 0.6rem 0;
+            font-size: 0.8rem;
         }
         
-        .total-row:last-child {
-            border-bottom: none;
-        }
-        
-        .total-label {
-            color: var(--gray-600);
-        }
-        
-        .total-value {
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .total-row.grand-total {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--primary-color);
+        .summary-row.total {
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
             padding-top: 1rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2e7d32;
         }
         
-        /* Place Order Button */
         .place-order-btn {
             width: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
+            background: #2e7d32;
             color: white;
-            padding: 1.25rem 2rem;
-            border-radius: var(--radius-md);
-            font-size: 1.1rem;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
             font-weight: 600;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 2rem;
+            transition: all 0.2s;
+            margin-top: 1rem;
         }
         
         .place-order-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
+            background: #1b5e20;
+        }
+        
+        .place-order-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        .continue-shopping {
+            width: 100%;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            padding: 0.65rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.75rem;
+            text-decoration: none;
+        }
+        
+        .continue-shopping:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         
         /* Security Badges */
         .security-badges {
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--gray-200);
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eef2f6;
         }
         
         .security-badge {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
         
         .security-badge i {
-            font-size: 1.5rem;
-            color: var(--success-color);
+            font-size: 1rem;
+            color: #2e7d32;
         }
         
         .security-badge span {
-            font-size: 12px;
-            color: var(--gray-500);
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 1rem;
+        }
+        
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+        
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        /* Floating Cart */
+        .floating-cart {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: #2e7d32;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(46,125,50,0.25);
+            z-index: 1000;
+        }
+        
+        .floating-cart:hover {
+            transform: scale(1.03);
+            background: #1b5e20;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef476f;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 0.1rem 0.3rem;
+            border-radius: 50%;
+            min-width: 18px;
             text-align: center;
         }
         
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .checkout-layout {
-                grid-template-columns: 1fr;
-            }
-            
-            .order-summary-section {
-                position: relative;
-                top: 0;
-            }
-        }
-        
+        /* Mobile Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
+            .top-nav {
+                padding: 0.5rem 1rem;
             }
             
-            .checkout-steps {
-                padding: 0;
+            .user-name {
+                display: none;
             }
             
-            .step-label {
-                font-size: 12px;
+            .nav-links {
+                gap: 0.5rem;
             }
             
-            .checkout-form-section {
-                padding: 1.5rem;
+            .nav-link span {
+                display: none;
+            }
+            
+            .nav-link i {
+                margin: 0;
+            }
+            
+            .breadcrumb-bar {
+                padding: 0.5rem 1rem;
+            }
+            
+            .main-container {
+                padding: 0.75rem;
+            }
+            
+            .checkout-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .form-grid {
                 grid-template-columns: 1fr;
-            }
-            
-            .delivery-options {
                 gap: 0.75rem;
             }
             
-            .security-badges {
+            .checkout-steps {
                 flex-wrap: wrap;
-                gap: 1rem;
+            }
+            
+            .summary-card {
+                position: static;
+            }
+            
+            .summary-item {
+                gap: 0.5rem;
+            }
+            
+            .item-image {
+                width: 45px;
+                height: 45px;
             }
         }
         
-        /* Animations */
+        /* Animation */
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
@@ -549,127 +656,108 @@
             }
         }
         
-        .checkout-form-section,
-        .order-summary-section {
-            animation: fadeIn 0.5s ease forwards;
+        .checkout-card, .summary-card {
+            animation: fadeIn 0.3s ease forwards;
         }
         
-        /* Success Modal */
-        .success-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s;
+        .summary-item {
+            animation: fadeIn 0.3s ease forwards;
         }
         
-        .success-modal.active {
-            opacity: 1;
-            visibility: visible;
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
         
-        .modal-content {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 3rem;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.3s;
+        .spin {
+            animation: spin 1s linear infinite;
         }
         
-        .success-modal.active .modal-content {
-            transform: scale(1);
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
-        .modal-icon {
-            width: 80px;
-            height: 80px;
-            background: var(--success-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 2.5rem;
-            margin: 0 auto 1.5rem;
+        /* Custom scrollbar */
+        .summary-items::-webkit-scrollbar {
+            width: 4px;
         }
         
-        .modal-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
+        .summary-items::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
         }
         
-        .modal-text {
-            color: var(--gray-600);
-            margin-bottom: 2rem;
+        .summary-items::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        
+        .summary-items::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="page-header">
-        <div class="header-content">
-            <h1>Checkout</h1>
-            <p>Complete your purchase securely</p>
-        </div>
-    </header>
-
-    <!-- Checkout Steps -->
-    <div class="checkout-steps">
-        <div class="step completed">
-            <div class="step-number">
-                <span>1</span>
-                <i class="bi bi-check" style="display: none;"></i>
-            </div>
-            <div class="step-label">Cart</div>
-            <div class="step-line"></div>
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Remedies</span>
         </div>
         
-        <div class="step active">
-            <div class="step-number">
-                <span>2</span>
-                <i class="bi bi-check" style="display: none;"></i>
-            </div>
-            <div class="step-label">Information</div>
-            <div class="step-line"></div>
+        <div class="nav-links">
+            <a href="{{ url_for('cart') }}" class="nav-link">
+                <i class="bi bi-cart"></i> <span>Cart</span>
+            </a>
+            <a href="{{ url_for('products') }}" class="nav-link">
+                <i class="bi bi-grid"></i> <span>Products</span>
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
         </div>
         
-        <div class="step">
-            <div class="step-number">
-                <span>3</span>
-                <i class="bi bi-check" style="display: none;"></i>
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
             </div>
-            <div class="step-label">Payment</div>
-            <div class="step-line"></div>
-        </div>
-        
-        <div class="step">
-            <div class="step-number">
-                <span>4</span>
-                <i class="bi bi-check" style="display: none;"></i>
-            </div>
-            <div class="step-label">Confirmation</div>
         </div>
     </div>
-
-    <!-- Main Content -->
-    <main class="container">
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <a href="{{ url_for('cart') }}">Cart</a>
+        <span>/</span>
+        <span style="color: #2e7d32;">Checkout</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Checkout Steps -->
+        <div class="checkout-steps">
+            <div class="step completed">
+                <i class="bi bi-check-circle-fill"></i> Cart
+            </div>
+            <div class="step active">
+                <i class="bi bi-info-circle-fill"></i> Information
+            </div>
+            <div class="step">
+                <i class="bi bi-credit-card"></i> Payment
+            </div>
+            <div class="step">
+                <i class="bi bi-check-lg"></i> Confirmation
+            </div>
+        </div>
+        
         <form method="POST" action="{{ url_for('checkout') }}" id="checkoutForm">
-            <div class="checkout-layout">
+            <div class="checkout-grid">
                 <!-- Checkout Form -->
-                <div class="checkout-form-section">
+                <div class="checkout-card">
                     <!-- Shipping Address -->
                     <div class="form-section">
                         <div class="section-header">
@@ -677,8 +765,8 @@
                                 <i class="bi bi-geo-alt"></i>
                             </div>
                             <div>
-                                <h3 class="section-title">Shipping Address</h3>
-                                <p class="section-subtitle">Where should we deliver your order?</p>
+                                <h3>Shipping Address</h3>
+                                <p>Where should we deliver your order?</p>
                             </div>
                         </div>
                         
@@ -689,8 +777,8 @@
                             <textarea 
                                 name="shipping_address" 
                                 id="shipping_address" 
-                                class="form-control form-textarea" 
-                                rows="4" 
+                                class="form-control" 
+                                rows="3" 
                                 required
                                 placeholder="Enter your full shipping address"
                             >{{ current_user.address or '' }}</textarea>
@@ -704,21 +792,14 @@
                                 <i class="bi bi-truck"></i>
                             </div>
                             <div>
-                                <h3 class="section-title">Delivery Options</h3>
-                                <p class="section-subtitle">Choose your preferred delivery method</p>
+                                <h3>Delivery Options</h3>
+                                <p>Choose your preferred delivery method</p>
                             </div>
                         </div>
                         
                         <div class="delivery-options">
                             <label class="delivery-option selected" for="delivery_standard">
-                                <input 
-                                    type="radio" 
-                                    name="delivery_option" 
-                                    id="delivery_standard" 
-                                    value="standard" 
-                                    class="option-radio" 
-                                    checked
-                                >
+                                <input type="radio" name="delivery_option" id="delivery_standard" value="standard" class="option-radio" checked>
                                 <div class="option-content">
                                     <div class="option-title">Standard Delivery</div>
                                     <div class="option-description">5-7 business days</div>
@@ -727,29 +808,17 @@
                             </label>
                             
                             <label class="delivery-option" for="delivery_express">
-                                <input 
-                                    type="radio" 
-                                    name="delivery_option" 
-                                    id="delivery_express" 
-                                    value="express" 
-                                    class="option-radio"
-                                >
+                                <input type="radio" name="delivery_option" id="delivery_express" value="express" class="option-radio">
                                 <div class="option-content">
                                     <div class="option-title">Express Delivery</div>
                                     <div class="option-description">2-3 business days</div>
-                                    <div class="option-price">{{ currency_symbol }} 150</div>
+                                    <div class="option-price">KES 150</div>
                                 </div>
                                 <span class="option-badge">Popular</span>
                             </label>
                             
                             <label class="delivery-option" for="delivery_pickup">
-                                <input 
-                                    type="radio" 
-                                    name="delivery_option" 
-                                    id="delivery_pickup" 
-                                    value="pickup" 
-                                    class="option-radio"
-                                >
+                                <input type="radio" name="delivery_option" id="delivery_pickup" value="pickup" class="option-radio">
                                 <div class="option-content">
                                     <div class="option-title">Store Pickup</div>
                                     <div class="option-description">Pick up at our nearest location</div>
@@ -766,8 +835,8 @@
                                 <i class="bi bi-telephone"></i>
                             </div>
                             <div>
-                                <h3 class="section-title">Contact Information</h3>
-                                <p class="section-subtitle">How can we reach you about your order?</p>
+                                <h3>Contact Information</h3>
+                                <p>How can we reach you?</p>
                             </div>
                         </div>
                         
@@ -776,93 +845,76 @@
                                 <label for="contact_name" class="form-label">
                                     Full Name <span class="required">*</span>
                                 </label>
-                                <input 
-                                    type="text" 
-                                    name="contact_name" 
-                                    id="contact_name" 
-                                    class="form-control" 
-                                    value="{{ current_user.name }}" 
-                                    required
-                                >
+                                <input type="text" name="contact_name" id="contact_name" class="form-control" value="{{ current_user.name }}" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="contact_email" class="form-label">
                                     Email Address <span class="required">*</span>
                                 </label>
-                                <input 
-                                    type="email" 
-                                    name="contact_email" 
-                                    id="contact_email" 
-                                    class="form-control" 
-                                    value="{{ current_user.email }}" 
-                                    required
-                                >
+                                <input type="email" name="contact_email" id="contact_email" class="form-control" value="{{ current_user.email }}" required>
                             </div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="contact_phone" class="form-label">
-                                Phone Number
-                            </label>
-                            <input 
-                                type="tel" 
-                                name="contact_phone" 
-                                id="contact_phone" 
-                                class="form-control" 
-                                placeholder="+1 (555) 123-4567"
-                            >
+                            <label for="contact_phone" class="form-label">Phone Number</label>
+                            <input type="tel" name="contact_phone" id="contact_phone" class="form-control" placeholder="+254 7XX XXX XXX" value="{{ current_user.phone or '' }}">
                         </div>
                     </div>
                 </div>
 
-                <!-- Order Summary -->
-                <div class="order-summary-section">
-                    <div class="summary-header">
-                        <h3>Order Summary</h3>
-                        <p style="color: var(--gray-500); font-size: 14px;">{{ cart_items|length }} item{% if cart_items|length != 1 %}s{% endif %} in cart</p>
+                <!-- Order Summary with Product Images -->
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <i class="bi bi-receipt"></i> Order Summary
                     </div>
                     
                     <div class="summary-items">
                         {% for item in cart_items %}
                         <div class="summary-item">
                             <div class="item-image">
+                                {% if item.product.image_url %}
+                                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" loading="lazy">
+                                {% else %}
                                 <i class="bi bi-capsule"></i>
+                                {% endif %}
                             </div>
                             <div class="item-details">
-                                <div class="item-name">{{ item.product.name }}</div>
-                                <div class="item-quantity">Quantity: {{ item.quantity }}</div>
+                                <div class="item-name">{{ item.product.name|truncate(35) }}</div>
+                                <div class="item-quantity">Qty: {{ item.quantity }}</div>
                             </div>
-                            <div class="item-price">{{ (item.product.price * item.quantity)|currency }}</div>
+                            <div class="item-price">{{ item.product.price|currency }}</div>
                         </div>
                         {% endfor %}
                     </div>
                     
-                    <div class="summary-totals">
-                        <div class="total-row">
-                            <span class="total-label">Subtotal</span>
-                            <span class="total-value">${{ "%.2f"|format(total) }}</span>
-                        </div>
-                        
-                        <div class="total-row">
-                            <span class="total-label">Shipping</span>
-                            <span class="total-value" id="shippingCost">Calculated</span>
-                        </div>
-                        
-                        <div class="total-row">
-                            <span class="total-label">Tax</span>
-                            <span class="total-value">{{ (total * 0.08)|currency }}</span>
-                        </div>
-                        
-                        <div class="total-row grand-total">
-                            <span class="total-label">Total</span>
-                            <span class="total-value" id="grandTotal">{{ (total * 1.08)|currency }}</span>
-                        </div>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="subtotalAmount">{{ total|currency }}</span>
                     </div>
                     
-                    <button type="submit" class="place-order-btn">
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span id="shippingAmount">Free</span>
+                    </div>
+                    
+                    <div class="summary-row">
+                        <span>Tax (8%)</span>
+                        <span id="taxAmount">{{ (total * 0.08)|currency }}</span>
+                    </div>
+                    
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="grandTotal">{{ (total * 1.08)|currency }}</span>
+                    </div>
+                    
+                    <button type="submit" class="place-order-btn" id="placeOrderBtn">
                         <i class="bi bi-arrow-right"></i> Proceed to Payment
                     </button>
+                    
+                    <a href="{{ url_for('products') }}" class="continue-shopping">
+                        <i class="bi bi-arrow-left"></i> Continue Shopping
+                    </a>
                     
                     <!-- Security Badges -->
                     <div class="security-badges">
@@ -876,141 +928,141 @@
                         </div>
                         <div class="security-badge">
                             <i class="bi bi-award"></i>
-                            <span>Money Back Guarantee</span>
+                            <span>Money Back</span>
                         </div>
                     </div>
                 </div>
             </div>
         </form>
-    </main>
-
-    <!-- Success Modal -->
-    <div class="success-modal" id="successModal">
-        <div class="modal-content">
-            <div class="modal-icon">
-                <i class="bi bi-check-lg"></i>
-            </div>
-            <h3 class="modal-title">Order Placed Successfully!</h3>
-            <p class="modal-text">
-                Thank you for your purchase. Your order has been confirmed and will be processed shortly.
-                You will receive an email confirmation with your order details.
-            </p>
-            <div style="display: flex; gap: 1rem; justify-content: center;">
-                <a href="{{ url_for('orders') }}" class="place-order-btn" style="max-width: 200px;">
-                    View Orders
-                </a>
-                <a href="{{ url_for('products') }}" class="continue-shopping" style="max-width: 200px;">
-                    Continue Shopping
-                </a>
-            </div>
-        </div>
     </div>
-
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+    
+    <!-- Floating Cart -->
+    <a href="{{ url_for('cart') }}" class="floating-cart">
+        <i class="bi bi-cart-fill"></i>
+        <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
+    </a>
+    
+    <!-- Toast -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg"></span>
+    </div>
+    
     <script>
-        // Delivery option selection
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.style.background = isError ? '#dc2626' : '#1e293b';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Parse currency value
+        function parseCurrencyValue(currencyString) {
+            if (!currencyString) return 0;
+            const numericValue = parseFloat(currencyString.replace(/[^\d.-]/g, ''));
+            return isNaN(numericValue) ? 0 : numericValue;
+        }
+        
+        // Update shipping cost and totals
+        function updateShippingAndTotals() {
+            const selectedOption = document.querySelector('input[name="delivery_option"]:checked');
+            const subtotal = {{ total }};
+            let shippingCost = 0;
+            let shippingText = 'Free';
+            
+            if (selectedOption && selectedOption.value === 'express') {
+                shippingCost = 150;
+                shippingText = 'KES 150';
+            }
+            
+            const tax = subtotal * 0.08;
+            const grandTotal = subtotal + shippingCost + tax;
+            
+            // Update shipping display
+            const shippingElement = document.getElementById('shippingAmount');
+            if (shippingElement) {
+                shippingElement.textContent = shippingText;
+            }
+            
+            // Update tax
+            const taxElement = document.getElementById('taxAmount');
+            if (taxElement) {
+                taxElement.textContent = `KES ${tax.toFixed(2)}`;
+            }
+            
+            // Update grand total
+            const grandTotalElement = document.getElementById('grandTotal');
+            if (grandTotalElement) {
+                grandTotalElement.textContent = `KES ${grandTotal.toFixed(2)}`;
+            }
+        }
+        
+        // Delivery option selection styling
         document.querySelectorAll('.delivery-option').forEach(option => {
             option.addEventListener('click', function() {
-                // Remove selected class from all options
                 document.querySelectorAll('.delivery-option').forEach(opt => {
                     opt.classList.remove('selected');
                 });
-                
-                // Add selected class to clicked option
                 this.classList.add('selected');
-                
-                // Check the radio input
                 const radio = this.querySelector('.option-radio');
-                radio.checked = true;
-                
-                // Update shipping cost
-                updateShippingCost(radio.value);
+                if (radio) radio.checked = true;
+                updateShippingAndTotals();
             });
         });
         
-        // Update shipping cost
-        function updateShippingCost(option) {
-            const shippingElement = document.getElementById('shippingCost');
-            const subtotal = {{ total }};
-            let shippingCost = 0;
-            let taxRate = 0.08;
-            
-            switch(option) {
-                case 'express':
-                    shippingCost = 150;
-                    shippingElement.textContent = '{{ currency_symbol }} 150';
-                    break;
-                case 'pickup':
-                    shippingCost = 0;
-                    shippingElement.textContent = 'Free';
-                    break;
-                default:
-                    shippingCost = 0;
-                    shippingElement.textContent = 'Free';
-            }
-            
-            const tax = subtotal * taxRate;
-            const grandTotal = subtotal + shippingCost + tax;
-            
-            // Update grand total
-            document.getElementById('grandTotal').textContent = '{{ currency_symbol }} ' + grandTotal.toFixed(2);
-        }
-        
         // Form validation and submission
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-            // Basic validation
-            const shippingAddress = document.getElementById('shipping_address').value.trim();
-            const contactName = document.getElementById('contact_name').value.trim();
-            const contactEmail = document.getElementById('contact_email').value.trim();
-            
-            if (!shippingAddress) {
-                e.preventDefault();
-                alert('Please enter your shipping address');
-                document.getElementById('shipping_address').focus();
-                return;
-            }
-            
-            if (!contactName) {
-                e.preventDefault();
-                alert('Please enter your name');
-                document.getElementById('contact_name').focus();
-                return;
-            }
-            
-            if (!contactEmail || !isValidEmail(contactEmail)) {
-                e.preventDefault();
-                alert('Please enter a valid email address');
-                document.getElementById('contact_email').focus();
-                return;
-            }
-            
-            // Validation passed: show loading state and allow form to submit (server will redirect to payment page)
-            const submitBtn = this.querySelector('.place-order-btn');
-            submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Proceeding to Payment...';
-            submitBtn.disabled = true;
-        });
+        const checkoutForm = document.getElementById('checkoutForm');
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
         
-        // Email validation
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', function(e) {
+                const shippingAddress = document.getElementById('shipping_address').value.trim();
+                const contactName = document.getElementById('contact_name').value.trim();
+                const contactEmail = document.getElementById('contact_email').value.trim();
+                
+                if (!shippingAddress) {
+                    e.preventDefault();
+                    showToast('Please enter your shipping address', true);
+                    document.getElementById('shipping_address').focus();
+                    return;
+                }
+                
+                if (!contactName) {
+                    e.preventDefault();
+                    showToast('Please enter your name', true);
+                    document.getElementById('contact_name').focus();
+                    return;
+                }
+                
+                if (!contactEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactEmail)) {
+                    e.preventDefault();
+                    showToast('Please enter a valid email address', true);
+                    document.getElementById('contact_email').focus();
+                    return;
+                }
+                
+                // Show loading state
+                if (placeOrderBtn) {
+                    placeOrderBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processing...';
+                    placeOrderBtn.disabled = true;
+                }
+            });
         }
         
-        // Add CSS for spinner
-        const style = document.createElement('style');
-        style.textContent = `
-            .spin {
-                animation: spin 1s linear infinite;
-            }
-            
-            @keyframes spin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Initialize shipping cost
-        updateShippingCost('standard');
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateShippingAndTotals();
+        });
     </script>
 </body>
 </html>
