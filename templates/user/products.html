@@ -3,43 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Natural Herbal Products | HerbalCare Store</title>
-    <meta name="description" content="Browse our premium collection of natural herbal remedies, supplements, and wellness products">
+    <title>Products | Shifaa Herbal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2e7d32;
-            --primary-light: #e8f5e8;
-            --primary-dark: #1b5e20;
-            --secondary-color: #4a7c59;
-            --success-color: #06d6a0;
-            --warning-color: #ffd166;
-            --danger-color: #ef476f;
-            --dark-color: #121826;
-            --light-color: #f8fafc;
-            --gray-50: #f9fafb;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --radius-sm: 0.5rem;
-            --radius-md: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.25rem;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -47,116 +15,122 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f0f7f0 0%, #f8fafc 100%);
-            color: var(--gray-800);
-            line-height: 1.6;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.5;
         }
         
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            padding: 3rem 0;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%231b5e20' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-            opacity: 0.3;
-        }
-        
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .header-content {
-            max-width: 800px;
-        }
-        
-        .header-content h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            line-height: 1.1;
-            letter-spacing: -0.025em;
-        }
-        
-        .header-content p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-        }
-        
-        /* Navigation Actions */
-        .navigation-actions {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        /* Top Navigation Bar */
+        .top-nav {
             background: white;
-            padding: 1.5rem 2rem;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 0.75rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
-        .back-dashboard-btn {
-            display: inline-flex;
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-image {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2e7d32;
+        }
+        
+        .back-btn {
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            background: var(--primary-light);
-            color: var(--primary-dark);
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             text-decoration: none;
-            font-weight: 600;
             font-size: 0.875rem;
-            transition: var(--transition-smooth);
-            border: 2px solid transparent;
+            font-weight: 500;
+            transition: all 0.2s;
         }
         
-        .back-dashboard-btn:hover {
-            background: white;
-            border-color: var(--primary-color);
-            transform: translateX(-4px);
-            color: var(--primary-color);
+        .back-btn:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .user-name {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
         }
         
         /* Main Container */
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1.5rem;
         }
         
-        /* Search & Filter Section */
-        .search-filter-section {
+        /* Page Header */
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+        
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #121826;
+        }
+        
+        .page-header p {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        /* Search Section */
+        .search-section {
             background: white;
-            padding: 2rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            margin-bottom: 2rem;
-            border: 1px solid var(--gray-200);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
         }
         
         .search-wrapper {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+            gap: 0.75rem;
         }
         
         .search-input-group {
@@ -166,767 +140,452 @@
         
         .search-input {
             width: 100%;
-            padding: 0.875rem 1rem 0.875rem 3rem;
-            border: 2px solid var(--gray-300);
-            border-radius: var(--radius-md);
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            transition: var(--transition-base);
-            background: var(--gray-50);
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            outline: none;
+            transition: all 0.2s;
         }
         
         .search-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
         
         .search-icon {
             position: absolute;
-            left: 1rem;
+            left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray-500);
-            pointer-events: none;
+            color: #94a3b8;
         }
         
         .search-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: #2e7d32;
             color: white;
             border: none;
-            padding: 0.875rem 2rem;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 1rem;
+            padding: 0.625rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition-smooth);
-            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
+            transition: all 0.2s;
         }
         
         .search-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
+            background: #1b5e20;
         }
         
         /* Categories */
         .categories-section {
-            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
         
-        .categories-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-600);
-            margin-bottom: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .categories-list {
+        .categories-scroll {
             display: flex;
-            flex-wrap: wrap;
             gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            flex-wrap: wrap;
         }
         
-        .category-btn {
-            padding: 0.5rem 1.25rem;
-            background: var(--gray-100);
-            border: 2px solid transparent;
+        .category-chip {
+            padding: 0.375rem 1rem;
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 2rem;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 500;
-            color: var(--gray-700);
-            cursor: pointer;
-            transition: var(--transition-base);
+            color: #4a5568;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
+            white-space: nowrap;
+            transition: all 0.2s;
         }
         
-        .category-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            border-color: var(--primary-light);
-            transform: translateY(-2px);
+        .category-chip:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
         }
         
-        .category-btn.active {
-            background: var(--primary-color);
+        .category-chip.active {
+            background: #2e7d32;
+            border-color: #2e7d32;
             color: white;
-            border-color: var(--primary-color);
-            font-weight: 600;
         }
         
         /* Products Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
         }
         
-        /* Product Card */
         .product-card {
             background: white;
-            border-radius: var(--radius-lg);
+            border-radius: 0.75rem;
             overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-smooth);
-            border: 1px solid var(--gray-200);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
         }
         
         .product-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--primary-color);
-        }
-        
-        .product-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-            z-index: 2;
-        }
-        
-        .product-image-container {
-            height: 240px;
-            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
-            position: relative;
-            overflow: hidden;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border-color: #2e7d32;
         }
         
         .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .product-card:hover .product-image {
-            transform: scale(1.1);
-        }
-        
-        .image-placeholder {
+            height: 200px;
+            background: #f1f5f9;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            color: var(--primary-color);
-            opacity: 0.3;
-        }
-        
-        .image-placeholder i {
-            font-size: 5rem;
-        }
-        
-        .product-badges {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 3;
-        }
-        
-        .product-badge {
-            padding: 0.375rem 0.875rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.025em;
-            text-transform: uppercase;
-            backdrop-filter: blur(8px);
-        }
-        
-        .badge-featured {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-        }
-        
-        .badge-low-stock {
-            background: linear-gradient(135deg, var(--warning-color), #ffb142);
-            color: #7c5019;
-        }
-        
-        .badge-new {
-            background: linear-gradient(135deg, var(--success-color), #05c48a);
-            color: #034732;
-        }
-        
-        .product-content {
-            padding: 1.5rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-header {
-            margin-bottom: 1rem;
-        }
-        
-        .product-category {
-            display: inline-block;
-            background: var(--primary-light);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-        }
-        
-        .product-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            line-height: 1.3;
-            margin-bottom: 0.75rem;
-        }
-        
-        .product-description {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-            flex: 1;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
             overflow: hidden;
         }
         
-        .product-footer {
-            margin-top: auto;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-image i {
+            font-size: 3rem;
+            color: #cbd5e1;
+        }
+        
+        .product-info {
+            padding: 1rem;
+        }
+        
+        .product-category {
+            font-size: 0.625rem;
+            color: #2e7d32;
+            background: #e8f5e9;
+            padding: 0.125rem 0.5rem;
+            border-radius: 1rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
         }
         
         .product-price {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--dark-color);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2e7d32;
+            margin: 0.5rem 0;
         }
         
         .product-actions {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid #e2e8f0;
         }
         
         .btn-view {
-            padding: 0.625rem 1.25rem;
-            background: transparent;
-            border: 2px solid var(--gray-300);
-            border-radius: var(--radius-md);
-            color: var(--gray-700);
-            font-size: 0.875rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition-base);
+            flex: 1;
+            background: #f1f5f9;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #4a5568;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: all 0.2s;
         }
         
         .btn-view:hover {
-            background: var(--primary-light);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-1px);
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         
-        .btn-add-to-cart {
-            padding: 0.625rem 1.25rem;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            border: none;
-            border-radius: var(--radius-md);
+        .btn-add {
+            flex: 1;
+            background: #2e7d32;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
             color: white;
-            font-size: 0.875rem;
-            font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.2s;
+        }
+        
+        .btn-add:hover:not(:disabled) {
+            background: #1b5e20;
+        }
+        
+        .btn-add:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+        
+        /* Floating Cart */
+        .floating-cart {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #2e7d32;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+        
+        .floating-cart:hover {
+            transform: scale(1.05);
+            background: #1b5e20;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef476f;
+            color: white;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.125rem 0.375rem;
+            border-radius: 50%;
+            min-width: 20px;
+            text-align: center;
+        }
+        
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 5rem;
+            right: 1.5rem;
+            background: #1a1a2e;
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
+            font-size: 0.813rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s;
         }
         
-        .btn-add-to-cart:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
-        }
-        
-        .btn-add-to-cart:disabled {
-            background: var(--gray-400);
-            cursor: not-allowed;
-            opacity: 0.7;
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
         }
         
         /* Empty State */
         .empty-state {
-            grid-column: 1 / -1;
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem;
             background: white;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-            border: 2px dashed var(--gray-300);
+            border-radius: 0.75rem;
+            grid-column: 1 / -1;
         }
         
-        .empty-icon {
-            font-size: 4rem;
-            color: var(--gray-300);
-            margin-bottom: 1.5rem;
-            opacity: 0.5;
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+            margin-top: 2rem;
         }
         
-        .empty-state h3 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--gray-600);
-            margin-bottom: 0.5rem;
-        }
-        
-        .empty-state p {
-            color: var(--gray-500);
-            margin-bottom: 1.5rem;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* Cart Notification */
-        .cart-notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: linear-gradient(135deg, var(--success-color), #05c48a);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-xl);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            z-index: 1000;
-            transform: translateX(100%) scale(0.8);
-            opacity: 0;
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
-                        opacity 0.3s ease;
-            max-width: 350px;
-        }
-        
-        .cart-notification.show {
-            transform: translateX(0) scale(1);
-            opacity: 1;
-        }
-        
-        .notification-icon {
-            font-size: 1.5rem;
-        }
-        
-        /* Responsive Design */
+        /* Mobile */
         @media (max-width: 768px) {
-            .header-container {
-                padding: 0 1rem;
+            .top-nav {
+                padding: 0.75rem 1rem;
             }
             
-            .header-content h1 {
-                font-size: 2rem;
-            }
-            
-            .header-content p {
-                font-size: 1rem;
-            }
-            
-            .navigation-actions {
-                padding: 1rem;
-                flex-direction: column;
-                gap: 1rem;
-                align-items: stretch;
+            .user-name {
+                display: none;
             }
             
             .main-container {
                 padding: 1rem;
             }
             
-            .search-filter-section {
-                padding: 1.5rem;
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+            }
+            
+            .product-image {
+                height: 150px;
             }
             
             .search-wrapper {
                 flex-direction: column;
             }
-            
+        }
+        
+        @media (max-width: 480px) {
             .products-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .categories-list {
-                justify-content: center;
-            }
-        }
-        
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .product-card {
-            animation: fadeInUp 0.5s ease forwards;
-            opacity: 0;
-        }
-        
-        .product-card:nth-child(1) { animation-delay: 0.1s; }
-        .product-card:nth-child(2) { animation-delay: 0.2s; }
-        .product-card:nth-child(3) { animation-delay: 0.3s; }
-        .product-card:nth-child(4) { animation-delay: 0.4s; }
-        .product-card:nth-child(5) { animation-delay: 0.5s; }
-        .product-card:nth-child(6) { animation-delay: 0.6s; }
-        
-        /* Focus States */
-        :focus-visible {
-            outline: 3px solid var(--primary-color);
-            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="page-header" role="banner">
-        <div class="header-container">
-            <div class="header-content">
-                <h1>Natural Herbal Remedies</h1>
-                <p>Discover nature's healing power with our premium collection of organic herbal products, carefully sourced and prepared for your wellness journey.</p>
-            </div>
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Remedies </span>
         </div>
-    </header>
-
-    <!-- Navigation Actions -->
-    <nav class="navigation-actions" aria-label="Product navigation">
-        <a href="{{ url_for('dashboard') }}" class="back-dashboard-btn">
-            <i class="bi bi-speedometer2"></i>
-            Return to Dashboard
+        
+        <a href="{{ url_for('dashboard') }}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
         </a>
-        <span class="product-count" role="status">
-            {{ products|length }} products found
-        </span>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main-container" id="main-content">
-        <!-- Search and Filters -->
-        <section class="search-filter-section" aria-label="Product search and filters">
-            <form method="GET" class="search-wrapper">
-                <div class="search-input-group">
-                    <i class="bi bi-search search-icon" aria-hidden="true"></i>
-                    <input 
-                        type="search" 
-                        name="search" 
-                        class="search-input" 
-                        placeholder="Search herbal products by name, description, or benefits..." 
-                        value="{{ search }}"
-                        aria-label="Search products"
-                    >
-                </div>
-                <button type="submit" class="search-btn">
-                    <i class="bi bi-search" aria-hidden="true"></i> 
-                    <span>Search</span>
-                </button>
-            </form>
-            
-            <div class="categories-section">
-                <h2 class="categories-title">Browse Categories</h2>
-                <div class="categories-list" role="tablist">
-                    <a 
-                        href="{{ url_for('products') }}" 
-                        class="category-btn {{ 'active' if not current_category else '' }}"
-                        role="tab"
-                        aria-selected="{{ 'true' if not current_category else 'false' }}"
-                    >
-                        All Products
-                    </a>
-                    {% for cat in categories %}
-                    <a 
-                        href="{{ url_for('products', category=cat) }}" 
-                        class="category-btn {{ 'active' if current_category == cat else '' }}"
-                        role="tab"
-                        aria-selected="{{ 'true' if current_category == cat else 'false' }}"
-                    >
-                        {{ cat }}
-                    </a>
-                    {% endfor %}
-                </div>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
             </div>
-        </section>
-
-        <!-- Products Grid -->
-        <section class="products-grid" aria-label="Products listing">
-            {% for product in products %}
-            <article class="product-card" itemscope itemtype="https://schema.org/Product">
-                <div class="product-image-container">
-                    {% if product.image_url %}
-                    <img 
-                        src="{{ product.image_url }}" 
-                        alt="{{ product.name }}" 
-                        class="product-image" 
-                        loading="lazy"
-                        itemprop="image"
-                    >
-                    {% else %}
-                    <div class="image-placeholder" aria-hidden="true">
-                        <i class="bi bi-capsule"></i>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="product-badges">
-                        {% if product.featured %}
-                        <span class="product-badge badge-featured" aria-label="Featured product">Featured</span>
-                        {% endif %}
-                        {% if product.stock and product.stock < 10 %}
-                        <span class="product-badge badge-low-stock" aria-label="Low stock">Low Stock</span>
-                        {% endif %}
-                        {% if product.is_new %}
-                        <span class="product-badge badge-new" aria-label="New product">New</span>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="product-content">
-                    <div class="product-header">
-                        {% if product.category %}
-                        <span class="product-category" itemprop="category">{{ product.category }}</span>
-                        {% endif %}
-                        <h3 class="product-title" itemprop="name">{{ product.name }}</h3>
-                        <p class="product-description" itemprop="description">
-                            {{ product.description[:150] }}{% if product.description|length > 150 %}...{% endif %}
-                        </p>
-                    </div>
-                    
-                    <div class="product-footer">
-                        <div class="product-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                            <meta itemprop="priceCurrency" content="USD">
-                            <span itemprop="price">{{ product.price|currency }}</span>
-                        </div>
-                        <div class="product-actions">
-                            <a 
-                                href="{{ url_for('product_detail', product_id=product.id) }}" 
-                                class="btn-view"
-                                aria-label="View details of {{ product.name }}"
-                            >
-                                <i class="bi bi-eye" aria-hidden="true"></i> 
-                                <span>View</span>
-                            </a>
-                            <form 
-                                method="POST" 
-                                action="{{ url_for('add_to_cart', product_id=product.id) }}" 
-                                class="add-to-cart-form"
-                                data-product-name="{{ product.name }}"
-                            >
-                                <input type="hidden" name="quantity" value="1">
-                                <button 
-                                    type="submit" 
-                                    class="btn-add-to-cart"
-                                    {% if not product.stock or product.stock == 0 %}disabled{% endif %}
-                                    aria-label="Add {{ product.name }} to cart"
-                                >
-                                    <i class="bi bi-cart-plus" aria-hidden="true"></i> 
-                                    <span>Add to Cart</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </article>
-            {% else %}
-            <div class="empty-state">
-                <i class="bi bi-search empty-icon" aria-hidden="true"></i>
-                <h3>No Products Found</h3>
-                <p>Try adjusting your search terms or browse all categories to find what you're looking for.</p>
-                <a href="{{ url_for('products') }}" class="search-btn">
-                    <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> 
-                    View All Products
-                </a>
-            </div>
-            {% endfor %}
-        </section>
-    </main>
-
-    <!-- Cart Notification -->
-    <div class="cart-notification" id="cartNotification" role="alert" aria-live="polite" aria-atomic="true">
-        <i class="bi bi-check-circle-fill notification-icon" aria-hidden="true"></i>
-        <div class="notification-content">
-            <strong>Added to cart!</strong>
-            <span id="notificationMessage"></span>
         </div>
     </div>
-
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Herbal Products</h1>
+            <p>Discover nature's healing power with our premium collection</p>
+        </div>
+        
+        <!-- Search Section -->
+        <div class="search-section">
+            <form method="GET" class="search-wrapper">
+                <div class="search-input-group">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="search" name="search" class="search-input" placeholder="Search products by name, category..." value="{{ search }}">
+                </div>
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+        </div>
+        
+        <!-- Categories -->
+        <div class="categories-section">
+            <div class="categories-scroll">
+                <a href="{{ url_for('products') }}" class="category-chip {{ 'active' if not current_category else '' }}">All Products</a>
+                {% for cat in categories %}
+                <a href="{{ url_for('products', category=cat) }}" class="category-chip {{ 'active' if current_category == cat else '' }}">{{ cat }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div class="products-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.image_url %}
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy">
+                    {% else %}
+                    <i class="bi bi-flower1"></i>
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    {% if product.category %}
+                    <span class="product-category">{{ product.category }}</span>
+                    {% endif %}
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <div class="product-price">{{ product.price|currency }}</div>
+                    <div class="product-actions">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn-view">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" class="add-form" data-name="{{ product.name }}">
+                            <input type="hidden" name="quantity" value="1">
+                            <button type="submit" class="btn-add" {% if not product.stock or product.stock == 0 %}disabled{% endif %}>
+                                <i class="bi bi-cart-plus"></i> Add
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-emoji-frown" style="font-size: 3rem; color: #cbd5e1;"></i>
+                <h4 style="margin-top: 1rem;">No products found</h4>
+                <p style="color: #718096;">Try adjusting your search or browse all categories</p>
+                <a href="{{ url_for('products') }}" class="search-btn" style="display: inline-block; margin-top: 0.5rem;">View All Products</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+    
+    <!-- Floating Cart Button -->
+    <a href="{{ url_for('cart') }}" class="floating-cart">
+        <i class="bi bi-cart-fill"></i>
+        <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
+    </a>
+    
+    <!-- Toast Notification -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg">Added to cart!</span>
+    </div>
+    
     <script>
-        // Enhanced cart notification system
-        document.addEventListener('DOMContentLoaded', function() {
-            const forms = document.querySelectorAll('.add-to-cart-form');
-            const notification = document.getElementById('cartNotification');
-            const notificationMessage = document.getElementById('notificationMessage');
-            
-            forms.forEach(form => {
-                form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    const productName = this.dataset.productName;
-                    const formData = new FormData(this);
-                    
-                    // Update notification message
-                    notificationMessage.textContent = `${productName} has been added to your cart.`;
-                    
-                    // Show notification with animation
-                    notification.classList.add('show');
-                    
-                    // Hide notification after 3 seconds
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 3000);
-                    
-                    // Submit form after a brief delay
-                    setTimeout(() => {
-                        this.submit();
-                    }, 100);
-                });
-            });
-            
-            // Search debounce functionality
-            const searchInput = document.querySelector('input[name="search"]');
-            if (searchInput) {
-                let searchTimeout;
-                searchInput.addEventListener('input', function(e) {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        if (this.value.length > 2 || this.value.length === 0) {
-                            this.form.submit();
-                        }
-                    }, 500);
-                });
-            }
-            
-            // Intersection Observer for animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-            
-            // Observe product cards
-            document.querySelectorAll('.product-card').forEach(card => {
-                observer.observe(card);
-            });
-            
-            // Category button interactions
-            const categoryButtons = document.querySelectorAll('.category-btn');
-            categoryButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    // Add loading state
-                    const main = document.getElementById('main-content');
-                    main.classList.add('loading');
-                    
-                    // Remove active class from all buttons
-                    categoryButtons.forEach(btn => {
-                        btn.classList.remove('active');
-                        btn.setAttribute('aria-selected', 'false');
-                    });
-                    
-                    // Add active class to clicked button
-                    this.classList.add('active');
-                    this.setAttribute('aria-selected', 'true');
-                });
-            });
-            
-            // Add loading state
-            document.addEventListener('submit', function(e) {
-                if (e.target.matches('form')) {
-                    const main = document.getElementById('main-content');
-                    main.classList.add('loading');
-                }
+        // Add to cart with toast
+        const forms = document.querySelectorAll('.add-form');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMsg');
+        const cartCountSpan = document.getElementById('cartCount');
+        
+        let currentCartCount = parseInt(cartCountSpan.innerText) || 0;
+        
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const productName = this.dataset.name;
+                
+                toastMsg.textContent = `${productName} added to cart!`;
+                toast.classList.add('show');
+                
+                currentCartCount += 1;
+                cartCountSpan.innerText = currentCartCount;
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+                
+                setTimeout(() => {
+                    this.submit();
+                }, 300);
             });
         });
-        
-        // Add loading styles
-        const style = document.createElement('style');
-        style.textContent = `
-            .loading {
-                position: relative;
-            }
-            
-            .loading::after {
-                content: '';
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(255, 255, 255, 0.8);
-                z-index: 9999;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .loading::before {
-                content: '';
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 50px;
-                height: 50px;
-                border: 3px solid var(--gray-300);
-                border-top-color: var(--primary-color);
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-                z-index: 10000;
-            }
-            
-            @keyframes spin {
-                to { transform: translate(-50%, -50%) rotate(360deg); }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
