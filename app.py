@@ -2,8 +2,7 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from functools import wraps
-
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -19,21 +18,18 @@ def create_app():
 
     # Basic config
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
-    # Use absolute path for database
     db_path = os.path.join(BASE_DIR, "shifaa.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    # Currency: Kenyan Shillings
     app.config["CURRENCY_SYMBOL"] = os.getenv("CURRENCY_SYMBOL", "KSh")
     app.config["CURRENCY_CODE"] = os.getenv("CURRENCY_CODE", "KES")
-    # M-Pesa Till Number
     app.config["MPESA_TILL_NUMBER"] = os.getenv("MPESA_TILL_NUMBER", "622255")
 
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "login"
 
-    from models import User  # noqa: F401
+    from models import User
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -63,17 +59,15 @@ def create_app():
             return f(*args, **kwargs)
         return decorated
 
-    # Routes
+    # ========== AUTHENTICATION ROUTES ==========
     @app.route("/")
     def index():
-        # Redirect authenticated users to dashboard
         if current_user.is_authenticated:
             return redirect(url_for("dashboard"))
         return render_template("base.html")
 
     @app.route("/register", methods=["GET", "POST"])
     def register():
-        # Redirect authenticated users to dashboard
         if current_user.is_authenticated:
             return redirect(url_for("dashboard"))
         
@@ -90,7 +84,6 @@ def create_app():
             elif len(password) < 6:
                 flash("Password must be at least 6 characters long.", "error")
             else:
-                # Handle email domain
                 if "@" in email_input:
                     email = email_input
                     if not email.endswith("@shifaaherbal.com"):
@@ -111,7 +104,6 @@ def create_app():
                     )
                     db.session.add(user)
                     db.session.commit()
-                    # Automatically log in the user after registration
                     login_user(user)
                     flash("Account created successfully! Welcome to Shifaa Herbal.", "success")
                     return redirect(url_for("dashboard"))
@@ -120,18 +112,9 @@ def create_app():
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
-        """
-        Handle user login with support for both admin and regular users.
-        - If user is already authenticated, redirect to dashboard
-        - Check URL parameter 'type=admin' to show admin login form
-        - Regular users see the standard login form
-        """
-        # Redirect authenticated users to dashboard
         if current_user.is_authenticated:
             return redirect(url_for("dashboard"))
         
-        # Check if this is an admin login attempt via URL parameter
-        # Example: /login?type=admin
         is_admin_login = request.args.get('type') == 'admin'
         
         if request.method == "POST":
@@ -143,21 +126,13 @@ def create_app():
                 login_user(user)
                 flash("Welcome back!", "success")
                 next_page = request.args.get("next")
-                
-                # Redirect based on user role
-                if user.role == "admin":
-                    return redirect(next_page or url_for("dashboard"))
-                else:
-                    return redirect(next_page or url_for("dashboard"))
+                return redirect(next_page or url_for("dashboard"))
             
             flash("Invalid email or password", "danger")
         
-        # Render appropriate template based on login type
         if is_admin_login:
-            # Show admin login form with admin badge
             return render_template("auth/admin_login.html")
         else:
-            # Show regular user login form
             return render_template("auth/login.html")
 
     @app.route("/logout")
@@ -167,6 +142,7 @@ def create_app():
         flash("You have been logged out.", "info")
         return redirect(url_for("index"))
 
+    # ========== DASHBOARD ==========
     @app.route("/dashboard")
     @login_required
     def dashboard():
@@ -184,6 +160,7 @@ def create_app():
                 Appointment.status == "scheduled"
             ).order_by(Appointment.appointment_date).limit(5).all()
             low_stock = Product.query.filter(Product.stock > 0, Product.stock < 10).count()
+            
             return render_template(
                 "admin/dashboard.html",
                 product_count=product_count,
@@ -198,7 +175,6 @@ def create_app():
             )
         
         from models import Order, Appointment, CartItem
-        # Get user stats for dashboard
         recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
         upcoming_appointments = Appointment.query.filter_by(
             user_id=current_user.id, 
@@ -206,11 +182,12 @@ def create_app():
         ).filter(Appointment.appointment_date >= datetime.utcnow()).order_by(Appointment.appointment_date).limit(5).all()
         cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
         
-        return render_template("user/dashboard.html", recent_orders=recent_orders, upcoming_appointments=upcoming_appointments, cart_count=cart_count)
+        return render_template("user/dashboard.html", 
+                             recent_orders=recent_orders, 
+                             upcoming_appointments=upcoming_appointments, 
+                             cart_count=cart_count)
 
-    # ========== USER ROUTES ==========
-    
-    # Products
+    # ========== PRODUCT ROUTES ==========
     @app.route("/products")
     def products():
         from models import Product
@@ -227,22 +204,66 @@ def create_app():
         categories = db.session.query(Product.category).distinct().all()
         categories = [c[0] for c in categories if c[0]]
         
-        return render_template("user/products.html", products=products_list, categories=categories, current_category=category, search=search)
+        return render_template("user/products.html", 
+                             products=products_list, 
+                             categories=categories, 
+                             current_category=category, 
+                             search=search)
     
     @app.route("/products/<int:product_id>")
     def product_detail(product_id):
         from models import Product
         product = Product.query.get_or_404(product_id)
         return render_template("user/product_detail.html", product=product)
-    
-    # Cart
-    @app.route("/cart")
+
+    # ========== CART ROUTES ==========
+    @app.route("/add-to-cart/<int:product_id>", methods=["POST"])
     @login_required
-    def cart():
-        from models import CartItem
-        cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
-        total = sum(item.product.price * item.quantity for item in cart_items)
-        return render_template("user/cart.html", cart_items=cart_items, total=total)
+    def add_to_cart_ajax(product_id):
+        """AJAX endpoint for adding to cart - returns JSON response"""
+        from models import CartItem, Product
+        
+        try:
+            data = request.get_json()
+            quantity = data.get('quantity', 1)
+            product = Product.query.get_or_404(product_id)
+            
+            if product.stock < quantity:
+                return jsonify({
+                    'success': False,
+                    'message': f'Only {product.stock} items in stock'
+                }), 400
+            
+            cart_item = CartItem.query.filter_by(
+                user_id=current_user.id, 
+                product_id=product_id
+            ).first()
+            
+            if cart_item:
+                cart_item.quantity += quantity
+            else:
+                cart_item = CartItem(
+                    user_id=current_user.id, 
+                    product_id=product_id, 
+                    quantity=quantity
+                )
+                db.session.add(cart_item)
+            
+            db.session.commit()
+            cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
+            
+            return jsonify({
+                'success': True,
+                'cart_count': cart_count,
+                'message': f'{product.name} added to cart'
+            })
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                'success': False,
+                'message': str(e)
+            }), 400
     
     @app.route("/cart/add/<int:product_id>", methods=["POST"])
     @login_required
@@ -261,6 +282,14 @@ def create_app():
         db.session.commit()
         flash(f"{product.name} added to cart.", "success")
         return redirect(request.referrer or url_for("products"))
+    
+    @app.route("/cart")
+    @login_required
+    def cart():
+        from models import CartItem
+        cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+        total = sum(item.product.price * item.quantity for item in cart_items)
+        return render_template("user/cart.html", cart_items=cart_items, total=total)
     
     @app.route("/cart/update/<int:item_id>", methods=["POST"])
     @login_required
@@ -292,12 +321,12 @@ def create_app():
         db.session.commit()
         flash("Item removed from cart.", "success")
         return redirect(url_for("cart"))
-    
-    # Checkout
+
+    # ========== CHECKOUT & PAYMENT ==========
     @app.route("/checkout", methods=["GET", "POST"])
     @login_required
     def checkout():
-        from models import CartItem, Order, OrderItem
+        from models import CartItem
         cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
         
         if not cart_items:
@@ -311,7 +340,6 @@ def create_app():
             contact_email = request.form.get("contact_email", current_user.email)
             contact_phone = request.form.get("contact_phone", current_user.phone or "")
             
-            # Save checkout info to session and redirect to payment page
             session["checkout_info"] = {
                 "shipping_address": shipping_address,
                 "delivery_option": delivery_option,
@@ -325,13 +353,12 @@ def create_app():
         total = sum(item.product.price * item.quantity for item in cart_items)
         return render_template("user/checkout.html", cart_items=cart_items, total=float(total))
     
-    # Payment
     @app.route("/payment", methods=["GET", "POST"])
     @login_required
     def payment():
         from models import CartItem, Order, OrderItem
+        import random
         
-        # Check if checkout info exists in session
         if "checkout_info" not in session:
             flash("Please complete checkout first.", "warning")
             return redirect(url_for("checkout"))
@@ -346,8 +373,6 @@ def create_app():
         total = sum(item.product.price * item.quantity for item in cart_items)
         
         if request.method == "POST":
-            # User confirmed payment - create order
-            import random
             order_number = f"SHF{random.randint(100000, 999999)}"
             order = Order(
                 user_id=current_user.id,
@@ -360,7 +385,6 @@ def create_app():
             db.session.add(order)
             db.session.flush()
             
-            # Create order items
             for cart_item in cart_items:
                 order_item = OrderItem(
                     order_id=order.id,
@@ -370,7 +394,6 @@ def create_app():
                 )
                 db.session.add(order_item)
             
-            # Clear cart and session
             CartItem.query.filter_by(user_id=current_user.id).delete()
             session.pop("checkout_info", None)
             db.session.commit()
@@ -378,9 +401,12 @@ def create_app():
             flash("Order received! Pay via M-Pesa to Till No. " + app.config["MPESA_TILL_NUMBER"] + " to complete payment.", "success")
             return redirect(url_for("order_detail", order_id=order.id))
         
-        return render_template("user/payment.html", cart_items=cart_items, total=float(total), checkout_info=checkout_info)
-    
-    # Orders
+        return render_template("user/payment.html", 
+                             cart_items=cart_items, 
+                             total=float(total), 
+                             checkout_info=checkout_info)
+
+    # ========== ORDER ROUTES ==========
     @app.route("/orders")
     @login_required
     def orders():
@@ -418,8 +444,8 @@ def create_app():
         db.session.commit()
         flash("Items added to cart.", "success")
         return redirect(url_for("cart"))
-    
-    # Practitioners
+
+    # ========== PRACTITIONER ROUTES ==========
     @app.route("/practitioners")
     def practitioners():
         from models import Practitioner
@@ -431,8 +457,8 @@ def create_app():
         from models import Practitioner
         practitioner = Practitioner.query.get_or_404(practitioner_id)
         return render_template("user/practitioner_detail.html", practitioner=practitioner)
-    
-    # Appointments
+
+    # ========== APPOINTMENT ROUTES ==========
     @app.route("/appointments")
     @login_required
     def appointments():
@@ -482,8 +508,8 @@ def create_app():
             flash("Unauthorized.", "error")
             return redirect(url_for("appointments"))
         return render_template("user/appointment_detail.html", appointment=appointment)
-    
-    # Profile
+
+    # ========== PROFILE ROUTES ==========
     @app.route("/profile", methods=["GET", "POST"])
     @login_required
     def profile():
@@ -504,24 +530,25 @@ def create_app():
             flash("Profile updated successfully.", "success")
             return redirect(url_for("profile"))
         
-        # Fetch user's orders and appointments
         from models import Order, Appointment
         recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
-        upcoming_appointments = Appointment.query.filter_by(user_id=current_user.id).filter(Appointment.appointment_date >= datetime.utcnow()).order_by(Appointment.appointment_date.asc()).limit(5).all()
+        upcoming_appointments = Appointment.query.filter_by(user_id=current_user.id).filter(
+            Appointment.appointment_date >= datetime.utcnow()
+        ).order_by(Appointment.appointment_date.asc()).limit(5).all()
         
-        return render_template("user/profile.html", recent_orders=recent_orders, upcoming_appointments=upcoming_appointments)
-    
-    # Health Information
+        return render_template("user/profile.html", 
+                             recent_orders=recent_orders, 
+                             upcoming_appointments=upcoming_appointments)
+
+    # ========== STATIC PAGES ==========
     @app.route("/health-info")
     def health_info():
         return render_template("user/health_info.html")
     
-    # Community
     @app.route("/community")
     def community():
         return render_template("user/community.html")
     
-    # Support
     @app.route("/support")
     def support():
         return render_template("user/support.html")
@@ -542,7 +569,11 @@ def create_app():
         products_list = query.order_by(Product.name).all()
         categories = db.session.query(Product.category).distinct().all()
         categories = [c[0] for c in categories if c[0]]
-        return render_template("admin/products.html", products=products_list, categories=categories, current_category=category, search=search)
+        return render_template("admin/products.html", 
+                             products=products_list, 
+                             categories=categories, 
+                             current_category=category, 
+                             search=search)
 
     @app.route("/admin/products/new", methods=["GET", "POST"])
     @login_required
@@ -559,14 +590,17 @@ def create_app():
             usage_instructions = request.form.get("usage_instructions", "")
             warnings = request.form.get("warnings", "")
             is_active = request.form.get("is_active") == "on"
+            
             if not name:
                 flash("Product name is required.", "error")
                 return render_template("admin/product_form.html", product=None)
+            
             try:
                 price_val = Decimal(price)
             except Exception:
                 flash("Invalid price.", "error")
                 return render_template("admin/product_form.html", product=None)
+            
             product = Product(
                 name=name,
                 description=description or None,
@@ -603,9 +637,11 @@ def create_app():
             product.usage_instructions = request.form.get("usage_instructions", "") or None
             product.warnings = request.form.get("warnings", "") or None
             product.is_active = request.form.get("is_active") == "on"
+            
             if not product.name:
                 flash("Product name is required.", "error")
                 return render_template("admin/product_form.html", product=product)
+            
             db.session.commit()
             flash(f"Product «{product.name}» updated.", "success")
             return redirect(url_for("admin_products"))
@@ -684,9 +720,11 @@ def create_app():
             email = request.form.get("email", "").strip()
             phone = request.form.get("phone", "").strip()
             is_active = request.form.get("is_active") == "on"
+            
             if not name:
                 flash("Practitioner name is required.", "error")
                 return render_template("admin/practitioner_form.html", practitioner=None)
+            
             practitioner = Practitioner(
                 name=name,
                 title=title or None,
@@ -718,9 +756,11 @@ def create_app():
             practitioner.email = request.form.get("email", "").strip() or None
             practitioner.phone = request.form.get("phone", "").strip() or None
             practitioner.is_active = request.form.get("is_active") == "on"
+            
             if not practitioner.name:
                 flash("Practitioner name is required.", "error")
                 return render_template("admin/practitioner_form.html", practitioner=practitioner)
+            
             db.session.commit()
             flash(f"Practitioner «{practitioner.name}» updated.", "success")
             return redirect(url_for("admin_practitioners"))
@@ -756,9 +796,11 @@ def create_app():
     def admin_sales():
         from datetime import timedelta
         from models import Order
+        
         date_from_str = request.args.get("date_from", "").strip()
         date_to_str = request.args.get("date_to", "").strip()
         delivered_only = request.args.get("delivered_only") == "on"
+        
         query = Order.query
         if delivered_only:
             query = query.filter_by(status="delivered")
@@ -775,11 +817,13 @@ def create_app():
                 query = query.filter(Order.created_at < end_of_day)
             except ValueError:
                 pass
+        
         orders_in_period = query.order_by(Order.created_at.desc()).all()
         order_count = len(orders_in_period)
         revenue = sum(float(o.total_amount) for o in orders_in_period)
         total_all_time = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).scalar() or 0
         total_orders_all_time = Order.query.count()
+        
         return render_template(
             "admin/sales.html",
             date_from=date_from_str,
@@ -792,10 +836,11 @@ def create_app():
             orders=orders_in_period[:50],
         )
 
+    # ========== CLI COMMANDS ==========
     @app.cli.command("init-db")
     def init_db():
         """Initialize the database and create an initial admin user if none exists."""
-        from models import User  # local import to avoid circular
+        from models import User
 
         db.create_all()
         admin_email = os.getenv("ADMIN_EMAIL", "admin@shifaaherbal.com")
@@ -820,7 +865,6 @@ def create_app():
 
 
 if __name__ == "__main__":
-    # Development mode with debug enabled
     app = create_app()
     with app.app_context():
         db.create_all()
