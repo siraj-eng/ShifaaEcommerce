@@ -280,7 +280,7 @@
         }
         
         .qty-input-mini {
-            width: 55px;
+            width: 70px;
             height: 28px;
             border: none;
             text-align: center;
@@ -616,6 +616,14 @@
             -webkit-appearance: none;
             margin: 0;
         }
+        
+        /* Stock warning */
+        .stock-warning {
+            color: #ef476f;
+            font-size: 0.65rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -661,7 +669,7 @@
                 <div class="cart-header">
                     <h2>
                         <i class="bi bi-bag-check"></i> 
-                        Your Cart (Indicate the number if pieces you want to purchase....!)
+                        Your Cart
                     </h2>
                     <span class="item-count-badge">{{ cart_items|length }} item{% if cart_items|length != 1 %}s{% endif %}</span>
                 </div>
@@ -680,15 +688,18 @@
                         <div class="item-details">
                             <div class="item-name">{{ item.product.name }}</div>
                             <div class="item-price">{{ item.product.price|currency }}</div>
+                            <div class="stock-info" style="font-size: 0.65rem; color: #64748b;">
+                                Available: {{ item.product.stock }} pieces
+                            </div>
                             
                             <div class="quantity-controls">
                                 <form method="POST" action="{{ url_for('update_cart', item_id=item.id) }}" class="quantity-form" data-item-id="{{ item.id }}">
                                     <div class="quantity-wrapper">
-                                        <button type="button" class="qty-btn-mini" onclick="updateQuantity(this, -1, {{ item.id }})">
+                                        <button type="button" class="qty-btn-mini" onclick="updateQuantity(this, -1, {{ item.id }}, {{ item.product.stock }})">
                                             <i class="bi bi-dash"></i>
                                         </button>
-                                        <input type="number" name="quantity" class="qty-input-mini" value="{{ item.quantity }}" min="1" data-original="{{ item.quantity }}" data-item-id="{{ item.id }}" data-max-stock="{{ item.product.stock }}">
-                                        <button type="button" class="qty-btn-mini" onclick="updateQuantity(this, 1, {{ item.id }})">
+                                        <input type="number" name="quantity" class="qty-input-mini" value="{{ item.quantity }}" min="1" data-original="{{ item.quantity }}" data-item-id="{{ item.id }}" data-max-stock="{{ item.product.stock }}" data-price="{{ item.product.price }}">
+                                        <button type="button" class="qty-btn-mini" onclick="updateQuantity(this, 1, {{ item.id }}, {{ item.product.stock }})">
                                             <i class="bi bi-plus"></i>
                                         </button>
                                     </div>
@@ -736,7 +747,7 @@
                     <span id="totalAmount">{{ total|currency }}</span>
                 </div>
                 
-                <a href="{{ url_for('checkout') }}" class="checkout-btn">
+                <a href="{{ url_for('checkout') }}" class="checkout-btn" id="checkoutBtn">
                     <i class="bi bi-arrow-right"></i> Proceed to Checkout
                 </a>
                 
@@ -788,15 +799,14 @@
             }, 2000);
         }
         
-        // Parse currency value (removes currency symbol and commas)
+        // Parse currency value
         function parseCurrencyValue(currencyString) {
             if (!currencyString) return 0;
-            // Remove currency symbol, commas, and any non-numeric characters except decimal
             const numericValue = parseFloat(currencyString.replace(/[^\d.-]/g, ''));
             return isNaN(numericValue) ? 0 : numericValue;
         }
         
-        // Format currency (keeps same format as server)
+        // Format currency
         function formatCurrency(value) {
             const currencySymbol = '{{ currency_symbol }}';
             return `${currencySymbol} ${value.toFixed(2)}`;
@@ -821,7 +831,6 @@
                 subtotal += total;
             });
             
-            // Update subtotal and total in order summary
             const subtotalElement = document.getElementById('subtotalAmount');
             const totalElement = document.getElementById('totalAmount');
             
@@ -834,19 +843,18 @@
         }
         
         // Update quantity (called from + and - buttons)
-        function updateQuantity(button, change, itemId) {
+        function updateQuantity(button, change, itemId, maxStock) {
             const form = button.closest('.quantity-form');
             const input = form.querySelector('.qty-input-mini');
             const updateBtn = form.querySelector('.update-btn-mini');
             let quantity = parseInt(input.value);
-            const maxStock = parseInt(input.getAttribute('data-max-stock')) || 999999;
             
             // Update quantity
             quantity += change;
             if (quantity < 1) quantity = 1;
             if (quantity > maxStock) {
                 quantity = maxStock;
-                showToast(`Only ${maxStock} items available in stock`, true);
+                showToast(`Only ${maxStock} items available in stock!`, true);
             }
             
             input.value = quantity;
@@ -859,12 +867,11 @@
                 updateBtn.style.display = 'none';
             }
             
-            // Get price from data attribute or parse from display
-            const cartItem = form.closest('.cart-item');
-            const priceElement = cartItem.querySelector('.item-price');
-            const price = parseCurrencyValue(priceElement.textContent);
+            // Get price from data attribute
+            const price = parseFloat(input.getAttribute('data-price')) || 0;
             
             // Update item total
+            const cartItem = form.closest('.cart-item');
             updateItemTotal(cartItem, quantity, price);
             
             // Update overall cart totals
@@ -878,17 +885,18 @@
             let quantity = parseInt(input.value);
             const maxStock = parseInt(input.getAttribute('data-max-stock')) || 999999;
             
-            // Validate input - allow any positive number up to max stock
+            // Validate input
             if (isNaN(quantity) || quantity < 1) {
                 quantity = 1;
                 input.value = 1;
+                showToast('Quantity must be at least 1', true);
             }
             
             // Check against max stock
             if (quantity > maxStock) {
                 quantity = maxStock;
                 input.value = maxStock;
-                showToast(`Only ${maxStock} items available in stock`, true);
+                showToast(`Only ${maxStock} items available in stock!`, true);
             }
             
             // Compare with original
@@ -900,15 +908,13 @@
             }
             
             // Update totals
+            const price = parseFloat(input.getAttribute('data-price')) || 0;
             const cartItem = form.closest('.cart-item');
-            const priceElement = cartItem.querySelector('.item-price');
-            const price = parseCurrencyValue(priceElement.textContent);
-            
             updateItemTotal(cartItem, quantity, price);
             updateCartTotals();
         }
         
-        // Handle quantity form submission
+        // Handle quantity form submission with stock validation
         document.querySelectorAll('.quantity-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -919,8 +925,17 @@
                 
                 // Final validation before submission
                 let finalValue = newValue;
-                if (isNaN(finalValue) || finalValue < 1) finalValue = 1;
-                if (finalValue > maxStock) finalValue = maxStock;
+                if (isNaN(finalValue) || finalValue < 1) {
+                    finalValue = 1;
+                    showToast('Quantity must be at least 1', true);
+                    return;
+                }
+                if (finalValue > maxStock) {
+                    finalValue = maxStock;
+                    showToast(`Only ${maxStock} items available! Please reduce quantity.`, true);
+                    input.value = maxStock;
+                    return;
+                }
                 
                 if (finalValue !== original) {
                     showToast('Quantity updated successfully!');
@@ -954,11 +969,11 @@
             });
         });
         
-        // Handle manual input changes - THIS IS THE KEY FIX
+        // Handle manual input changes
         document.querySelectorAll('.qty-input-mini').forEach(input => {
-            // Remove any existing event listeners to avoid duplicates
-            input.removeEventListener('change', handleQuantityInputChange);
-            input.removeEventListener('blur', handleQuantityInputChange);
+            // Remove existing listeners to avoid duplicates
+            input.removeEventListener('change', function() {});
+            input.removeEventListener('blur', function() {});
             
             // Add event listener for when user finishes typing
             input.addEventListener('change', function() {
@@ -971,6 +986,31 @@
             });
         });
         
+        // Validate checkout button - prevent checkout if any quantity exceeds stock
+        function validateCheckout() {
+            const checkoutBtn = document.getElementById('checkoutBtn');
+            if (!checkoutBtn) return;
+            
+            let hasStockIssue = false;
+            document.querySelectorAll('.cart-item').forEach(item => {
+                const input = item.querySelector('.qty-input-mini');
+                const quantity = parseInt(input.value);
+                const maxStock = parseInt(input.getAttribute('data-max-stock'));
+                
+                if (quantity > maxStock) {
+                    hasStockIssue = true;
+                }
+            });
+            
+            if (hasStockIssue) {
+                checkoutBtn.style.opacity = '0.5';
+                checkoutBtn.style.pointerEvents = 'none';
+            } else {
+                checkoutBtn.style.opacity = '1';
+                checkoutBtn.style.pointerEvents = 'auto';
+            }
+        }
+        
         // Sync cart count on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Add animation delays
@@ -981,6 +1021,7 @@
             
             // Ensure all quantities are properly displayed
             updateCartTotals();
+            validateCheckout();
         });
     </script>
 </body>

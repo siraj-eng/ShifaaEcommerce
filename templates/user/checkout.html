@@ -803,7 +803,7 @@
                                 <div class="option-content">
                                     <div class="option-title">Standard Delivery</div>
                                     <div class="option-description">5-7 business days</div>
-                                    <div class="option-price">Free</div>
+                                    <div class="option-price">KES 300 per 72 pieces</div>
                                 </div>
                             </label>
                             
@@ -812,7 +812,7 @@
                                 <div class="option-content">
                                     <div class="option-title">Express Delivery</div>
                                     <div class="option-description">2-3 business days</div>
-                                    <div class="option-price">KES 150</div>
+                                    <div class="option-price">KES 300 per 72 pieces</div>
                                 </div>
                                 <span class="option-badge">Popular</span>
                             </label>
@@ -881,9 +881,11 @@
                             </div>
                             <div class="item-details">
                                 <div class="item-name">{{ item.product.name|truncate(35) }}</div>
-                                <div class="item-quantity">Qty: {{ item.quantity }}</div>
+                                <div class="item-quantity" data-quantity="{{ item.quantity }}">Qty: {{ item.quantity }}</div>
                             </div>
-                            <div class="item-price">{{ item.product.price|currency }}</div>
+                            <div class="item-price" data-price="{{ item.product.price }}" data-total="{{ item.product.price * item.quantity }}">
+                                {{ (item.product.price * item.quantity)|currency }}
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
@@ -895,17 +897,12 @@
                     
                     <div class="summary-row">
                         <span>Shipping</span>
-                        <span id="shippingAmount">Free</span>
-                    </div>
-                    
-                    <div class="summary-row">
-                        <span>Tax (8%)</span>
-                        <span id="taxAmount">{{ (total * 0.08)|currency }}</span>
+                        <span id="shippingAmount">Calculating...</span>
                     </div>
                     
                     <div class="summary-row total">
                         <span>Total</span>
-                        <span id="grandTotal">{{ (total * 1.08)|currency }}</span>
+                        <span id="totalAmount">{{ total|currency }}</span>
                     </div>
                     
                     <button type="submit" class="place-order-btn" id="placeOrderBtn">
@@ -954,6 +951,122 @@
     </div>
     
     <script>
+        // Store cart items data from server
+        const cartItemsData = [
+            {% for item in cart_items %}
+            {
+                id: {{ item.id }},
+                name: "{{ item.product.name }}",
+                quantity: {{ item.quantity }},
+                price: {{ item.product.price }},
+                stock: {{ item.product.stock }}
+            },
+            {% endfor %}
+        ];
+        
+        // Calculate total quantity from cart items
+        function calculateTotalQuantity() {
+            let totalQty = 0;
+            {% for item in cart_items %}
+                totalQty += {{ item.quantity }};
+            {% endfor %}
+            return totalQty;
+        }
+        
+        // Calculate shipping cost based on total quantity (KES 300 per 72 pieces)
+        function calculateShippingCost(totalQuantity, deliveryOption) {
+            // Store pickup is free
+            if (deliveryOption === 'pickup') {
+                return 0;
+            }
+            
+            // Standard and Express both: KES 300 for every 72 pieces
+            const batches = Math.ceil(totalQuantity / 72);
+            return batches * 300;
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return `KES ${amount.toFixed(2)}`;
+        }
+        
+        // Parse currency value from string
+        function parseCurrencyValue(currencyString) {
+            if (!currencyString) return 0;
+            const numericValue = parseFloat(currencyString.replace(/[^\d.-]/g, ''));
+            return isNaN(numericValue) ? 0 : numericValue;
+        }
+        
+        // Update totals based on selected delivery option
+        function updateTotals() {
+            const selectedOption = document.querySelector('input[name="delivery_option"]:checked');
+            if (!selectedOption) return;
+            
+            const subtotalElement = document.getElementById('subtotalAmount');
+            const shippingElement = document.getElementById('shippingAmount');
+            const totalElement = document.getElementById('totalAmount');
+            
+            // Get subtotal from the page (passed from server)
+            const subtotal = {{ total }};
+            const totalQuantity = calculateTotalQuantity();
+            const deliveryOption = selectedOption.value;
+            
+            // Calculate shipping cost
+            let shippingCost = 0;
+            let shippingText = '';
+            
+            if (deliveryOption === 'pickup') {
+                shippingCost = 0;
+                shippingText = 'Free (Store Pickup)';
+            } else {
+                // Standard and Express both: KES 300 per 72 pieces
+                const batches = Math.ceil(totalQuantity / 72);
+                shippingCost = batches * 300;
+                if (shippingCost === 0) {
+                    shippingText = 'Free';
+                } else {
+                    shippingText = formatCurrency(shippingCost);
+                }
+            }
+            
+            // Calculate grand total (no tax)
+            const grandTotal = subtotal + shippingCost;
+            
+            // Update shipping display
+            if (shippingElement) {
+                shippingElement.textContent = shippingText;
+            }
+            
+            // Update total display
+            if (totalElement) {
+                totalElement.textContent = formatCurrency(grandTotal);
+            }
+            
+            // Store calculated values for form submission
+            window.calculatedShipping = shippingCost;
+            window.calculatedTotal = grandTotal;
+        }
+        
+        // Delivery option selection handler
+        document.querySelectorAll('.delivery-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Update selected styling
+                document.querySelectorAll('.delivery-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                this.classList.add('selected');
+                
+                // Check the radio button
+                const radio = this.querySelector('.option-radio');
+                if (radio) {
+                    radio.checked = true;
+                }
+                
+                // Update totals
+                updateTotals();
+            });
+        });
+        
         // Show toast notification
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
@@ -965,60 +1078,6 @@
                 toast.classList.remove('show');
             }, 3000);
         }
-        
-        // Parse currency value
-        function parseCurrencyValue(currencyString) {
-            if (!currencyString) return 0;
-            const numericValue = parseFloat(currencyString.replace(/[^\d.-]/g, ''));
-            return isNaN(numericValue) ? 0 : numericValue;
-        }
-        
-        // Update shipping cost and totals
-        function updateShippingAndTotals() {
-            const selectedOption = document.querySelector('input[name="delivery_option"]:checked');
-            const subtotal = {{ total }};
-            let shippingCost = 0;
-            let shippingText = 'Free';
-            
-            if (selectedOption && selectedOption.value === 'express') {
-                shippingCost = 150;
-                shippingText = 'KES 150';
-            }
-            
-            const tax = subtotal * 0.08;
-            const grandTotal = subtotal + shippingCost + tax;
-            
-            // Update shipping display
-            const shippingElement = document.getElementById('shippingAmount');
-            if (shippingElement) {
-                shippingElement.textContent = shippingText;
-            }
-            
-            // Update tax
-            const taxElement = document.getElementById('taxAmount');
-            if (taxElement) {
-                taxElement.textContent = `KES ${tax.toFixed(2)}`;
-            }
-            
-            // Update grand total
-            const grandTotalElement = document.getElementById('grandTotal');
-            if (grandTotalElement) {
-                grandTotalElement.textContent = `KES ${grandTotal.toFixed(2)}`;
-            }
-        }
-        
-        // Delivery option selection styling
-        document.querySelectorAll('.delivery-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.delivery-option').forEach(opt => {
-                    opt.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                const radio = this.querySelector('.option-radio');
-                if (radio) radio.checked = true;
-                updateShippingAndTotals();
-            });
-        });
         
         // Form validation and submission
         const checkoutForm = document.getElementById('checkoutForm');
@@ -1051,6 +1110,20 @@
                     return;
                 }
                 
+                // Add shipping cost to form before submission
+                const selectedOption = document.querySelector('input[name="delivery_option"]:checked');
+                if (selectedOption && window.calculatedShipping !== undefined) {
+                    // Create hidden input for shipping cost
+                    let shippingInput = document.querySelector('input[name="shipping_cost"]');
+                    if (!shippingInput) {
+                        shippingInput = document.createElement('input');
+                        shippingInput.type = 'hidden';
+                        shippingInput.name = 'shipping_cost';
+                        this.appendChild(shippingInput);
+                    }
+                    shippingInput.value = window.calculatedShipping;
+                }
+                
                 // Show loading state
                 if (placeOrderBtn) {
                     placeOrderBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processing...';
@@ -1061,7 +1134,9 @@
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            updateShippingAndTotals();
+            updateTotals();
+            console.log('Checkout page loaded');
+            console.log('Total quantity:', calculateTotalQuantity());
         });
     </script>
 </body>

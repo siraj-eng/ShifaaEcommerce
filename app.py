@@ -322,14 +322,64 @@ def create_app():
     
     @app.route("/products/<int:product_id>")
     def product_detail(product_id):
-        from models import Product
+        from models import Product, CartItem
         product = db.session.get(Product, product_id)
         if not product:
             flash("Product not found.", "error")
             return redirect(url_for("products"))
-        return render_template("user/product_detail.html", product=product)
+        
+        # Calculate cart count for logged-in users
+        cart_count = 0
+        if current_user.is_authenticated:
+            cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
+        
+        return render_template("user/product_detail.html", product=product, cart_count=cart_count)
 
     # ========== CART ROUTES ==========
+    @app.route("/cart/count")
+    @login_required
+    def cart_count():
+        """Return current user's cart count as JSON"""
+        from models import CartItem
+        cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
+        return jsonify({'cart_count': cart_count})
+
+    @app.route("/cart/sync")
+    @login_required
+    def cart_sync():
+        """Return full cart data for real-time sync"""
+        from models import CartItem, Product
+        cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
+        
+        cart_data = []
+        total_quantity = 0
+        total_amount = 0
+        
+        for item in cart_items:
+            item_total = item.product.price * item.quantity
+            total_quantity += item.quantity
+            total_amount += item_total
+            
+            cart_data.append({
+                'id': item.id,
+                'product_id': item.product_id,
+                'name': item.product.name,
+                'price': float(item.product.price),
+                'quantity': item.quantity,
+                'total': float(item_total),
+                'stock': item.product.stock,
+                'is_active': item.product.is_active,
+                'image_url': item.product.image_url
+            })
+        
+        return jsonify({
+            'cart_items': cart_data,
+            'total_quantity': total_quantity,
+            'total_amount': float(total_amount),
+            'cart_count': len(cart_items),
+            'shipping_cost': (total_quantity // 72 + (1 if total_quantity % 72 > 0 else 0)) * 300
+        })
+
     @app.route("/add-to-cart/<int:product_id>", methods=["POST"])
     @login_required
     def add_to_cart_ajax(product_id):
@@ -429,11 +479,28 @@ def create_app():
     @app.route("/checkout", methods=["GET", "POST"])
     @login_required
     def checkout():
-        from models import CartItem
+        from models import CartItem, Product
         cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
         
         if not cart_items:
             flash("Your cart is empty.", "warning")
+            return redirect(url_for("cart"))
+        
+        # Check stock availability and prevent checkout if insufficient stock
+        stock_issues = []
+        for item in cart_items:
+            if not item.product.is_active:
+                stock_issues.append(f"{item.product.name} is no longer available")
+            elif item.quantity > item.product.stock:
+                if item.product.stock == 0:
+                    stock_issues.append(f"{item.product.name} is out of stock")
+                else:
+                    stock_issues.append(f"Only {item.product.stock} {item.product.name} available (you have {item.quantity} in cart)")
+        
+        if stock_issues:
+            flash("Cannot proceed to checkout - Stock Issues:", "error")
+            for issue in stock_issues:
+                flash(issue, "error")
             return redirect(url_for("cart"))
         
         if request.method == "POST":
@@ -466,7 +533,9 @@ def create_app():
             return redirect(url_for("payment"))
         
         total = sum(item.product.price * item.quantity for item in cart_items)
-        return render_template("user/checkout.html", cart_items=cart_items, total=float(total))
+        total_quantity = sum(item.quantity for item in cart_items)
+        
+        return render_template("user/checkout.html", cart_items=cart_items, total=float(total), total_quantity=total_quantity)
     
     @app.route("/payment", methods=["GET", "POST"])
     @login_required

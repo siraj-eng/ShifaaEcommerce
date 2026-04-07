@@ -784,6 +784,10 @@
                     .then(data => {
                         if (data.success) {
                             console.log('Item added to cart successfully');
+                            // Update cart count with server value
+                            if (data.cart_count !== undefined) {
+                                updateCartCount(data.cart_count);
+                            }
                         } else {
                             console.error('Failed to add to cart:', data.message);
                             // Show error message if provided
@@ -842,6 +846,63 @@
                 this.value = val;
             });
         }
+        
+        // Real-time cart sync
+        let syncInterval;
+        
+        function syncCartData() {
+            fetch('/cart/sync')
+                .then(response => response.json())
+                .then(data => {
+                    // Update cart count
+                    if (cartCountSpan) {
+                        const newCount = data.cart_count || 0;
+                        if (newCount !== currentCartCount) {
+                            updateCartCount(newCount);
+                        }
+                    }
+                    
+                    // Update floating cart badge if it exists
+                    const floatingCartBadge = document.querySelector('.floating-cart .cart-badge');
+                    if (floatingCartBadge) {
+                        floatingCartBadge.textContent = data.cart_count || 0;
+                    }
+                })
+                .catch(error => {
+                    console.error('Cart sync error:', error);
+                });
+        }
+        
+        // Start real-time sync
+        function startCartSync() {
+            // Sync immediately
+            syncCartData();
+            
+            // Then sync every 5 seconds
+            syncInterval = setInterval(syncCartData, 5000);
+        }
+        
+        // Stop cart sync when page is hidden
+        function stopCartSync() {
+            if (syncInterval) {
+                clearInterval(syncInterval);
+            }
+        }
+        
+        // Page visibility API to pause/resume sync
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                stopCartSync();
+            } else {
+                startCartSync();
+            }
+        });
+        
+        // Start sync on page load
+        startCartSync();
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', stopCartSync);
     </script>
 </body>
 </html>

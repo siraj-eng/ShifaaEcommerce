@@ -524,7 +524,7 @@
     
     <a href="{{ url_for('cart') }}" class="floating-cart">
         <i class="bi bi-cart-fill"></i>
-        <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
+        <span class="cart-badge" id="cartCount">0</span>
     </a>
     
     <div class="toast-notification" id="toast">
@@ -535,7 +535,7 @@
     <script>
         // Get cart badge element
         const cartBadge = document.getElementById('cartCount');
-        let currentCartCount = parseInt(cartBadge.innerText) || 0;
+        let currentCartCount = 0;
         
         // Toast function
         function showToast(message, isError = false) {
@@ -556,15 +556,37 @@
         // Update cart badge
         function updateCartBadge(count) {
             currentCartCount = count;
-            cartBadge.innerText = count;
-            // Store in sessionStorage so it persists across pages
-            sessionStorage.setItem('shifaa_cart_count', count);
+            if (cartBadge) {
+                cartBadge.innerText = count;
+                // Add pulse animation
+                cartBadge.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    cartBadge.style.transform = 'scale(1)';
+                }, 200);
+            }
         }
         
-        // Load saved cart count from sessionStorage
-        const savedCount = sessionStorage.getItem('shifaa_cart_count');
-        if (savedCount !== null && !isNaN(parseInt(savedCount))) {
-            updateCartBadge(parseInt(savedCount));
+        // Fetch actual cart count from server
+        async function fetchCartCount() {
+            try {
+                const response = await fetch('/cart/count', {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && typeof data.cart_count !== 'undefined') {
+                        updateCartBadge(data.cart_count);
+                        return data.cart_count;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching cart count:', error);
+            }
+            return 0;
         }
         
         // Handle all Add to Cart buttons with AJAX
@@ -619,6 +641,11 @@
                     this.innerHTML = originalHTML;
                 }
             });
+        });
+        
+        // Load actual cart count when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchCartCount();
         });
     </script>
 </body>
