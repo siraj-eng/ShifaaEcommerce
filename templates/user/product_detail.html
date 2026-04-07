@@ -632,7 +632,7 @@
                     
                     <!-- Add to Cart - compact -->
                     <div class="cart-section">
-                        <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}" id="cartForm">
+                        <form method="POST" action="{{ url_for('add_to_cart_ajax', product_id=product.id) }}" id="cartForm">
                             <div class="quantity-control">
                                 <span class="quantity-label">Qty: Specify the number of pieces you want to purchase</span>
                                 <div class="quantity-selector">
@@ -768,18 +768,39 @@
                 // Update cart count immediately
                 updateCartCount(currentCartCount + qty);
                 
-                // Submit form after delay
+                // Submit form after delay using AJAX
                 setTimeout(() => {
-                    const newForm = document.createElement('form');
-                    newForm.method = form.method;
-                    newForm.action = form.action;
-                    const qtyField = document.createElement('input');
-                    qtyField.type = 'hidden';
-                    qtyField.name = 'quantity';
-                    qtyField.value = qty;
-                    newForm.appendChild(qtyField);
-                    document.body.appendChild(newForm);
-                    newForm.submit();
+                    fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrf_token]')?.value || ''
+                        },
+                        body: JSON.stringify({
+                            quantity: qty
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Item added to cart successfully');
+                        } else {
+                            console.error('Failed to add to cart:', data.message);
+                            // Show error message if provided
+                            if (data.message) {
+                                toastMsgSpan.textContent = data.message;
+                                toast.classList.add('show');
+                                setTimeout(() => toast.classList.remove('show'), 3000);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error adding to cart:', error);
+                        // Show generic error message
+                        toastMsgSpan.textContent = 'Error adding to cart. Please try again.';
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 3000);
+                    });
                 }, 280);
             });
         } else {

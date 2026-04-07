@@ -98,10 +98,10 @@ def create_app():
         def decorated(*args, **kwargs):
             if not current_user.is_authenticated:
                 flash("Please log in to access the admin area.", "warning")
-                return redirect(url_for("login"))
+                return redirect(url_for("admin_login"))
             if current_user.role != "admin":
                 flash("Access denied. Admin privileges required.", "error")
-                return redirect(url_for("dashboard"))
+                return redirect(url_for("admin_login"))
             return f(*args, **kwargs)
         return decorated
 
