@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime
 from decimal import Decimal
 from functools import wraps
@@ -16,24 +17,68 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
 
-    # Basic config
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
+    # ========== SECURITY CONFIGURATION ==========
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-me-in-production")
+    
+    # Database configuration
     db_path = os.path.join(BASE_DIR, "shifaa.db")
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{db_path}"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["CURRENCY_SYMBOL"] = os.getenv("CURRENCY_SYMBOL", "KSh")
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_size": 10,
+        "pool_recycle": 3600,
+        "pool_pre_ping": True,
+    }
+    
+    # Business configuration
+    app.config["CURRENCY_SYMBOL"] = os.getenv("CURRENCY_SYMBOL", "KES")
     app.config["CURRENCY_CODE"] = os.getenv("CURRENCY_CODE", "KES")
     app.config["MPESA_TILL_NUMBER"] = os.getenv("MPESA_TILL_NUMBER", "622255")
+    
+    # Security settings
+    app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "False").lower() == "true"
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+    
+    # Pagination settings
+    app.config["PRODUCTS_PER_PAGE"] = 12
+    app.config["ORDERS_PER_PAGE"] = 10
+    app.config["APPOINTMENTS_PER_PAGE"] = 10
 
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = "login"
+    login_manager.login_message = "Please log in to access this page."
+    login_manager.login_message_category = "warning"
 
     from models import User
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(User, int(user_id))
+
+    # ========== HELPER FUNCTIONS ==========
+    
+    def validate_password_strength(password):
+        if len(password) < 8:
+            return False, "Password must be at least 8 characters long."
+        if not re.search(r"\d", password):
+            return False, "Password must contain at least one number."
+        if not re.search(r"[A-Za-z]", password):
+            return False, "Password must contain at least one letter."
+        return True, ""
+    
+    def validate_email_domain(email):
+        allowed_domains = ["@shifaaherbal.com", "@shifaa.com"]
+        for domain in allowed_domains:
+            if email.endswith(domain):
+                return True, ""
+        return False, f"Email must be from {', '.join(allowed_domains)} domain."
+    
+    def sanitize_input(text):
+        if not text:
+            return ""
+        return text.strip().replace("<", "&lt;").replace(">", "&gt;")
 
     @app.context_processor
     def inject_currency():
@@ -52,9 +97,10 @@ def create_app():
         @wraps(f)
         def decorated(*args, **kwargs):
             if not current_user.is_authenticated:
+                flash("Please log in to access the admin area.", "warning")
                 return redirect(url_for("login"))
             if current_user.role != "admin":
-                flash("Access denied. Admin only.", "error")
+                flash("Access denied. Admin privileges required.", "error")
                 return redirect(url_for("dashboard"))
             return f(*args, **kwargs)
         return decorated
@@ -63,6 +109,8 @@ def create_app():
     @app.route("/")
     def index():
         if current_user.is_authenticated:
+            if current_user.role == "admin":
+                return redirect(url_for("admin_dashboard"))
             return redirect(url_for("dashboard"))
         return render_template("base.html")
 
@@ -72,74 +120,120 @@ def create_app():
             return redirect(url_for("dashboard"))
         
         if request.method == "POST":
-            name = request.form.get("name", "").strip()
+            first_name = sanitize_input(request.form.get("first_name", ""))
+            last_name = sanitize_input(request.form.get("last_name", ""))
             email_input = request.form.get("email", "").strip().lower()
             password = request.form.get("password", "")
             confirm = request.form.get("confirm_password", "")
+            
+            name = f"{first_name} {last_name}".strip()
 
-            if not name or not email_input or not password:
+            if not first_name or not last_name or not email_input or not password:
                 flash("Please fill in all fields.", "error")
-            elif password != confirm:
+                return render_template("auth/register.html")
+            
+            if password != confirm:
                 flash("Passwords do not match.", "error")
-            elif len(password) < 6:
-                flash("Password must be at least 6 characters long.", "error")
+                return render_template("auth/register.html")
+            
+            is_valid, password_msg = validate_password_strength(password)
+            if not is_valid:
+                flash(password_msg, "error")
+                return render_template("auth/register.html")
+            
+            if "@" in email_input:
+                email = email_input
             else:
-                if "@" in email_input:
-                    email = email_input
-                    if not email.endswith("@shifaaherbal.com"):
-                        flash("Email must be from @shifaaherbal.com domain.", "error")
-                        return render_template("auth/register.html")
-                else:
-                    email = f"{email_input}@shifaaherbal.com"
+                email = f"{email_input}@shifaaherbal.com"
+            
+            is_valid_domain, domain_msg = validate_email_domain(email)
+            if not is_valid_domain:
+                flash(domain_msg, "error")
+                return render_template("auth/register.html")
+            
+            existing = User.query.filter_by(email=email).first()
+            if existing:
+                flash("An account with this email already exists. Please login.", "warning")
+                return redirect(url_for("login"))
+            
+            try:
+                user = User(
+                    name=name,
+                    email=email,
+                    role="user",
+                    password_hash=generate_password_hash(password, method="pbkdf2:sha256"),
+                )
+                db.session.add(user)
+                db.session.commit()
                 
-                existing = User.query.filter_by(email=email).first()
-                if existing:
-                    flash("An account with this email already exists.", "warning")
-                else:
-                    user = User(
-                        name=name,
-                        email=email,
-                        role="user",
-                        password_hash=generate_password_hash(password),
-                    )
-                    db.session.add(user)
-                    db.session.commit()
-                    login_user(user)
-                    flash("Account created successfully! Welcome to Shifaa Herbal.", "success")
-                    return redirect(url_for("dashboard"))
+                login_user(user)
+                flash(f"Welcome to Shifaa Herbal, {name}!", "success")
+                return redirect(url_for("dashboard"))
+                
+            except Exception as e:
+                db.session.rollback()
+                print(f"Registration error: {e}")
+                flash("An error occurred during registration. Please try again.", "error")
+                return render_template("auth/register.html")
 
         return render_template("auth/register.html")
 
     @app.route("/login", methods=["GET", "POST"])
     def login():
         if current_user.is_authenticated:
+            if current_user.role == "admin":
+                return redirect(url_for("admin_dashboard"))
             return redirect(url_for("dashboard"))
-        
-        is_admin_login = request.args.get('type') == 'admin'
         
         if request.method == "POST":
             email = request.form.get("email", "").strip().lower()
             password = request.form.get("password", "")
+            
             user = User.query.filter_by(email=email).first()
             
             if user and check_password_hash(user.password_hash, password):
-                login_user(user)
-                flash("Welcome back!", "success")
+                login_user(user, remember=False)
                 next_page = request.args.get("next")
-                return redirect(next_page or url_for("dashboard"))
+                
+                if next_page and next_page.startswith('/'):
+                    return redirect(next_page)
+                
+                if user.role == "admin":
+                    return redirect(url_for("admin_dashboard"))
+                return redirect(url_for("dashboard"))
             
-            flash("Invalid email or password", "danger")
+            flash("Invalid email or password. Please try again.", "danger")
         
-        if is_admin_login:
-            return render_template("auth/admin_login.html")
-        else:
-            return render_template("auth/login.html")
+        return render_template("auth/login.html")
+
+    @app.route("/admin-login", methods=["GET", "POST"])
+    def admin_login():
+        if current_user.is_authenticated and current_user.role == "admin":
+            return redirect(url_for("admin_dashboard"))
+        
+        if request.method == "POST":
+            email = request.form.get("email", "").strip().lower()
+            password = request.form.get("password", "")
+            
+            user = User.query.filter_by(email=email).first()
+            
+            if user and check_password_hash(user.password_hash, password) and user.role == "admin":
+                login_user(user, remember=False)
+                flash(f"Welcome back, {user.name}!", "success")
+                return redirect(url_for("admin_dashboard"))
+            
+            flash("Invalid admin credentials. Please try again.", "danger")
+        
+        return render_template("auth/admin_login.html")
+
+    @app.route("/admin/login", methods=["GET", "POST"])
+    def admin_login_alt():
+        return redirect(url_for("admin_login"))
 
     @app.route("/logout")
     @login_required
     def logout():
         logout_user()
-        flash("You have been logged out.", "info")
         return redirect(url_for("index"))
 
     # ========== DASHBOARD ==========
@@ -147,32 +241,7 @@ def create_app():
     @login_required
     def dashboard():
         if current_user.role == "admin":
-            from models import Order, Product, Appointment, Practitioner
-            product_count = Product.query.count()
-            order_count = Order.query.count()
-            user_count = User.query.count()
-            practitioner_count = Practitioner.query.count()
-            pending_orders = Order.query.filter_by(status="pending").count()
-            total_revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).scalar() or 0
-            recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
-            upcoming_appointments = Appointment.query.filter(
-                Appointment.appointment_date >= datetime.utcnow(), 
-                Appointment.status == "scheduled"
-            ).order_by(Appointment.appointment_date).limit(5).all()
-            low_stock = Product.query.filter(Product.stock > 0, Product.stock < 10).count()
-            
-            return render_template(
-                "admin/dashboard.html",
-                product_count=product_count,
-                order_count=order_count,
-                user_count=user_count,
-                practitioner_count=practitioner_count,
-                pending_orders=pending_orders,
-                recent_orders=recent_orders,
-                upcoming_appointments=upcoming_appointments,
-                low_stock=low_stock,
-                total_revenue=total_revenue,
-            )
+            return redirect(url_for("admin_dashboard"))
         
         from models import Order, Appointment, CartItem
         recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
@@ -182,10 +251,44 @@ def create_app():
         ).filter(Appointment.appointment_date >= datetime.utcnow()).order_by(Appointment.appointment_date).limit(5).all()
         cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
         
-        return render_template("user/dashboard.html", 
-                             recent_orders=recent_orders, 
-                             upcoming_appointments=upcoming_appointments, 
-                             cart_count=cart_count)
+        return render_template(
+            "user/dashboard.html",
+            recent_orders=recent_orders,
+            upcoming_appointments=upcoming_appointments,
+            cart_count=cart_count,
+        )
+
+    @app.route("/admin-dashboard")
+    @login_required
+    @admin_required
+    def admin_dashboard():
+        from models import Order, Product, Appointment, Practitioner
+        
+        product_count = Product.query.count()
+        order_count = Order.query.count()
+        user_count = User.query.count()
+        practitioner_count = Practitioner.query.count()
+        pending_orders = Order.query.filter_by(status="pending").count()
+        total_revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).scalar() or 0
+        recent_orders = Order.query.order_by(Order.created_at.desc()).limit(5).all()
+        upcoming_appointments = Appointment.query.filter(
+            Appointment.appointment_date >= datetime.utcnow(), 
+            Appointment.status == "scheduled"
+        ).order_by(Appointment.appointment_date).limit(5).all()
+        low_stock = Product.query.filter(Product.stock > 0, Product.stock < 10).count()
+        
+        return render_template(
+            "admin/dashboard.html",
+            product_count=product_count,
+            order_count=order_count,
+            user_count=user_count,
+            practitioner_count=practitioner_count,
+            pending_orders=pending_orders,
+            recent_orders=recent_orders,
+            upcoming_appointments=upcoming_appointments,
+            low_stock=low_stock,
+            total_revenue=total_revenue,
+        )
 
     # ========== PRODUCT ROUTES ==========
     @app.route("/products")
@@ -193,19 +296,26 @@ def create_app():
         from models import Product
         category = request.args.get("category", "")
         search = request.args.get("search", "")
+        page = request.args.get('page', 1, type=int)
+        
         query = Product.query.filter_by(is_active=True)
         
         if category:
             query = query.filter_by(category=category)
         if search:
-            query = query.filter(Product.name.contains(search) | Product.description.contains(search))
+            search_term = sanitize_input(search)
+            query = query.filter(Product.name.contains(search_term) | Product.description.contains(search_term))
         
-        products_list = query.all()
+        paginated_products = query.order_by(Product.name).paginate(
+            page=page, per_page=app.config["PRODUCTS_PER_PAGE"], error_out=False
+        )
+        
         categories = db.session.query(Product.category).distinct().all()
         categories = [c[0] for c in categories if c[0]]
         
         return render_template("user/products.html", 
-                             products=products_list, 
+                             products=paginated_products.items,
+                             pagination=paginated_products,
                              categories=categories, 
                              current_category=category, 
                              search=search)
@@ -213,20 +323,28 @@ def create_app():
     @app.route("/products/<int:product_id>")
     def product_detail(product_id):
         from models import Product
-        product = Product.query.get_or_404(product_id)
+        product = db.session.get(Product, product_id)
+        if not product:
+            flash("Product not found.", "error")
+            return redirect(url_for("products"))
         return render_template("user/product_detail.html", product=product)
 
     # ========== CART ROUTES ==========
     @app.route("/add-to-cart/<int:product_id>", methods=["POST"])
     @login_required
     def add_to_cart_ajax(product_id):
-        """AJAX endpoint for adding to cart - returns JSON response"""
         from models import CartItem, Product
         
         try:
             data = request.get_json()
             quantity = data.get('quantity', 1)
-            product = Product.query.get_or_404(product_id)
+            
+            if quantity < 1:
+                return jsonify({'success': False, 'message': 'Quantity must be at least 1'}), 400
+            
+            product = db.session.get(Product, product_id)
+            if not product or not product.is_active:
+                return jsonify({'success': False, 'message': 'Product not available'}), 400
             
             if product.stock < quantity:
                 return jsonify({
@@ -262,26 +380,8 @@ def create_app():
             db.session.rollback()
             return jsonify({
                 'success': False,
-                'message': str(e)
+                'message': 'An error occurred. Please try again.'
             }), 400
-    
-    @app.route("/cart/add/<int:product_id>", methods=["POST"])
-    @login_required
-    def add_to_cart(product_id):
-        from models import CartItem, Product
-        product = Product.query.get_or_404(product_id)
-        quantity = int(request.form.get("quantity", 1))
-        
-        cart_item = CartItem.query.filter_by(user_id=current_user.id, product_id=product_id).first()
-        if cart_item:
-            cart_item.quantity += quantity
-        else:
-            cart_item = CartItem(user_id=current_user.id, product_id=product_id, quantity=quantity)
-            db.session.add(cart_item)
-        
-        db.session.commit()
-        flash(f"{product.name} added to cart.", "success")
-        return redirect(request.referrer or url_for("products"))
     
     @app.route("/cart")
     @login_required
@@ -295,16 +395,19 @@ def create_app():
     @login_required
     def update_cart(item_id):
         from models import CartItem
-        cart_item = CartItem.query.get_or_404(item_id)
-        if cart_item.user_id != current_user.id:
-            flash("Unauthorized.", "error")
+        cart_item = db.session.get(CartItem, item_id)
+        if not cart_item or cart_item.user_id != current_user.id:
+            flash("Unauthorized action.", "error")
             return redirect(url_for("cart"))
         
         quantity = int(request.form.get("quantity", 1))
         if quantity <= 0:
             db.session.delete(cart_item)
+            flash("Item removed from cart.", "success")
         else:
             cart_item.quantity = quantity
+            flash("Cart updated successfully.", "success")
+        
         db.session.commit()
         return redirect(url_for("cart"))
     
@@ -312,9 +415,9 @@ def create_app():
     @login_required
     def remove_from_cart(item_id):
         from models import CartItem
-        cart_item = CartItem.query.get_or_404(item_id)
-        if cart_item.user_id != current_user.id:
-            flash("Unauthorized.", "error")
+        cart_item = db.session.get(CartItem, item_id)
+        if not cart_item or cart_item.user_id != current_user.id:
+            flash("Unauthorized action.", "error")
             return redirect(url_for("cart"))
         
         db.session.delete(cart_item)
@@ -334,11 +437,23 @@ def create_app():
             return redirect(url_for("cart"))
         
         if request.method == "POST":
-            shipping_address = request.form.get("shipping_address", current_user.address or "")
+            shipping_address = sanitize_input(request.form.get("shipping_address", current_user.address or ""))
             delivery_option = request.form.get("delivery_option", "standard")
-            contact_name = request.form.get("contact_name", current_user.name)
-            contact_email = request.form.get("contact_email", current_user.email)
-            contact_phone = request.form.get("contact_phone", current_user.phone or "")
+            contact_name = sanitize_input(request.form.get("contact_name", current_user.name))
+            contact_email = request.form.get("contact_email", current_user.email).strip().lower()
+            contact_phone = sanitize_input(request.form.get("contact_phone", current_user.phone or ""))
+            
+            if not shipping_address:
+                flash("Please enter your shipping address.", "error")
+                return redirect(url_for("checkout"))
+            
+            if not contact_name:
+                flash("Please enter your contact name.", "error")
+                return redirect(url_for("checkout"))
+            
+            if not contact_email or not re.match(r"[^@]+@[^@]+\.[^@]+", contact_email):
+                flash("Please enter a valid email address.", "error")
+                return redirect(url_for("checkout"))
             
             session["checkout_info"] = {
                 "shipping_address": shipping_address,
@@ -360,7 +475,7 @@ def create_app():
         import random
         
         if "checkout_info" not in session:
-            flash("Please complete checkout first.", "warning")
+            flash("Please complete the checkout process first.", "warning")
             return redirect(url_for("checkout"))
         
         cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
@@ -398,7 +513,7 @@ def create_app():
             session.pop("checkout_info", None)
             db.session.commit()
             
-            flash("Order received! Pay via M-Pesa to Till No. " + app.config["MPESA_TILL_NUMBER"] + " to complete payment.", "success")
+            flash(f"Order #{order_number} received! Pay via M-Pesa to Till No. {app.config['MPESA_TILL_NUMBER']} to complete payment.", "success")
             return redirect(url_for("order_detail", order_id=order.id))
         
         return render_template("user/payment.html", 
@@ -411,26 +526,34 @@ def create_app():
     @login_required
     def orders():
         from models import Order
-        orders_list = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).all()
-        return render_template("user/orders.html", orders=orders_list)
+        page = request.args.get('page', 1, type=int)
+        
+        paginated_orders = Order.query.filter_by(user_id=current_user.id)\
+            .order_by(Order.created_at.desc())\
+            .paginate(page=page, per_page=app.config["ORDERS_PER_PAGE"], error_out=False)
+        
+        return render_template("user/orders.html", 
+                             orders=paginated_orders.items,
+                             pagination=paginated_orders)
     
     @app.route("/orders/<int:order_id>")
     @login_required
     def order_detail(order_id):
         from models import Order
-        order = Order.query.get_or_404(order_id)
-        if order.user_id != current_user.id:
-            flash("Unauthorized.", "error")
+        order = db.session.get(Order, order_id)
+        if not order or (order.user_id != current_user.id and current_user.role != "admin"):
+            flash("Order not found or unauthorized access.", "error")
             return redirect(url_for("orders"))
+        
         return render_template("user/order_detail.html", order=order)
-    
+
     @app.route("/orders/<int:order_id>/reorder", methods=["POST"])
     @login_required
     def reorder(order_id):
         from models import Order, OrderItem, CartItem
-        order = Order.query.get_or_404(order_id)
-        if order.user_id != current_user.id:
-            flash("Unauthorized.", "error")
+        order = db.session.get(Order, order_id)
+        if not order or order.user_id != current_user.id:
+            flash("Unauthorized action.", "error")
             return redirect(url_for("orders"))
         
         for order_item in order.items:
@@ -442,20 +565,30 @@ def create_app():
                 db.session.add(cart_item)
         
         db.session.commit()
-        flash("Items added to cart.", "success")
+        flash("Items added to your cart.", "success")
         return redirect(url_for("cart"))
 
     # ========== PRACTITIONER ROUTES ==========
     @app.route("/practitioners")
     def practitioners():
         from models import Practitioner
-        practitioners_list = Practitioner.query.filter_by(is_active=True).all()
-        return render_template("user/practitioners.html", practitioners=practitioners_list)
+        page = request.args.get('page', 1, type=int)
+        
+        paginated_practitioners = Practitioner.query.filter_by(is_active=True)\
+            .order_by(Practitioner.name)\
+            .paginate(page=page, per_page=app.config["PRODUCTS_PER_PAGE"], error_out=False)
+        
+        return render_template("user/practitioners.html", 
+                             practitioners=paginated_practitioners.items,
+                             pagination=paginated_practitioners)
     
     @app.route("/practitioners/<int:practitioner_id>")
     def practitioner_detail(practitioner_id):
         from models import Practitioner
-        practitioner = Practitioner.query.get_or_404(practitioner_id)
+        practitioner = db.session.get(Practitioner, practitioner_id)
+        if not practitioner or not practitioner.is_active:
+            flash("Practitioner not found.", "error")
+            return redirect(url_for("practitioners"))
         return render_template("user/practitioner_detail.html", practitioner=practitioner)
 
     # ========== APPOINTMENT ROUTES ==========
@@ -463,25 +596,39 @@ def create_app():
     @login_required
     def appointments():
         from models import Appointment
-        appointments_list = Appointment.query.filter_by(user_id=current_user.id).order_by(Appointment.appointment_date.desc()).all()
-        return render_template("user/appointments.html", appointments=appointments_list)
+        page = request.args.get('page', 1, type=int)
+        
+        paginated_appointments = Appointment.query.filter_by(user_id=current_user.id)\
+            .order_by(Appointment.appointment_date.desc())\
+            .paginate(page=page, per_page=app.config["APPOINTMENTS_PER_PAGE"], error_out=False)
+        
+        return render_template("user/appointments.html", 
+                             appointments=paginated_appointments.items,
+                             pagination=paginated_appointments)
     
     @app.route("/appointments/book/<int:practitioner_id>", methods=["GET", "POST"])
     @login_required
     def book_appointment(practitioner_id):
         from models import Practitioner, Appointment
-        practitioner = Practitioner.query.get_or_404(practitioner_id)
+        practitioner = db.session.get(Practitioner, practitioner_id)
+        if not practitioner or not practitioner.is_active:
+            flash("This practitioner is currently unavailable.", "error")
+            return redirect(url_for("practitioners"))
         
         if request.method == "POST":
             appointment_date_str = request.form.get("appointment_date")
             appointment_time = request.form.get("appointment_time")
             appointment_type = request.form.get("appointment_type", "general advice")
-            notes = request.form.get("notes", "")
+            notes = sanitize_input(request.form.get("notes", ""))
             
             try:
                 appointment_datetime = datetime.strptime(f"{appointment_date_str} {appointment_time}", "%Y-%m-%d %H:%M")
             except ValueError:
                 flash("Invalid date or time format.", "error")
+                return render_template("user/book_appointment.html", practitioner=practitioner)
+            
+            if appointment_datetime < datetime.utcnow():
+                flash("Cannot book appointments in the past.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
             appointment = Appointment(
@@ -503,10 +650,11 @@ def create_app():
     @login_required
     def appointment_detail(appointment_id):
         from models import Appointment
-        appointment = Appointment.query.get_or_404(appointment_id)
-        if appointment.user_id != current_user.id:
-            flash("Unauthorized.", "error")
+        appointment = db.session.get(Appointment, appointment_id)
+        if not appointment or (appointment.user_id != current_user.id and current_user.role != "admin"):
+            flash("Appointment not found or unauthorized access.", "error")
             return redirect(url_for("appointments"))
+        
         return render_template("user/appointment_detail.html", appointment=appointment)
 
     # ========== PROFILE ROUTES ==========
@@ -514,17 +662,19 @@ def create_app():
     @login_required
     def profile():
         if request.method == "POST":
-            current_user.name = request.form.get("name", current_user.name)
-            current_user.phone = request.form.get("phone", current_user.phone)
-            current_user.address = request.form.get("address", current_user.address)
+            current_user.name = sanitize_input(request.form.get("name", current_user.name))
+            current_user.phone = sanitize_input(request.form.get("phone", current_user.phone))
+            current_user.address = sanitize_input(request.form.get("address", current_user.address))
             
             new_password = request.form.get("new_password", "")
             if new_password:
-                if len(new_password) < 6:
-                    flash("Password must be at least 6 characters.", "error")
+                is_valid, msg = validate_password_strength(new_password)
+                if is_valid:
+                    current_user.password_hash = generate_password_hash(new_password, method="pbkdf2:sha256")
+                    flash("Password updated successfully.", "success")
                 else:
-                    current_user.password_hash = generate_password_hash(new_password)
-                    flash("Password updated.", "success")
+                    flash(msg, "error")
+                    return redirect(url_for("profile"))
             
             db.session.commit()
             flash("Profile updated successfully.", "success")
@@ -561,16 +711,24 @@ def create_app():
         from models import Product
         category = request.args.get("category", "")
         search = request.args.get("search", "")
+        page = request.args.get('page', 1, type=int)
+        
         query = Product.query
         if category:
             query = query.filter_by(category=category)
         if search:
             query = query.filter(Product.name.contains(search) | Product.description.contains(search))
-        products_list = query.order_by(Product.name).all()
+        
+        paginated_products = query.order_by(Product.name).paginate(
+            page=page, per_page=app.config["PRODUCTS_PER_PAGE"], error_out=False
+        )
+        
         categories = db.session.query(Product.category).distinct().all()
         categories = [c[0] for c in categories if c[0]]
+        
         return render_template("admin/products.html", 
-                             products=products_list, 
+                             products=paginated_products.items,
+                             pagination=paginated_products,
                              categories=categories, 
                              current_category=category, 
                              search=search)
@@ -581,14 +739,14 @@ def create_app():
     def admin_product_new():
         from models import Product
         if request.method == "POST":
-            name = request.form.get("name", "").strip()
-            description = request.form.get("description", "")
+            name = sanitize_input(request.form.get("name", ""))
+            description = sanitize_input(request.form.get("description", ""))
             price = request.form.get("price", "0")
             stock = int(request.form.get("stock", 0) or 0)
-            category = request.form.get("category", "").strip()
-            image_url = request.form.get("image_url", "").strip()
-            usage_instructions = request.form.get("usage_instructions", "")
-            warnings = request.form.get("warnings", "")
+            category = sanitize_input(request.form.get("category", ""))
+            image_url = sanitize_input(request.form.get("image_url", ""))
+            usage_instructions = sanitize_input(request.form.get("usage_instructions", ""))
+            warnings = sanitize_input(request.form.get("warnings", ""))
             is_active = request.form.get("is_active") == "on"
             
             if not name:
@@ -623,19 +781,23 @@ def create_app():
     @admin_required
     def admin_product_edit(product_id):
         from models import Product
-        product = Product.query.get_or_404(product_id)
+        product = db.session.get(Product, product_id)
+        if not product:
+            flash("Product not found.", "error")
+            return redirect(url_for("admin_products"))
+        
         if request.method == "POST":
-            product.name = request.form.get("name", "").strip()
-            product.description = request.form.get("description", "") or None
+            product.name = sanitize_input(request.form.get("name", ""))
+            product.description = sanitize_input(request.form.get("description", "")) or None
             try:
                 product.price = Decimal(request.form.get("price", "0"))
             except Exception:
                 pass
             product.stock = int(request.form.get("stock", 0) or 0)
-            product.category = request.form.get("category", "").strip() or None
-            product.image_url = request.form.get("image_url", "").strip() or None
-            product.usage_instructions = request.form.get("usage_instructions", "") or None
-            product.warnings = request.form.get("warnings", "") or None
+            product.category = sanitize_input(request.form.get("category", "")) or None
+            product.image_url = sanitize_input(request.form.get("image_url", "")) or None
+            product.usage_instructions = sanitize_input(request.form.get("usage_instructions", "")) or None
+            product.warnings = sanitize_input(request.form.get("warnings", "")) or None
             product.is_active = request.form.get("is_active") == "on"
             
             if not product.name:
@@ -652,7 +814,11 @@ def create_app():
     @admin_required
     def admin_product_toggle(product_id):
         from models import Product
-        product = Product.query.get_or_404(product_id)
+        product = db.session.get(Product, product_id)
+        if not product:
+            flash("Product not found.", "error")
+            return redirect(request.referrer or url_for("admin_products"))
+        
         product.is_active = not product.is_active
         db.session.commit()
         status = "active" if product.is_active else "inactive"
@@ -665,18 +831,29 @@ def create_app():
     def admin_orders():
         from models import Order
         status_filter = request.args.get("status", "")
+        page = request.args.get('page', 1, type=int)
+        
         query = Order.query.order_by(Order.created_at.desc())
         if status_filter:
             query = query.filter_by(status=status_filter)
-        orders_list = query.all()
-        return render_template("admin/orders.html", orders=orders_list, status_filter=status_filter)
+        
+        paginated_orders = query.paginate(page=page, per_page=app.config["ORDERS_PER_PAGE"], error_out=False)
+        
+        return render_template("admin/orders.html", 
+                             orders=paginated_orders.items,
+                             pagination=paginated_orders,
+                             status_filter=status_filter)
 
     @app.route("/admin/orders/<int:order_id>", methods=["GET", "POST"])
     @login_required
     @admin_required
     def admin_order_detail(order_id):
         from models import Order
-        order = Order.query.get_or_404(order_id)
+        order = db.session.get(Order, order_id)
+        if not order:
+            flash("Order not found.", "error")
+            return redirect(url_for("admin_orders"))
+        
         if request.method == "POST":
             new_status = request.form.get("status", "").strip()
             if new_status in ("pending", "processing", "shipped", "delivered", "cancelled"):
@@ -692,19 +869,33 @@ def create_app():
     @admin_required
     def admin_users():
         search = request.args.get("search", "")
+        page = request.args.get('page', 1, type=int)
+        
         query = User.query.order_by(User.name)
         if search:
             query = query.filter(User.name.contains(search) | User.email.contains(search))
-        users_list = query.all()
-        return render_template("admin/users.html", users=users_list, search=search)
+        
+        paginated_users = query.paginate(page=page, per_page=20, error_out=False)
+        
+        return render_template("admin/users.html", 
+                             users=paginated_users.items,
+                             pagination=paginated_users,
+                             search=search)
 
     @app.route("/admin/practitioners")
     @login_required
     @admin_required
     def admin_practitioners():
         from models import Practitioner
-        practitioners_list = Practitioner.query.order_by(Practitioner.name).all()
-        return render_template("admin/practitioners.html", practitioners=practitioners_list)
+        page = request.args.get('page', 1, type=int)
+        
+        paginated_practitioners = Practitioner.query.order_by(Practitioner.name).paginate(
+            page=page, per_page=app.config["PRODUCTS_PER_PAGE"], error_out=False
+        )
+        
+        return render_template("admin/practitioners.html", 
+                             practitioners=paginated_practitioners.items,
+                             pagination=paginated_practitioners)
 
     @app.route("/admin/practitioners/new", methods=["GET", "POST"])
     @login_required
@@ -712,13 +903,13 @@ def create_app():
     def admin_practitioner_new():
         from models import Practitioner
         if request.method == "POST":
-            name = request.form.get("name", "").strip()
-            title = request.form.get("title", "").strip()
-            bio = request.form.get("bio", "")
-            specialties = request.form.get("specialties", "").strip()
-            image_url = request.form.get("image_url", "").strip()
-            email = request.form.get("email", "").strip()
-            phone = request.form.get("phone", "").strip()
+            name = sanitize_input(request.form.get("name", ""))
+            title = sanitize_input(request.form.get("title", ""))
+            bio = sanitize_input(request.form.get("bio", ""))
+            specialties = sanitize_input(request.form.get("specialties", ""))
+            image_url = sanitize_input(request.form.get("image_url", ""))
+            email = sanitize_input(request.form.get("email", ""))
+            phone = sanitize_input(request.form.get("phone", ""))
             is_active = request.form.get("is_active") == "on"
             
             if not name:
@@ -746,15 +937,19 @@ def create_app():
     @admin_required
     def admin_practitioner_edit(practitioner_id):
         from models import Practitioner
-        practitioner = Practitioner.query.get_or_404(practitioner_id)
+        practitioner = db.session.get(Practitioner, practitioner_id)
+        if not practitioner:
+            flash("Practitioner not found.", "error")
+            return redirect(url_for("admin_practitioners"))
+        
         if request.method == "POST":
-            practitioner.name = request.form.get("name", "").strip()
-            practitioner.title = request.form.get("title", "").strip() or None
-            practitioner.bio = request.form.get("bio", "") or None
-            practitioner.specialties = request.form.get("specialties", "").strip() or None
-            practitioner.image_url = request.form.get("image_url", "").strip() or None
-            practitioner.email = request.form.get("email", "").strip() or None
-            practitioner.phone = request.form.get("phone", "").strip() or None
+            practitioner.name = sanitize_input(request.form.get("name", ""))
+            practitioner.title = sanitize_input(request.form.get("title", "")) or None
+            practitioner.bio = sanitize_input(request.form.get("bio", "")) or None
+            practitioner.specialties = sanitize_input(request.form.get("specialties", "")) or None
+            practitioner.image_url = sanitize_input(request.form.get("image_url", "")) or None
+            practitioner.email = sanitize_input(request.form.get("email", "")) or None
+            practitioner.phone = sanitize_input(request.form.get("phone", "")) or None
             practitioner.is_active = request.form.get("is_active") == "on"
             
             if not practitioner.name:
@@ -771,7 +966,11 @@ def create_app():
     @admin_required
     def admin_practitioner_toggle(practitioner_id):
         from models import Practitioner
-        practitioner = Practitioner.query.get_or_404(practitioner_id)
+        practitioner = db.session.get(Practitioner, practitioner_id)
+        if not practitioner:
+            flash("Practitioner not found.", "error")
+            return redirect(request.referrer or url_for("admin_practitioners"))
+        
         practitioner.is_active = not practitioner.is_active
         db.session.commit()
         status = "active" if practitioner.is_active else "inactive"
@@ -784,11 +983,18 @@ def create_app():
     def admin_appointments():
         from models import Appointment
         status_filter = request.args.get("status", "")
+        page = request.args.get('page', 1, type=int)
+        
         query = Appointment.query.order_by(Appointment.appointment_date.desc())
         if status_filter:
             query = query.filter_by(status=status_filter)
-        appointments_list = query.all()
-        return render_template("admin/appointments.html", appointments=appointments_list, status_filter=status_filter)
+        
+        paginated_appointments = query.paginate(page=page, per_page=app.config["APPOINTMENTS_PER_PAGE"], error_out=False)
+        
+        return render_template("admin/appointments.html", 
+                             appointments=paginated_appointments.items,
+                             pagination=paginated_appointments,
+                             status_filter=status_filter)
 
     @app.route("/admin/sales")
     @login_required
@@ -800,6 +1006,7 @@ def create_app():
         date_from_str = request.args.get("date_from", "").strip()
         date_to_str = request.args.get("date_to", "").strip()
         delivered_only = request.args.get("delivered_only") == "on"
+        page = request.args.get('page', 1, type=int)
         
         query = Order.query
         if delivered_only:
@@ -818,9 +1025,15 @@ def create_app():
             except ValueError:
                 pass
         
-        orders_in_period = query.order_by(Order.created_at.desc()).all()
-        order_count = len(orders_in_period)
-        revenue = sum(float(o.total_amount) for o in orders_in_period)
+        order_count = query.count()
+        revenue = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).filter(
+            query.whereclause
+        ).scalar() or 0 if query.whereclause else 0
+        
+        paginated_orders = query.order_by(Order.created_at.desc()).paginate(
+            page=page, per_page=50, error_out=False
+        )
+        
         total_all_time = db.session.query(db.func.coalesce(db.func.sum(Order.total_amount), 0)).scalar() or 0
         total_orders_all_time = Order.query.count()
         
@@ -830,16 +1043,16 @@ def create_app():
             date_to=date_to_str,
             delivered_only=delivered_only,
             order_count=order_count,
-            revenue=revenue,
+            revenue=float(revenue) if revenue else 0,
             total_orders_all_time=total_orders_all_time,
             total_revenue_all_time=float(total_all_time) if total_all_time else 0,
-            orders=orders_in_period[:50],
+            orders=paginated_orders.items,
+            pagination=paginated_orders,
         )
 
     # ========== CLI COMMANDS ==========
     @app.cli.command("init-db")
     def init_db():
-        """Initialize the database and create an initial admin user if none exists."""
         from models import User
 
         db.create_all()
@@ -848,10 +1061,10 @@ def create_app():
 
         if not User.query.filter_by(email=admin_email).first():
             admin = User(
-                name="Admin",
+                name="System Admin",
                 email=admin_email,
                 role="admin",
-                password_hash=generate_password_hash(admin_password),
+                password_hash=generate_password_hash(admin_password, method="pbkdf2:sha256"),
             )
             db.session.add(admin)
             db.session.commit()
