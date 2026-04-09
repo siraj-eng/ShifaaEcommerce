@@ -922,6 +922,10 @@
                 const original = parseInt(input.dataset.original);
                 const newValue = parseInt(input.value);
                 const maxStock = parseInt(input.getAttribute('data-max-stock')) || 999999;
+
+                // #region agent log
+                fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'A',location:'cart.html:quantity-form:submit',message:'Quantity form submit intercepted',data:{itemId:this.dataset.itemId,original,isNaN_newValue:isNaN(newValue),newValue,inputValue:input.value,maxStock,action:this.getAttribute('action')},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion agent log
                 
                 // Final validation before submission
                 let finalValue = newValue;
@@ -944,6 +948,9 @@
                     this.querySelector('.update-btn-mini').style.display = 'none';
                     
                     setTimeout(() => {
+                        // #region agent log
+                        fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'B',location:'cart.html:quantity-form:before-submit',message:'Submitting quantity form to server',data:{itemId:this.dataset.itemId,finalValue,inputValue:input.value,nameAttr:input.getAttribute('name')},timestamp:Date.now()})}).catch(()=>{});
+                        // #endregion agent log
                         this.submit();
                     }, 300);
                 }

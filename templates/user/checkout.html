@@ -1045,6 +1045,10 @@
             // Store calculated values for form submission
             window.calculatedShipping = shippingCost;
             window.calculatedTotal = grandTotal;
+
+            // #region agent log
+            fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'E',location:'checkout.html:updateTotals',message:'Totals updated',data:{deliveryOption,subtotal,totalQuantity,shippingCost,shippingText,grandTotal},timestamp:Date.now()})}).catch(()=>{});
+            // #endregion agent log
         }
         
         // Delivery option selection handler
@@ -1123,6 +1127,10 @@
                     }
                     shippingInput.value = window.calculatedShipping;
                 }
+
+                // #region agent log
+                fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'E',location:'checkout.html:submit',message:'Checkout form submitting',data:{deliveryOption:selectedOption?selectedOption.value:null,calculatedShipping:window.calculatedShipping,hasShippingInput:!!document.querySelector('input[name=\"shipping_cost\"]')},timestamp:Date.now()})}).catch(()=>{});
+                // #endregion agent log
                 
                 // Show loading state
                 if (placeOrderBtn) {

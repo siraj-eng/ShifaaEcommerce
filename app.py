@@ -1,5 +1,7 @@
 import os
 import re
+import json
+import time
 from datetime import datetime
 from decimal import Decimal
 from functools import wraps
@@ -16,6 +18,24 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+
+    # #region agent log
+    def _dbg(hypothesisId: str, location: str, message: str, data: dict | None = None):
+        try:
+            payload = {
+                "sessionId": "6e968a",
+                "runId": "pre-fix",
+                "hypothesisId": hypothesisId,
+                "location": location,
+                "message": message,
+                "data": data or {},
+                "timestamp": int(time.time() * 1000),
+            }
+            with open("debug-6e968a.log", "a", encoding="utf-8") as f:
+                f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+        except Exception:
+            pass
+    # #endregion agent log
 
     # ========== SECURITY CONFIGURATION ==========
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-me-in-production")
@@ -449,7 +469,20 @@ def create_app():
         if not cart_item or cart_item.user_id != current_user.id:
             flash("Unauthorized action.", "error")
             return redirect(url_for("cart"))
-        
+
+        # #region agent log
+        _dbg(
+            "A",
+            "app.py:update_cart:entry",
+            "update_cart called",
+            {
+                "item_id": item_id,
+                "raw_quantity": request.form.get("quantity"),
+                "qty_before": getattr(cart_item, "quantity", None),
+            },
+        )
+        # #endregion agent log
+
         quantity = int(request.form.get("quantity", 1))
         if quantity <= 0:
             db.session.delete(cart_item)
@@ -457,7 +490,16 @@ def create_app():
         else:
             cart_item.quantity = quantity
             flash("Cart updated successfully.", "success")
-        
+
+        # #region agent log
+        _dbg(
+            "B",
+            "app.py:update_cart:before_commit",
+            "update_cart about to commit",
+            {"item_id": item_id, "parsed_quantity": quantity, "qty_after": getattr(cart_item, "quantity", None)},
+        )
+        # #endregion agent log
+
         db.session.commit()
         return redirect(url_for("cart"))
     
@@ -509,6 +551,7 @@ def create_app():
             contact_name = sanitize_input(request.form.get("contact_name", current_user.name))
             contact_email = request.form.get("contact_email", current_user.email).strip().lower()
             contact_phone = sanitize_input(request.form.get("contact_phone", current_user.phone or ""))
+            shipping_cost_raw = request.form.get("shipping_cost")
             
             if not shipping_address:
                 flash("Please enter your shipping address.", "error")
@@ -521,6 +564,20 @@ def create_app():
             if not contact_email or not re.match(r"[^@]+@[^@]+\.[^@]+", contact_email):
                 flash("Please enter a valid email address.", "error")
                 return redirect(url_for("checkout"))
+
+            # #region agent log
+            _dbg(
+                "C",
+                "app.py:checkout:save_session",
+                "Saving checkout_info and redirecting to payment",
+                {
+                    "delivery_option": delivery_option,
+                    "shipping_cost_raw": shipping_cost_raw,
+                    "shipping_address_len": len(shipping_address or ""),
+                    "cart_items": len(cart_items),
+                },
+            )
+            # #endregion agent log
             
             session["checkout_info"] = {
                 "shipping_address": shipping_address,
@@ -542,6 +599,15 @@ def create_app():
     def payment():
         from models import CartItem, Order, OrderItem
         import random
+
+        # #region agent log
+        _dbg(
+            "D",
+            "app.py:payment:entry",
+            "payment route entered",
+            {"has_checkout_info": "checkout_info" in session, "method": request.method},
+        )
+        # #endregion agent log
         
         if "checkout_info" not in session:
             flash("Please complete the checkout process first.", "warning")
@@ -555,6 +621,15 @@ def create_app():
         
         checkout_info = session["checkout_info"]
         total = sum(item.product.price * item.quantity for item in cart_items)
+
+        # #region agent log
+        _dbg(
+            "E",
+            "app.py:payment:computed",
+            "Computed payment totals",
+            {"delivery_option": checkout_info.get("delivery_option"), "items": len(cart_items), "total": float(total)},
+        )
+        # #endregion agent log
         
         if request.method == "POST":
             order_number = f"SHF{random.randint(100000, 999999)}"
