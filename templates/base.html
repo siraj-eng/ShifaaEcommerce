@@ -830,6 +830,13 @@
     </nav>
 
     {% block content %}
+    <!-- Floating Cart - Only show when logged in -->
+    {% if current_user and current_user.is_authenticated %}
+    <a href="{{ url_for('cart') }}" class="floating-cart">
+        <i class="bi bi-cart-fill"></i>
+        <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
+    </a>
+    {% endif %}    
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-bg"></div>

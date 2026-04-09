@@ -525,6 +525,7 @@
             transform: translateX(100%);
             opacity: 0;
             transition: all 0.25s ease;
+            pointer-events: none;
         }
         
         .toast-notification.show {
@@ -787,15 +788,34 @@
     </div>
     
     <script>
-        // Show toast notification
+        // Clear any pending toast on page load
+        (function clearStoredToast() {
+            // Remove any session storage items that might cause phantom toasts
+            sessionStorage.removeItem('shifaa_toast_message');
+            localStorage.removeItem('shifaa_toast_message');
+        })();
+        
+        // Show toast notification with auto-cleanup
+        let toastTimeout = null;
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toastMsg');
+            
+            if (!toast) return;
+            
+            // Clear any existing timeout
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+            
             toastMsg.textContent = message;
             toast.style.background = isError ? '#dc2626' : '#1e293b';
             toast.classList.add('show');
-            setTimeout(() => {
+            
+            // Auto-hide after 2 seconds
+            toastTimeout = setTimeout(() => {
                 toast.classList.remove('show');
+                toastTimeout = null;
             }, 2000);
         }
         
@@ -820,7 +840,7 @@
             return newTotal;
         }
         
-        // Update cart total and subtotal
+        // Update cart totals
         function updateCartTotals() {
             const cartItems = document.querySelectorAll('.cart-item');
             let subtotal = 0;
@@ -839,6 +859,15 @@
             }
             if (totalElement) {
                 totalElement.textContent = formatCurrency(subtotal);
+            }
+        }
+        
+        // Update cart count badge
+        function updateCartCount() {
+            const cartCount = document.querySelectorAll('.cart-item').length;
+            const cartBadge = document.getElementById('cartCount');
+            if (cartBadge) {
+                cartBadge.textContent = cartCount;
             }
         }
         
@@ -922,10 +951,6 @@
                 const original = parseInt(input.dataset.original);
                 const newValue = parseInt(input.value);
                 const maxStock = parseInt(input.getAttribute('data-max-stock')) || 999999;
-
-                // #region agent log
-                fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'A',location:'cart.html:quantity-form:submit',message:'Quantity form submit intercepted',data:{itemId:this.dataset.itemId,original,isNaN_newValue:isNaN(newValue),newValue,inputValue:input.value,maxStock,action:this.getAttribute('action')},timestamp:Date.now()})}).catch(()=>{});
-                // #endregion agent log
                 
                 // Final validation before submission
                 let finalValue = newValue;
@@ -948,27 +973,25 @@
                     this.querySelector('.update-btn-mini').style.display = 'none';
                     
                     setTimeout(() => {
-                        // #region agent log
-                        fetch('http://127.0.0.1:7795/ingest/5b4efc71-d77c-4f00-8790-910067b716c9',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6e968a'},body:JSON.stringify({sessionId:'6e968a',runId:'pre-fix',hypothesisId:'B',location:'cart.html:quantity-form:before-submit',message:'Submitting quantity form to server',data:{itemId:this.dataset.itemId,finalValue,inputValue:input.value,nameAttr:input.getAttribute('name')},timestamp:Date.now()})}).catch(()=>{});
-                        // #endregion agent log
                         this.submit();
                     }, 300);
                 }
             });
         });
         
-        // Handle remove form
+        // Handle remove form - FIXED: No persistent toast
         document.querySelectorAll('.remove-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 if (confirm('Remove this item from your cart?')) {
                     const cartItem = this.closest('.cart-item');
-                    cartItem.style.opacity = '0';
-                    cartItem.style.transform = 'translateX(-20px)';
+                    const itemName = cartItem.querySelector('.item-name')?.textContent || 'Item';
                     
-                    showToast('Item removed from cart');
+                    // Show toast immediately (will auto-hide)
+                    showToast(`${itemName} removed from cart`);
                     
+                    // Submit form to remove from database
                     setTimeout(() => {
                         this.submit();
                     }, 300);
@@ -978,22 +1001,16 @@
         
         // Handle manual input changes
         document.querySelectorAll('.qty-input-mini').forEach(input => {
-            // Remove existing listeners to avoid duplicates
-            input.removeEventListener('change', function() {});
-            input.removeEventListener('blur', function() {});
-            
-            // Add event listener for when user finishes typing
             input.addEventListener('change', function() {
                 handleQuantityInputChange(this);
             });
             
-            // Also handle blur (when clicking away)
             input.addEventListener('blur', function() {
                 handleQuantityInputChange(this);
             });
         });
         
-        // Validate checkout button - prevent checkout if any quantity exceeds stock
+        // Validate checkout button
         function validateCheckout() {
             const checkoutBtn = document.getElementById('checkoutBtn');
             if (!checkoutBtn) return;
@@ -1001,11 +1018,13 @@
             let hasStockIssue = false;
             document.querySelectorAll('.cart-item').forEach(item => {
                 const input = item.querySelector('.qty-input-mini');
-                const quantity = parseInt(input.value);
-                const maxStock = parseInt(input.getAttribute('data-max-stock'));
-                
-                if (quantity > maxStock) {
-                    hasStockIssue = true;
+                if (input) {
+                    const quantity = parseInt(input.value);
+                    const maxStock = parseInt(input.getAttribute('data-max-stock'));
+                    
+                    if (quantity > maxStock) {
+                        hasStockIssue = true;
+                    }
                 }
             });
             
@@ -1018,6 +1037,13 @@
             }
         }
         
+        // Clean up on page unload - prevent toast from persisting
+        window.addEventListener('beforeunload', function() {
+            if (toastTimeout) {
+                clearTimeout(toastTimeout);
+            }
+        });
+        
         // Sync cart count on page load
         document.addEventListener('DOMContentLoaded', function() {
             // Add animation delays
@@ -1029,6 +1055,12 @@
             // Ensure all quantities are properly displayed
             updateCartTotals();
             validateCheckout();
+            
+            // Clear any pending toast on page load
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.classList.remove('show');
+            }
         });
     </script>
 </body>

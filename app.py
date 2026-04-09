@@ -486,10 +486,10 @@ def create_app():
         quantity = int(request.form.get("quantity", 1))
         if quantity <= 0:
             db.session.delete(cart_item)
-            flash("Item removed from cart.", "success")
+            # Remove flash message to prevent display on login page
         else:
             cart_item.quantity = quantity
-            flash("Cart updated successfully.", "success")
+            # Remove flash message to prevent display on login page
 
         # #region agent log
         _dbg(
@@ -514,7 +514,7 @@ def create_app():
         
         db.session.delete(cart_item)
         db.session.commit()
-        flash("Item removed from cart.", "success")
+        # Remove flash message to prevent display on login page
         return redirect(url_for("cart"))
 
     # ========== CHECKOUT & PAYMENT ==========
