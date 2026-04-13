@@ -741,7 +741,7 @@
                     <div class="till-box">
                         <div class="till-label">BUSINESS TILL NUMBER</div>
                         <div class="till-number">{{ mpesa_till_number }}</div>
-                        <div class="amount-display">Amount: {{ total|currency }}</div>
+                        <div class="amount-display">Amount: {{ grand_total|currency }}</div>
                     </div>
                 </div>
                 
@@ -789,7 +789,7 @@
                             <li>Select <strong>"Lipa na M-Pesa"</strong></li>
                             <li>Select <strong>"Buy Goods and Services"</strong></li>
                             <li>Enter Till Number: <strong>{{ mpesa_till_number }}</strong></li>
-                            <li>Enter Amount: <strong>{{ total|currency }}</strong></li>
+                            <li>Enter Amount: <strong>{{ grand_total|currency }}</strong></li>
                             <li>Enter your M-Pesa PIN and confirm</li>
                             <li>Wait for confirmation SMS from M-Pesa</li>
                         </ol>
@@ -830,13 +830,13 @@
                 </div>
                 
                 <div class="summary-row">
-                    <span>Shipping</span>
-                    <span>{{ checkout_info.delivery_option|title if checkout_info.delivery_option else 'Standard' }}</span>
+                    <span>Shipping ({{ checkout_info.delivery_option|title if checkout_info.delivery_option else 'Standard' }})</span>
+                    <span>{{ shipping_cost|currency }}</span>
                 </div>
                 
                 <div class="summary-row total">
                     <span>Total</span>
-                    <span>{{ total|currency }}</span>
+                    <span>{{ grand_total|currency }}</span>
                 </div>
                 
                 <!-- Shipping Address -->
@@ -894,7 +894,7 @@
         
         async function initSTKPush() {
             let phoneNumber = phoneInput.value.trim();
-            const amount = {{ total }};
+            const amount = {{ grand_total }};
             
             if (!phoneNumber) {
                 showToast('Please enter your M-Pesa phone number', true);

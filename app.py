@@ -565,6 +565,12 @@ def create_app():
                 flash("Please enter a valid email address.", "error")
                 return redirect(url_for("checkout"))
 
+            shipping_cost = 0.0
+            try:
+                shipping_cost = float(shipping_cost_raw) if shipping_cost_raw else 0.0
+            except (TypeError, ValueError):
+                shipping_cost = 0.0
+
             # #region agent log
             _dbg(
                 "C",
@@ -572,7 +578,7 @@ def create_app():
                 "Saving checkout_info and redirecting to payment",
                 {
                     "delivery_option": delivery_option,
-                    "shipping_cost_raw": shipping_cost_raw,
+                    "shipping_cost": shipping_cost,
                     "shipping_address_len": len(shipping_address or ""),
                     "cart_items": len(cart_items),
                 },
@@ -582,6 +588,7 @@ def create_app():
             session["checkout_info"] = {
                 "shipping_address": shipping_address,
                 "delivery_option": delivery_option,
+                "shipping_cost": shipping_cost,
                 "contact_name": contact_name,
                 "contact_email": contact_email,
                 "contact_phone": contact_phone,
@@ -621,13 +628,21 @@ def create_app():
         
         checkout_info = session["checkout_info"]
         total = sum(item.product.price * item.quantity for item in cart_items)
+        shipping_cost = float(checkout_info.get("shipping_cost", 0) or 0)
+        grand_total = float(total) + shipping_cost
 
         # #region agent log
         _dbg(
             "E",
             "app.py:payment:computed",
             "Computed payment totals",
-            {"delivery_option": checkout_info.get("delivery_option"), "items": len(cart_items), "total": float(total)},
+            {
+                "delivery_option": checkout_info.get("delivery_option"),
+                "items": len(cart_items),
+                "subtotal": float(total),
+                "shipping_cost": shipping_cost,
+                "grand_total": grand_total,
+            },
         )
         # #endregion agent log
         
@@ -636,7 +651,7 @@ def create_app():
             order = Order(
                 user_id=current_user.id,
                 order_number=order_number,
-                total_amount=total,
+                total_amount=grand_total,
                 shipping_address=checkout_info["shipping_address"],
                 delivery_option=checkout_info["delivery_option"],
                 status="pending"
@@ -660,10 +675,14 @@ def create_app():
             flash(f"Order #{order_number} received! Pay via M-Pesa to Till No. {app.config['MPESA_TILL_NUMBER']} to complete payment.", "success")
             return redirect(url_for("order_detail", order_id=order.id))
         
-        return render_template("user/payment.html", 
-                             cart_items=cart_items, 
-                             total=float(total), 
-                             checkout_info=checkout_info)
+        return render_template(
+            "user/payment.html",
+            cart_items=cart_items,
+            total=float(total),
+            shipping_cost=shipping_cost,
+            grand_total=grand_total,
+            checkout_info=checkout_info,
+        )
 
     # ========== ORDER ROUTES ==========
     @app.route("/orders")
