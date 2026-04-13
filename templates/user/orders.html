@@ -464,7 +464,7 @@
                     <div class="order-details">
                         <div class="detail-item">
                             <span class="detail-label">Items</span>
-                            <span class="detail-value">{{ order.items|length }} item{% if order.items|length != 1 %}s{% endif %}</span>
+                            <span class="detail-value">{{ order.items|list|length }} item{% if order.items|list|length != 1 %}s{% endif %}</span>
                         </div>
                         <div class="detail-item">
                             <span class="detail-label">Total Amount</span>

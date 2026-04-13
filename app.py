@@ -660,6 +660,16 @@ def create_app():
             db.session.flush()
             
             for cart_item in cart_items:
+                # Decrement product stock
+                product = cart_item.product
+                if product.stock >= cart_item.quantity:
+                    product.stock -= cart_item.quantity
+                else:
+                    # Handle insufficient stock (shouldn't happen due to checkout validation)
+                    flash(f"Insufficient stock for {product.name}. Order cancelled.", "error")
+                    db.session.rollback()
+                    return redirect(url_for("cart"))
+                
                 order_item = OrderItem(
                     order_id=order.id,
                     product_id=cart_item.product_id,
