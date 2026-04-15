@@ -1,1058 +1,1202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payment | Shifaa Herbal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: #f5f7fb;
+        color: #1a1a2e;
+        line-height: 1.4;
+      }
+
+      /* Top Navigation Bar */
+      .top-nav {
+        background: white;
+        padding: 0.5rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      }
+
+      .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .logo-image {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+
+      .logo-text {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #2e7d32;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: #f1f5f9;
+        color: #334155;
+        padding: 0.35rem 0.85rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .nav-link:hover {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+
+      .user-name {
+        font-size: 0.8rem;
+        font-weight: 500;
+        color: #334155;
+      }
+
+      .user-avatar {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #2e7d32, #1b5e20);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.75rem;
+      }
+
+      /* Breadcrumb */
+      .breadcrumb-bar {
+        background: white;
+        padding: 0.5rem 1.5rem;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 0.75rem;
+      }
+
+      .breadcrumb-bar a {
+        color: #64748b;
+        text-decoration: none;
+      }
+
+      .breadcrumb-bar a:hover {
+        color: #2e7d32;
+      }
+
+      /* Main Container */
+      .main-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem 1.25rem;
+      }
+
+      /* Checkout Steps */
+      .checkout-steps {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: white;
+        border-radius: 2rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #94a3b8;
+        border: 1px solid #e2e8f0;
+      }
+
+      .step.active {
+        background: #2e7d32;
+        color: white;
+        border-color: #2e7d32;
+      }
+
+      .step.completed {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border-color: #2e7d32;
+      }
+
+      .step i {
+        font-size: 0.85rem;
+      }
+
+      /* Payment Grid */
+      .payment-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 1.25rem;
+      }
+
+      /* M-Pesa Card */
+      .mpesa-card {
+        background: white;
+        border-radius: 0.875rem;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+      }
+
+      .form-section {
+        padding: 1.25rem;
+        border-bottom: 1px solid #eef2f6;
+      }
+
+      .form-section:last-child {
+        border-bottom: none;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .section-icon {
+        width: 40px;
+        height: 40px;
+        background: #e8f5e9;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #2e7d32;
+        font-size: 1.2rem;
+      }
+
+      .section-header h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .section-header p {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin: 0;
+      }
+
+      /* Till Number Box */
+      .till-box {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        text-align: center;
+        margin-bottom: 1.25rem;
+        border: 1px solid #eef2f6;
+      }
+
+      .till-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+      }
+
+      .till-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2e7d32;
+        font-family: monospace;
+        letter-spacing: 0.05em;
+      }
+
+      .amount-display {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-top: 0.5rem;
+      }
+
+      /* STK Push Section */
+      .stk-section {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        margin-bottom: 1.25rem;
+        border: 1px solid #eef2f6;
+      }
+
+      .stk-title {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .phone-input-group {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .phone-input {
+        flex: 1;
+        padding: 0.6rem 0.85rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.5rem;
+        font-size: 0.8rem;
+        font-family: "Inter", sans-serif;
+        transition: all 0.2s;
+      }
+
+      .phone-input:focus {
+        outline: none;
+        border-color: #2e7d32;
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+      }
+
+      .stk-btn {
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .stk-btn:hover:not(:disabled) {
+        background: #1b5e20;
+      }
+
+      .stk-btn:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+      }
+
+      .stk-status {
+        margin-top: 0.75rem;
+        padding: 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.7rem;
+        display: none;
+      }
+
+      .stk-status.show {
+        display: block;
+      }
+
+      .stk-status.success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
+
+      .stk-status.error {
+        background: #fee2e2;
+        color: #dc2626;
+        border: 1px solid #fecaca;
+      }
+
+      .stk-status.pending {
+        background: #fff3e0;
+        color: #e67e22;
+        border: 1px solid #ffe0b2;
+      }
+
+      .stk-status.info {
+        background: #e3f2fd;
+        color: #1976d2;
+        border: 1px solid #bbdef5;
+      }
+
+      /* Instructions Box */
+      .instructions-box {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #eef2f6;
+      }
+
+      .instructions-box h4 {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .instructions-box ol {
+        margin-left: 1.2rem;
+        line-height: 1.6;
+      }
+
+      .instructions-box li {
+        font-size: 0.7rem;
+        color: #475569;
+        margin-bottom: 0.25rem;
+      }
+
+      /* Order Summary Card */
+      .summary-card {
+        background: white;
+        border-radius: 0.875rem;
+        border: 1px solid #e2e8f0;
+        padding: 1.25rem;
+        position: sticky;
+        top: 4rem;
+        height: fit-content;
+      }
+
+      .summary-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #eef2f6;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .summary-title i {
+        color: #2e7d32;
+      }
+
+      .summary-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 1rem;
+      }
+
+      .summary-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #eef2f6;
+        gap: 0.75rem;
+      }
+
+      .item-image {
+        width: 50px;
+        height: 50px;
+        background: #f8fafc;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        overflow: hidden;
+        border: 1px solid #eef2f6;
+      }
+
+      .item-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .item-image i {
+        font-size: 1.3rem;
+        color: #cbd5e1;
+      }
+
+      .item-details {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .item-name {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.2rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .item-quantity {
+        font-size: 0.65rem;
+        color: #64748b;
+      }
+
+      .item-price {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #2e7d32;
+        text-align: right;
+        flex-shrink: 0;
+      }
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.6rem 0;
+        font-size: 0.8rem;
+      }
+
+      .summary-row.total {
+        border-top: 1px solid #e2e8f0;
+        margin-top: 0.5rem;
+        padding-top: 1rem;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #2e7d32;
+      }
+
+      .address-box {
+        background: #f8fafc;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .address-box h4 {
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .address-box p {
+        font-size: 0.7rem;
+        color: #64748b;
+        margin: 0;
+      }
+
+      .confirm-btn {
+        width: 100%;
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+      }
+
+      .confirm-btn:hover {
+        background: #1b5e20;
+      }
+
+      .confirm-btn:disabled {
+        background: #cbd5e1;
+        cursor: not-allowed;
+      }
+
+      /* Footer */
+      .footer {
+        text-align: center;
+        padding: 1rem;
+        color: #94a3b8;
+        font-size: 0.7rem;
+        border-top: 1px solid #eef2f6;
+        background: white;
+        margin-top: 1rem;
+      }
+
+      /* Floating Cart */
+      .floating-cart {
+        position: fixed;
+        bottom: 1.2rem;
+        right: 1.2rem;
+        background: #2e7d32;
+        color: white;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 3px 10px rgba(46, 125, 50, 0.25);
+        z-index: 1000;
+      }
+
+      .floating-cart:hover {
+        transform: scale(1.03);
+        background: #1b5e20;
+      }
+
+      .cart-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #ef476f;
+        color: white;
+        font-size: 0.55rem;
+        font-weight: 700;
+        padding: 0.1rem 0.3rem;
+        border-radius: 50%;
+        min-width: 18px;
+        text-align: center;
+      }
+
+      /* Toast */
+      .toast-notification {
+        position: fixed;
+        bottom: 4.5rem;
+        right: 1.2rem;
+        background: #1e293b;
+        color: white;
+        padding: 0.5rem 0.9rem;
+        border-radius: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.75rem;
+        z-index: 1000;
+        transform: translateX(100%);
+        opacity: 0;
+        transition: all 0.25s ease;
+      }
+
+      .toast-notification.show {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      .spin {
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
         }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f5f7fb;
-            color: #1a1a2e;
-            line-height: 1.4;
+        to {
+          transform: rotate(360deg);
         }
-        
-        /* Top Navigation Bar */
+      }
+
+      /* Debug Panel (Hidden by default, can be shown for testing) */
+      .debug-panel {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        background: #1e293b;
+        color: #a5f3fc;
+        font-family: monospace;
+        font-size: 0.65rem;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        max-width: 300px;
+        z-index: 1000;
+        opacity: 0.8;
+        display: none;
+      }
+
+      .debug-panel.show {
+        display: block;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
         .top-nav {
-            background: white;
-            padding: 0.5rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+          padding: 0.5rem 1rem;
         }
-        
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .logo-image {
-            width: 32px;
-            height: 32px;
-            object-fit: contain;
-        }
-        
-        .logo-text {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: #2e7d32;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-        
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: #f1f5f9;
-            color: #334155;
-            padding: 0.35rem 0.85rem;
-            border-radius: 0.5rem;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .nav-link:hover {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        
+
         .user-name {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #334155;
+          display: none;
         }
-        
-        .user-avatar {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 0.75rem;
+
+        .nav-links {
+          gap: 0.5rem;
         }
-        
-        /* Breadcrumb */
+
+        .nav-link span {
+          display: none;
+        }
+
+        .nav-link i {
+          margin: 0;
+        }
+
         .breadcrumb-bar {
-            background: white;
-            padding: 0.5rem 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 0.75rem;
+          padding: 0.5rem 1rem;
         }
-        
-        .breadcrumb-bar a {
-            color: #64748b;
-            text-decoration: none;
-        }
-        
-        .breadcrumb-bar a:hover {
-            color: #2e7d32;
-        }
-        
-        /* Main Container */
+
         .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 1.25rem;
+          padding: 0.75rem;
         }
-        
-        /* Checkout Steps */
-        .checkout-steps {
-            display: flex;
-            justify-content: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .step {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: white;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #94a3b8;
-            border: 1px solid #e2e8f0;
-        }
-        
-        .step.active {
-            background: #2e7d32;
-            color: white;
-            border-color: #2e7d32;
-        }
-        
-        .step.completed {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border-color: #2e7d32;
-        }
-        
-        .step i {
-            font-size: 0.85rem;
-        }
-        
-        /* Payment Grid */
+
         .payment-grid {
-            display: grid;
-            grid-template-columns: 1fr 380px;
-            gap: 1.25rem;
+          grid-template-columns: 1fr;
+          gap: 1rem;
         }
-        
-        /* M-Pesa Card */
-        .mpesa-card {
-            background: white;
-            border-radius: 0.875rem;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
+
+        .checkout-steps {
+          flex-wrap: wrap;
         }
-        
-        .form-section {
-            padding: 1.25rem;
-            border-bottom: 1px solid #eef2f6;
-        }
-        
-        .form-section:last-child {
-            border-bottom: none;
-        }
-        
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-        
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            background: #e8f5e9;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #2e7d32;
-            font-size: 1.2rem;
-        }
-        
-        .section-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin: 0;
-        }
-        
-        .section-header p {
-            font-size: 0.7rem;
-            color: #64748b;
-            margin: 0;
-        }
-        
-        /* Till Number Box */
-        .till-box {
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            text-align: center;
-            margin-bottom: 1.25rem;
-            border: 1px solid #eef2f6;
-        }
-        
-        .till-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-        
-        .till-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2e7d32;
-            font-family: monospace;
-            letter-spacing: 0.05em;
-        }
-        
-        .amount-display {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-top: 0.5rem;
-        }
-        
-        /* STK Push Section */
-        .stk-section {
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-bottom: 1.25rem;
-            border: 1px solid #eef2f6;
-        }
-        
-        .stk-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .phone-input-group {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .phone-input {
-            flex: 1;
-            padding: 0.6rem 0.85rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.2s;
-        }
-        
-        .phone-input:focus {
-            outline: none;
-            border-color: #2e7d32;
-            box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
-        }
-        
-        .stk-btn {
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .stk-btn:hover:not(:disabled) {
-            background: #1b5e20;
-        }
-        
-        .stk-btn:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-        }
-        
-        .stk-status {
-            margin-top: 0.75rem;
-            padding: 0.6rem;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            display: none;
-        }
-        
-        .stk-status.show {
-            display: block;
-        }
-        
-        .stk-status.success {
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
-        }
-        
-        .stk-status.error {
-            background: #fee2e2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-        
-        .stk-status.pending {
-            background: #fff3e0;
-            color: #e67e22;
-            border: 1px solid #ffe0b2;
-        }
-        
-        /* Instructions Box */
-        .instructions-box {
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            border: 1px solid #eef2f6;
-        }
-        
-        .instructions-box h4 {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .instructions-box ol {
-            margin-left: 1.2rem;
-            line-height: 1.6;
-        }
-        
-        .instructions-box li {
-            font-size: 0.7rem;
-            color: #475569;
-            margin-bottom: 0.25rem;
-        }
-        
-        /* Order Summary Card */
+
         .summary-card {
-            background: white;
-            border-radius: 0.875rem;
-            border: 1px solid #e2e8f0;
-            padding: 1.25rem;
-            position: sticky;
-            top: 4rem;
-            height: fit-content;
+          position: static;
         }
-        
-        .summary-title {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid #eef2f6;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+
+        .till-number {
+          font-size: 1.5rem;
         }
-        
-        .summary-title i {
-            color: #2e7d32;
+
+        .phone-input-group {
+          flex-direction: column;
         }
-        
-        .summary-items {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
-        }
-        
-        .summary-item {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #eef2f6;
-            gap: 0.75rem;
-        }
-        
-        .item-image {
-            width: 50px;
-            height: 50px;
-            background: #f8fafc;
-            border-radius: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            overflow: hidden;
-            border: 1px solid #eef2f6;
-        }
-        
-        .item-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .item-image i {
-            font-size: 1.3rem;
-            color: #cbd5e1;
-        }
-        
-        .item-details {
-            flex: 1;
-            min-width: 0;
-        }
-        
-        .item-name {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.2rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .item-quantity {
-            font-size: 0.65rem;
-            color: #64748b;
-        }
-        
-        .item-price {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #2e7d32;
-            text-align: right;
-            flex-shrink: 0;
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            font-size: 0.8rem;
-        }
-        
-        .summary-row.total {
-            border-top: 1px solid #e2e8f0;
-            margin-top: 0.5rem;
-            padding-top: 1rem;
-            font-size: 1rem;
-            font-weight: 700;
-            color: #2e7d32;
-        }
-        
-        .address-box {
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        
-        .address-box h4 {
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1e293b;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .address-box p {
-            font-size: 0.7rem;
-            color: #64748b;
-            margin: 0;
-        }
-        
-        .confirm-btn {
-            width: 100%;
-            background: #2e7d32;
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 1rem;
-        }
-        
-        .confirm-btn:hover {
-            background: #1b5e20;
-        }
-        
-        .confirm-btn:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-        }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 1rem;
-            color: #94a3b8;
-            font-size: 0.7rem;
-            border-top: 1px solid #eef2f6;
-            background: white;
-            margin-top: 1rem;
-        }
-        
-        /* Floating Cart */
-        .floating-cart {
-            position: fixed;
-            bottom: 1.2rem;
-            right: 1.2rem;
-            background: #2e7d32;
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 3px 10px rgba(46,125,50,0.25);
-            z-index: 1000;
-        }
-        
-        .floating-cart:hover {
-            transform: scale(1.03);
-            background: #1b5e20;
-        }
-        
-        .cart-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #ef476f;
-            color: white;
-            font-size: 0.55rem;
-            font-weight: 700;
-            padding: 0.1rem 0.3rem;
-            border-radius: 50%;
-            min-width: 18px;
-            text-align: center;
-            
-        }
-        
-        /* Toast */
-        .toast-notification {
-            position: fixed;
-            bottom: 4.5rem;
-            right: 1.2rem;
-            background: #1e293b;
-            color: white;
-            padding: 0.5rem 0.9rem;
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.75rem;
-            z-index: 1000;
-            transform: translateX(100%);
-            opacity: 0;
-            transition: all 0.25s ease;
-        }
-        
-        .toast-notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        
-        .spin {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .top-nav {
-                padding: 0.5rem 1rem;
-            }
-            
-            .user-name {
-                display: none;
-            }
-            
-            .nav-links {
-                gap: 0.5rem;
-            }
-            
-            .nav-link span {
-                display: none;
-            }
-            
-            .nav-link i {
-                margin: 0;
-            }
-            
-            .breadcrumb-bar {
-                padding: 0.5rem 1rem;
-            }
-            
-            .main-container {
-                padding: 0.75rem;
-            }
-            
-            .payment-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-            
-            .checkout-steps {
-                flex-wrap: wrap;
-            }
-            
-            .summary-card {
-                position: static;
-            }
-            
-            .till-number {
-                font-size: 1.5rem;
-            }
-            
-            .phone-input-group {
-                flex-direction: column;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Top Navigation Bar -->
     <div class="top-nav">
-        <div class="logo-area">
-            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
-            <span class="logo-text">Shifaa Herbal Remedies</span>
+      <div class="logo-area">
+        <img
+          class="logo-image"
+          src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}"
+          alt="Shifaa Herbal"
+        />
+        <span class="logo-text">Shifaa Herbal Remedies</span>
+      </div>
+
+      <div class="nav-links">
+        <a href="{{ url_for('cart') }}" class="nav-link">
+          <i class="bi bi-cart"></i> <span>Cart</span>
+        </a>
+        <a href="{{ url_for('products') }}" class="nav-link">
+          <i class="bi bi-grid"></i> <span>Products</span>
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="nav-link">
+          <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+        </a>
+      </div>
+
+      <div class="user-info">
+        <span class="user-name">{{ current_user.name }}</span>
+        <div class="user-avatar">
+          <i class="bi bi-person"></i>
         </div>
-        
-        <div class="nav-links">
-            <a href="{{ url_for('cart') }}" class="nav-link">
-                <i class="bi bi-cart"></i> <span>Cart</span>
-            </a>
-            <a href="{{ url_for('products') }}" class="nav-link">
-                <i class="bi bi-grid"></i> <span>Products</span>
-            </a>
-            <a href="{{ url_for('dashboard') }}" class="nav-link">
-                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
-            </a>
-        </div>
-        
-        <div class="user-info">
-            <span class="user-name">{{ current_user.name }}</span>
-            <div class="user-avatar">
-                <i class="bi bi-person"></i>
-            </div>
-        </div>
+      </div>
     </div>
-    
+
     <!-- Breadcrumb -->
     <div class="breadcrumb-bar">
-        <a href="{{ url_for('dashboard') }}">Dashboard</a>
-        <span>/</span>
-        <a href="{{ url_for('cart') }}">Cart</a>
-        <span>/</span>
-        <a href="{{ url_for('checkout') }}">Checkout</a>
-        <span>/</span>
-        <span style="color: #2e7d32;">Payment</span>
+      <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      <span>/</span>
+      <a href="{{ url_for('cart') }}">Cart</a>
+      <span>/</span>
+      <a href="{{ url_for('checkout') }}">Checkout</a>
+      <span>/</span>
+      <span style="color: #2e7d32">Payment</span>
     </div>
-    
+
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Checkout Steps -->
-        <div class="checkout-steps">
-            <div class="step completed">
-                <i class="bi bi-check-circle-fill"></i> Cart
-            </div>
-            <div class="step completed">
-                <i class="bi bi-info-circle-fill"></i> Information
-            </div>
-            <div class="step active">
-                <i class="bi bi-credit-card"></i> Payment
-            </div>
-            <div class="step">
-                <i class="bi bi-check-lg"></i> Confirmation
-            </div>
+      <!-- Checkout Steps -->
+      <div class="checkout-steps">
+        <div class="step completed">
+          <i class="bi bi-check-circle-fill"></i> Cart
         </div>
-        
-        <div class="payment-grid">
-            <!-- M-Pesa Payment Section -->
-            <div class="mpesa-card">
-                <!-- Till Number -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-phone"></i>
-                        </div>
-                        <div>
-                            <h3>M-Pesa Payment</h3>
-                            <p>Pay via M-Pesa to complete your order</p>
-                        </div>
-                    </div>
-                    
-                    <div class="till-box">
-                        <div class="till-label">BUSINESS TILL NUMBER</div>
-                        <div class="till-number">{{ mpesa_till_number }}</div>
-                        <div class="amount-display">Amount: {{ grand_total|currency }}</div>
-                    </div>
-                </div>
-                
-                <!-- STK Push Section -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-lightning-charge"></i>
-                        </div>
-                        <div>
-                            <h3>STK Push (Instant Payment)</h3>
-                            <p>Receive payment prompt directly on your phone</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stk-section">
-                        <div class="stk-title">
-                            <i class="bi bi-phone"></i> M-Pesa Phone Number
-                        </div>
-                        <div class="phone-input-group">
-                            <input type="tel" id="phoneNumber" class="phone-input" placeholder="2547XXXXXXXX">
-                            <button id="stkPushBtn" class="stk-btn">
-                                <i class="bi bi-send"></i> Request Payment
-                            </button>
-                        </div>
-                        <div id="stkStatus" class="stk-status"></div>
-                    </div>
-                </div>
-                
-                <!-- Payment Instructions -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-info-circle"></i>
-                        </div>
-                        <div>
-                            <h3>Payment Instructions</h3>
-                            <p>Follow these steps to complete your payment</p>
-                        </div>
-                    </div>
-                    
-                    <div class="instructions-box">
-                        <ol>
-                            <li>Open M-Pesa menu on your phone</li>
-                            <li>Select <strong>"Lipa na M-Pesa"</strong></li>
-                            <li>Select <strong>"Buy Goods and Services"</strong></li>
-                            <li>Enter Till Number: <strong>{{ mpesa_till_number }}</strong></li>
-                            <li>Enter Amount: <strong>{{ grand_total|currency }}</strong></li>
-                            <li>Enter your M-Pesa PIN and confirm</li>
-                            <li>Wait for confirmation SMS from M-Pesa</li>
-                        </ol>
-                    </div>
-                </div>
+        <div class="step completed">
+          <i class="bi bi-info-circle-fill"></i> Information
+        </div>
+        <div class="step active"><i class="bi bi-credit-card"></i> Payment</div>
+        <div class="step"><i class="bi bi-check-lg"></i> Confirmation</div>
+      </div>
+
+      <div class="payment-grid">
+        <!-- M-Pesa Payment Section -->
+        <div class="mpesa-card">
+          <!-- Till Number -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-icon">
+                <i class="bi bi-phone"></i>
+              </div>
+              <div>
+                <h3>M-Pesa Payment</h3>
+                <p>Pay via M-Pesa to complete your order</p>
+              </div>
             </div>
 
-            <!-- Order Summary -->
-            <div class="summary-card">
-                <div class="summary-title">
-                    <i class="bi bi-receipt"></i> Order Summary
-                </div>
-                
-                <div class="summary-items">
-                    {% for item in cart_items %}
-                    <div class="summary-item">
-                        <div class="item-image">
-                            {% if item.product.image_url %}
-                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}" loading="lazy">
-                            {% else %}
-                            <i class="bi bi-capsule"></i>
-                            {% endif %}
-                        </div>
-                        <div class="item-details">
-                            <div class="item-name">{{ item.product.name|truncate(35) }}</div>
-                            <div class="item-quantity">Qty: {{ item.quantity }}</div>
-                        </div>
-                        <div class="item-price">
-                            {{ (item.product.price * item.quantity)|currency }}
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                
-                <div class="summary-row">
-                    <span>Subtotal</span>
-                    <span>{{ total|currency }}</span>
-                </div>
-                
-                <div class="summary-row">
-                    <span>Shipping ({{ checkout_info.delivery_option|title if checkout_info.delivery_option else 'Standard' }})</span>
-                    <span>{{ shipping_cost|currency }}</span>
-                </div>
-                
-                <div class="summary-row total">
-                    <span>Total</span>
-                    <span>{{ grand_total|currency }}</span>
-                </div>
-                
-                <!-- Shipping Address -->
-                <div class="address-box">
-                    <h4><i class="bi bi-geo-alt"></i> Shipping Address</h4>
-                    <p>{{ checkout_info.shipping_address }}</p>
-                </div>
-                
-                <!-- Payment Confirmation Form -->
-                <form method="POST" id="paymentForm">
-                    <button type="submit" class="confirm-btn" id="confirmBtn">
-                        <i class="bi bi-check-circle"></i> Confirm Payment & Place Order
-                    </button>
-                </form>
+            <div class="till-box">
+              <div class="till-label">BUSINESS TILL NUMBER</div>
+              <div class="till-number">{{ mpesa_till_number }}</div>
+              <div class="amount-display">
+                Amount: {{ grand_total|currency }}
+              </div>
             </div>
+          </div>
+
+          <!-- STK Push Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-icon">
+                <i class="bi bi-lightning-charge"></i>
+              </div>
+              <div>
+                <h3>STK Push (Instant Payment)</h3>
+                <p>Receive payment prompt directly on your phone</p>
+              </div>
+            </div>
+
+            <div class="stk-section">
+              <div class="stk-title">
+                <i class="bi bi-phone"></i> M-Pesa Phone Number
+              </div>
+              <div class="phone-input-group">
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  class="phone-input"
+                  placeholder="2547XXXXXXXX"
+                  value=""
+                />
+                <button id="stkPushBtn" class="stk-btn">
+                  <i class="bi bi-send"></i> Request Payment
+                </button>
+              </div>
+              <div id="stkStatus" class="stk-status"></div>
+            </div>
+          </div>
+
+          <!-- Payment Instructions -->
+          <div class="form-section">
+            <div class="section-header">
+              <div class="section-icon">
+                <i class="bi bi-info-circle"></i>
+              </div>
+              <div>
+                <h3>Payment Instructions</h3>
+                <p>Follow these steps to complete your payment</p>
+              </div>
+            </div>
+
+            <div class="instructions-box">
+              <ol>
+                <li>Open M-Pesa menu on your phone</li>
+                <li>Select <strong>"Lipa na M-Pesa"</strong></li>
+                <li>Select <strong>"Buy Goods and Services"</strong></li>
+                <li>
+                  Enter Till Number: <strong>{{ mpesa_till_number }}</strong>
+                </li>
+                <li>
+                  Enter Amount: <strong>{{ grand_total|currency }}</strong>
+                </li>
+                <li>Enter your M-Pesa PIN and confirm</li>
+                <li>Wait for confirmation SMS from M-Pesa</li>
+              </ol>
+              <p class="mt-2" style="font-size: 0.65rem; color: #64748b"></p>
+            </div>
+          </div>
         </div>
+
+        <!-- Order Summary -->
+        <div class="summary-card">
+          <div class="summary-title">
+            <i class="bi bi-receipt"></i> Order Summary
+          </div>
+
+          <div class="summary-items">
+            {% for item in cart_items %}
+            <div class="summary-item">
+              <div class="item-image">
+                {% if item.product.image_url %}
+                <img
+                  src="{{ item.product.image_url }}"
+                  alt="{{ item.product.name }}"
+                  loading="lazy"
+                />
+                {% else %}
+                <i class="bi bi-capsule"></i>
+                {% endif %}
+              </div>
+              <div class="item-details">
+                <div class="item-name">
+                  {{ item.product.name|truncate(35) }}
+                </div>
+                <div class="item-quantity">Qty: {{ item.quantity }}</div>
+              </div>
+              <div class="item-price">
+                {{ (item.product.price * item.quantity)|currency }}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <span>{{ total|currency }}</span>
+          </div>
+
+          <div class="summary-row">
+            <span
+              >Shipping ({{ checkout_info.delivery_option|title if
+              checkout_info.delivery_option else 'Standard' }})</span
+            >
+            <span>{{ shipping_cost|currency }}</span>
+          </div>
+
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>{{ grand_total|currency }}</span>
+          </div>
+
+          <!-- Shipping Address -->
+          <div class="address-box">
+            <h4><i class="bi bi-geo-alt"></i> Shipping Address</h4>
+            <p>{{ checkout_info.shipping_address }}</p>
+          </div>
+
+          <!-- Payment Confirmation Form -->
+          <form method="POST" id="paymentForm">
+            <button type="submit" class="confirm-btn" id="confirmBtn">
+              <i class="bi bi-check-circle"></i> Confirm Payment & Place Order
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-    
+
     <!-- Footer -->
     <div class="footer">
-        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+      <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
     </div>
-    
+
     <!-- Floating Cart -->
     <a href="{{ url_for('cart') }}" class="floating-cart">
-        <i class="bi bi-cart-fill"></i>
-        <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
+      <i class="bi bi-cart-fill"></i>
+      <span class="cart-badge" id="cartCount">{{ cart_count|default(0) }}</span>
     </a>
-    
+
     <!-- Toast -->
     <div class="toast-notification" id="toast">
-        <i class="bi bi-check-circle-fill"></i>
-        <span id="toastMsg"></span>
+      <i class="bi bi-check-circle-fill"></i>
+      <span id="toastMsg"></span>
     </div>
-    
+
+    <!-- Debug Panel (Hidden by default - press Ctrl+Shift+D to show) -->
+    <div class="debug-panel" id="debugPanel">
+      <strong>Debug Info:</strong><br />
+      <span id="debugContent">Ready</span>
+    </div>
+
     <script>
-        // Show toast notification
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            toastMsg.textContent = message;
-            toast.style.background = isError ? '#dc2626' : '#1e293b';
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
-        // STK Push Functionality
-        const stkBtn = document.getElementById('stkPushBtn');
-        const phoneInput = document.getElementById('phoneNumber');
-        const stkStatus = document.getElementById('stkStatus');
-        let isProcessing = false;
-        let pollInterval = null;
-        
-        async function initSTKPush() {
-            let phoneNumber = phoneInput.value.trim();
-            const amount = {{ grand_total }};
-            
-            if (!phoneNumber) {
-                showToast('Please enter your M-Pesa phone number', true);
-                return false;
-            }
-            
-            // Format phone number
-            phoneNumber = phoneNumber.replace(/\s/g, '');
-            if (phoneNumber.startsWith('0')) {
-                phoneNumber = '254' + phoneNumber.substring(1);
-            } else if (phoneNumber.startsWith('+254')) {
-                phoneNumber = phoneNumber.substring(1);
-            } else if (!phoneNumber.startsWith('254')) {
-                phoneNumber = '254' + phoneNumber;
-            }
-            
-            if (phoneNumber.length !== 12) {
-                showToast('Please enter a valid M-Pesa phone number (e.g., 2547XXXXXXXX)', true);
-                return false;
-            }
-            
-            return phoneNumber;
-        }
-        
-        if (stkBtn) {
-            stkBtn.addEventListener('click', async function() {
-                if (isProcessing) return;
-                
-                const phoneNumber = await initSTKPush();
-                if (!phoneNumber) return;
-                
-                isProcessing = true;
-                stkBtn.disabled = true;
-                stkBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Requesting...';
-                
-                stkStatus.className = 'stk-status show pending';
-                stkStatus.innerHTML = '<i class="bi bi-hourglass-split"></i> Requesting payment prompt. Please check your phone...';
-                
-                try {
-                    const response = await fetch('/initiate-stk-push', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            phone_number: phoneNumber,
-                            amount: amount
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        stkStatus.className = 'stk-status show pending';
-                        stkStatus.innerHTML = '<i class="bi bi-envelope-paper"></i> STK Push sent! Please enter your PIN on your phone to complete payment.';
-                        
-                        // Poll for payment status
-                        let attempts = 0;
-                        const maxAttempts = 60;
-                        
-                        if (pollInterval) clearInterval(pollInterval);
-                        
-                        pollInterval = setInterval(async () => {
-                            attempts++;
-                            try {
-                                const statusResponse = await fetch('/check-payment-status', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        checkout_request_id: data.checkout_request_id
-                                    })
-                                });
-                                
-                                const statusData = await statusResponse.json();
-                                
-                                if (statusData.status === 'completed') {
-                                    clearInterval(pollInterval);
-                                    stkStatus.className = 'stk-status show success';
-                                    stkStatus.innerHTML = '<i class="bi bi-check-circle-fill"></i> Payment successful! You can now confirm your order.';
-                                    showToast('Payment successful! Click confirm to place your order.');
-                                    stkBtn.disabled = false;
-                                    stkBtn.innerHTML = '<i class="bi bi-check"></i> Payment Complete';
-                                    isProcessing = false;
-                                    pollInterval = null;
-                                } else if (statusData.status === 'failed') {
-                                    clearInterval(pollInterval);
-                                    stkStatus.className = 'stk-status show error';
-                                    stkStatus.innerHTML = '<i class="bi bi-x-circle-fill"></i> Payment failed. Please try again or use manual payment.';
-                                    showToast('Payment failed. Please try again.', true);
-                                    stkBtn.disabled = false;
-                                    stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
-                                    isProcessing = false;
-                                    pollInterval = null;
-                                } else if (attempts >= maxAttempts) {
-                                    clearInterval(pollInterval);
-                                    stkStatus.className = 'stk-status show error';
-                                    stkStatus.innerHTML = '<i class="bi bi-clock"></i> Payment timeout. Please use manual payment method.';
-                                    stkBtn.disabled = false;
-                                    stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
-                                    isProcessing = false;
-                                    pollInterval = null;
-                                }
-                            } catch (err) {
-                                console.error('Polling error:', err);
-                            }
-                        }, 2000);
-                        
-                    } else {
-                        stkStatus.className = 'stk-status show error';
-                        stkStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> ' + (data.message || 'Failed to initiate STK Push. Please try manual payment.');
-                        showToast(data.message || 'STK Push failed', true);
-                        stkBtn.disabled = false;
-                        stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
-                        isProcessing = false;
-                    }
-                } catch (error) {
-                    console.error('STK Push error:', error);
-                    stkStatus.className = 'stk-status show error';
-                    stkStatus.innerHTML = '<i class="bi bi-wifi-off"></i> Network error. Please try manual payment.';
-                    showToast('Network error. Please try again.', true);
-                    stkBtn.disabled = false;
-                    stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
-                    isProcessing = false;
-                }
-            });
-        }
-        
-        // Form submission
-        const paymentForm = document.getElementById('paymentForm');
-        const confirmBtn = document.getElementById('confirmBtn');
-        
-        if (paymentForm) {
-            paymentForm.addEventListener('submit', function(e) {
-                if (confirmBtn) {
-                    confirmBtn.disabled = true;
-                    confirmBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processing Order...';
-                }
-            });
-        }
-        
-        // Format phone number as user types
-        if (phoneInput) {
-            phoneInput.addEventListener('input', function(e) {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 12) value = value.substring(0, 12);
-                e.target.value = value;
-            });
-        }
-        
-        // Cleanup interval on page unload
-        window.addEventListener('beforeunload', function() {
-            if (pollInterval) {
-                clearInterval(pollInterval);
-            }
-        });
+      // Show toast notification
+      function showToast(message, isError = false) {
+          const toast = document.getElementById('toast');
+          const toastMsg = document.getElementById('toastMsg');
+          toastMsg.textContent = message;
+          toast.style.background = isError ? '#dc2626' : '#1e293b';
+          toast.classList.add('show');
+          setTimeout(() => {
+              toast.classList.remove('show');
+          }, 3000);
+      }
+
+      // Debug logging
+      let debugMode = false;
+      function debugLog(message) {
+          console.log('[DEBUG]', message);
+          if (debugMode) {
+              const debugContent = document.getElementById('debugContent');
+              const timestamp = new Date().toLocaleTimeString();
+              debugContent.innerHTML = `${timestamp}: ${message}<br>${debugContent.innerHTML}`.substring(0, 500);
+          }
+      }
+
+      // Toggle debug mode with Ctrl+Shift+D
+      document.addEventListener('keydown', function(e) {
+          if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+              debugMode = !debugMode;
+              const debugPanel = document.getElementById('debugPanel');
+              if (debugMode) {
+                  debugPanel.classList.add('show');
+                  showToast('Debug mode enabled');
+              } else {
+                  debugPanel.classList.remove('show');
+                  showToast('Debug mode disabled');
+              }
+          }
+      });
+
+      // STK Push Functionality with improved error handling
+      const stkBtn = document.getElementById('stkPushBtn');
+      const phoneInput = document.getElementById('phoneNumber');
+      const stkStatus = document.getElementById('stkStatus');
+      let isProcessing = false;
+      let pollInterval = null;
+
+      async function initSTKPush() {
+          let phoneNumber = phoneInput.value.trim();
+          const amount = {{ grand_total }};
+
+          debugLog(`Initiating STK Push for amount: ${amount}`);
+
+          if (!phoneNumber) {
+              showToast('Please enter your M-Pesa phone number', true);
+              debugLog('Error: No phone number entered');
+              return false;
+          }
+
+          // Format phone number
+          phoneNumber = phoneNumber.replace(/\s/g, '');
+          if (phoneNumber.startsWith('0')) {
+              phoneNumber = '254' + phoneNumber.substring(1);
+          } else if (phoneNumber.startsWith('+254')) {
+              phoneNumber = phoneNumber.substring(1);
+          } else if (!phoneNumber.startsWith('254')) {
+              phoneNumber = '254' + phoneNumber;
+          }
+
+          debugLog(`Formatted phone number: ${phoneNumber}`);
+
+          if (phoneNumber.length !== 12) {
+              showToast('Please enter a valid M-Pesa phone number (e.g., 2547XXXXXXXX)', true);
+              debugLog(`Error: Invalid phone number length: ${phoneNumber.length}`);
+              return false;
+          }
+
+          return { phoneNumber, amount };
+      }
+
+      if (stkBtn) {
+          stkBtn.addEventListener('click', async function() {
+              if (isProcessing) {
+                  debugLog('STK Push already in progress');
+                  return;
+              }
+
+              const result = await initSTKPush();
+              if (!result) return;
+
+              isProcessing = true;
+              stkBtn.disabled = true;
+              stkBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Requesting...';
+
+              stkStatus.className = 'stk-status show info';
+              stkStatus.innerHTML = '<i class="bi bi-hourglass-split"></i> Connecting to M-Pesa...';
+
+              debugLog('Sending request to /initiate-stk-push');
+
+              try {
+                  const controller = new AbortController();
+                  const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+                  const response = await fetch('/initiate-stk-push', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                          phone_number: result.phoneNumber,
+                          amount: result.amount
+                      }),
+                      signal: controller.signal
+                  });
+
+                  clearTimeout(timeoutId);
+
+                  debugLog(`Response status: ${response.status}`);
+                  const data = await response.json();
+                  debugLog(`Response data: ${JSON.stringify(data)}`);
+
+                  if (data.success) {
+                      stkStatus.className = 'stk-status show pending';
+                      stkStatus.innerHTML = '<i class="bi bi-envelope-paper"></i> STK Push sent! Please enter your PIN on your phone to complete payment.';
+                      showToast('STK Push sent! Check your phone.');
+
+                      // Poll for payment status
+                      let attempts = 0;
+                      const maxAttempts = 60;
+
+                      if (pollInterval) clearInterval(pollInterval);
+
+                      pollInterval = setInterval(async () => {
+                          attempts++;
+                          debugLog(`Polling attempt ${attempts}/${maxAttempts}`);
+
+                          try {
+                              const statusResponse = await fetch('/check-payment-status', {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                  },
+                                  body: JSON.stringify({
+                                      checkout_request_id: data.checkout_request_id
+                                  })
+                              });
+
+                              const statusData = await statusResponse.json();
+                              debugLog(`Payment status: ${statusData.status}`);
+
+                              if (statusData.status === 'completed') {
+                                  clearInterval(pollInterval);
+                                  stkStatus.className = 'stk-status show success';
+                                  stkStatus.innerHTML = '<i class="bi bi-check-circle-fill"></i> Payment successful! You can now confirm your order.';
+                                  showToast('Payment successful! Click confirm to place your order.');
+                                  stkBtn.disabled = false;
+                                  stkBtn.innerHTML = '<i class="bi bi-check"></i> Payment Complete';
+                                  isProcessing = false;
+                                  pollInterval = null;
+                              } else if (statusData.status === 'failed') {
+                                  clearInterval(pollInterval);
+                                  stkStatus.className = 'stk-status show error';
+                                  stkStatus.innerHTML = '<i class="bi bi-x-circle-fill"></i> Payment failed. Please try again or use manual payment.';
+                                  showToast('Payment failed. Please try again.', true);
+                                  stkBtn.disabled = false;
+                                  stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
+                                  isProcessing = false;
+                                  pollInterval = null;
+                              } else if (attempts >= maxAttempts) {
+                                  clearInterval(pollInterval);
+                                  stkStatus.className = 'stk-status show error';
+                                  stkStatus.innerHTML = '<i class="bi bi-clock"></i> Payment timeout. Please use manual payment method.';
+                                  showToast('Payment timeout. Please use manual payment.', true);
+                                  stkBtn.disabled = false;
+                                  stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
+                                  isProcessing = false;
+                                  pollInterval = null;
+                              }
+                          } catch (err) {
+                              debugLog(`Polling error: ${err.message}`);
+                              console.error('Polling error:', err);
+                          }
+                      }, 2000);
+
+                  } else {
+                      stkStatus.className = 'stk-status show error';
+                      stkStatus.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i> ' + (data.message || 'Failed to initiate STK Push. Please try manual payment.');
+                      showToast(data.message || 'STK Push failed', true);
+                      stkBtn.disabled = false;
+                      stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
+                      isProcessing = false;
+                      debugLog(`STK Push failed: ${data.message}`);
+                  }
+              } catch (error) {
+                  debugLog(`Network error: ${error.message}`);
+                  console.error('STK Push error:', error);
+
+                  let errorMessage = 'Network error. ';
+                  if (error.name === 'AbortError') {
+                      errorMessage = 'Request timeout. ';
+                  }
+                  errorMessage += 'Please try manual payment.';
+
+                  stkStatus.className = 'stk-status show error';
+                  stkStatus.innerHTML = '<i class="bi bi-wifi-off"></i> ' + errorMessage;
+                  showToast(errorMessage, true);
+                  stkBtn.disabled = false;
+                  stkBtn.innerHTML = '<i class="bi bi-send"></i> Request Payment';
+                  isProcessing = false;
+              }
+          });
+      }
+
+      // Form submission
+      const paymentForm = document.getElementById('paymentForm');
+      const confirmBtn = document.getElementById('confirmBtn');
+
+      if (paymentForm) {
+          paymentForm.addEventListener('submit', function(e) {
+              debugLog('Order confirmation submitted');
+              if (confirmBtn) {
+                  confirmBtn.disabled = true;
+                  confirmBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Processing Order...';
+              }
+          });
+      }
+
+      // Format phone number as user types
+      if (phoneInput) {
+          phoneInput.addEventListener('input', function(e) {
+              let value = e.target.value.replace(/\D/g, '');
+              if (value.length > 12) value = value.substring(0, 12);
+              e.target.value = value;
+              debugLog(`Phone input changed: ${value}`);
+          });
+      }
+
+      // Cleanup interval on page unload
+      window.addEventListener('beforeunload', function() {
+          if (pollInterval) {
+              clearInterval(pollInterval);
+          }
+      });
+
+      // Test connection on page load (optional)
+      async function testConnection() {
+          try {
+              debugLog('Testing connection to M-Pesa API...');
+              const response = await fetch('/test-mpesa-connection');
+              const data = await response.json();
+              debugLog(`Connection test result: ${JSON.stringify(data)}`);
+          } catch (err) {
+              debugLog(`Connection test failed: ${err.message}`);
+          }
+      }
+
+      // Uncomment to test connection on page load
+      // testConnection();
     </script>
-</body>
+  </body>
 </html>

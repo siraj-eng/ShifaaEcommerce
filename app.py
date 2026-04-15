@@ -2,6 +2,8 @@ import os
 import re
 import json
 import time
+import requests
+import base64
 from datetime import datetime
 from decimal import Decimal
 from functools import wraps
@@ -16,6 +18,11 @@ from extensions import db, login_manager
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
+# M-Pesa Credentials
+CONSUMER_KEY = "KUcFWGrg76dsOqJWI8jNzvnATok3FduXRVS8PSEpPwRf4Ih4"
+CONSUMER_SECRET = "xI8A5BlTGG32ps49tADs0Al5OW9CuOaxDB7BuXSVB2LG2z4P2lllGKvqQD5Ut0LV"
+SHORTCODE = "622255"  # Your Till Number
+PASSKEY = "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
 
 def create_app():
     app = Flask(__name__)
@@ -60,6 +67,220 @@ def create_app():
     def load_user(user_id):
         return db.session.get(User, int(user_id))
 
+    # ========== M-PESA HELPER FUNCTIONS ==========
+    def get_access_token():
+        """Get OAuth access token from Safaricom"""
+        url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
+        try:
+            print("Fetching access token...")
+            response = requests.get(
+                url, 
+                auth=(CONSUMER_KEY, CONSUMER_SECRET),
+                timeout=30,
+                verify=True
+            )
+            print(f"Token response status: {response.status_code}")
+            
+            if response.status_code == 200:
+                token_data = response.json()
+                print("Access token obtained successfully")
+                return token_data['access_token']
+            else:
+                print(f"Failed to get token: {response.text}")
+                return None
+        except Exception as e:
+            print(f"Error getting access token: {e}")
+            return None
+
+    # Store payment statuses
+    payments = {}
+
+    @app.route('/initiate-stk-push', methods=['POST'])
+    def initiate_stk_push():
+        """Initiate STK Push to customer's phone"""
+        try:
+            data = request.get_json()
+            print(f"STK Push request received: {data}")
+            
+            phone = data.get('phone_number')
+            amount = data.get('amount')
+            
+            if not phone or not amount:
+                return jsonify({
+                    'success': False,
+                    'message': 'Phone number and amount are required'
+                }), 400
+            
+            # Format phone number
+            phone = str(phone).strip()
+            if phone.startswith('0'):
+                phone = '254' + phone[1:]
+            elif phone.startswith('+'):
+                phone = phone[1:]
+            
+            if len(phone) != 12:
+                return jsonify({
+                    'success': False,
+                    'message': 'Invalid phone number format. Use 2547XXXXXXXX'
+                }), 400
+            
+            # Get access token
+            access_token = get_access_token()
+            if not access_token:
+                return jsonify({
+                    'success': False,
+                    'message': 'Failed to authenticate with M-Pesa. Please try again.'
+                }), 500
+            
+            # Generate timestamp and password
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            password_str = f"{SHORTCODE}{PASSKEY}{timestamp}"
+            password = base64.b64encode(password_str.encode()).decode('utf-8')
+            
+            # Prepare STK Push request for TILL NUMBER (Buy Goods)
+            url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+            headers = {
+                "Authorization": f"Bearer {access_token}",
+                "Content-Type": "application/json"
+            }
+            
+            # CORRECTED: For Till Number, use CustomerBuyGoodsOnline
+            payload = {
+                "BusinessShortCode": SHORTCODE,
+                "Password": password,
+                "Timestamp": timestamp,
+                "TransactionType": "CustomerBuyGoodsOnline",
+                "Amount": int(amount),
+                "PartyA": phone,
+                "PartyB": SHORTCODE,
+                "PhoneNumber": phone,
+                "CallBackURL": request.host_url.rstrip('/') + "/callback",
+                "AccountReference": "ShifaaHerbal",
+                "TransactionDesc": "Payment for Order"
+            }
+            
+            print(f"Sending STK Push payload: {payload}")
+            
+            # Make request to Safaricom
+            response = requests.post(url, json=payload, headers=headers, timeout=30)
+            response_data = response.json()
+            
+            print(f"STK Push Response: {response_data}")
+            
+            # Check for successful response
+            if response_data.get("ResponseCode") == "0":
+                checkout_id = response_data.get("CheckoutRequestID")
+                payments[checkout_id] = "pending"
+                
+                return jsonify({
+                    'success': True,
+                    'checkout_request_id': checkout_id,
+                    'message': 'STK Push sent successfully. Check your phone for the prompt.'
+                })
+            else:
+                error_msg = response_data.get("errorMessage", response_data.get("ResponseDescription", "STK Push failed"))
+                
+                # Provide user-friendly error messages
+                if "Invalid TransactionType" in error_msg:
+                    error_msg = "Your till number may not support STK Push. Please use the manual payment method below."
+                elif "Invalid Access Token" in error_msg:
+                    error_msg = "Authentication failed. Please try again."
+                    
+                return jsonify({
+                    'success': False,
+                    'message': error_msg
+                }), 400
+                
+        except Exception as e:
+            print(f"STK Push error: {e}")
+            return jsonify({
+                'success': False,
+                'message': 'An error occurred. Please use manual payment method.'
+            }), 500
+
+    @app.route('/check-payment-status', methods=['POST'])
+    def check_payment_status():
+        """Check the status of a payment"""
+        try:
+            data = request.get_json()
+            checkout_id = data.get('checkout_request_id')
+            
+            if not checkout_id:
+                return jsonify({'status': 'unknown'}), 400
+            
+            status = payments.get(checkout_id, "pending")
+            return jsonify({'status': status})
+            
+        except Exception as e:
+            print(f"Check status error: {e}")
+            return jsonify({'status': 'unknown'}), 500
+
+    @app.route('/callback', methods=['POST'])
+    def mpesa_callback():
+        """Handle M-Pesa callback after payment"""
+        try:
+            data = request.get_json()
+            print(f"Callback received: {data}")
+            
+            stk_callback = data.get('Body', {}).get('stkCallback', {})
+            checkout_id = stk_callback.get('CheckoutRequestID')
+            result_code = stk_callback.get('ResultCode')
+            result_desc = stk_callback.get('ResultDesc')
+            
+            if result_code == 0:
+                payments[checkout_id] = "completed"
+                print(f"Payment completed for {checkout_id}")
+                
+                # Extract payment details
+                callback_metadata = stk_callback.get('CallbackMetadata', {})
+                if callback_metadata:
+                    items = callback_metadata.get('Item', [])
+                    for item in items:
+                        if item.get('Name') == 'Amount':
+                            print(f"Amount paid: {item.get('Value')}")
+                        elif item.get('Name') == 'MpesaReceiptNumber':
+                            print(f"Receipt number: {item.get('Value')}")
+            else:
+                payments[checkout_id] = "failed"
+                print(f"Payment failed for {checkout_id}: {result_desc}")
+            
+            return jsonify({
+                "ResultCode": 0,
+                "ResultDesc": "Success"
+            })
+            
+        except Exception as e:
+            print(f"Callback error: {e}")
+            return jsonify({
+                "ResultCode": 1,
+                "ResultDesc": "Failed"
+            }), 500
+
+    @app.route('/test-mpesa-connection', methods=['GET'])
+    def test_mpesa_connection():
+        """Test connection to M-Pesa API"""
+        results = {}
+        
+        # Test 1: Basic internet connectivity
+        try:
+            response = requests.get('https://sandbox.safaricom.co.ke', timeout=10)
+            results['safaricom_reachable'] = True
+            results['status_code'] = response.status_code
+        except Exception as e:
+            results['safaricom_reachable'] = False
+            results['error'] = str(e)
+        
+        # Test 2: Authentication
+        try:
+            token = get_access_token()
+            results['authentication'] = 'success' if token else 'failed'
+            if token:
+                results['token_preview'] = token[:20] + '...'
+        except Exception as e:
+            results['authentication'] = f'error: {str(e)}'
+        
+        return jsonify(results)
+
     # ========== HELPER FUNCTIONS ==========
     
     def validate_password_strength(password):
@@ -88,6 +309,7 @@ def create_app():
         return {
             "currency_symbol": app.config["CURRENCY_SYMBOL"],
             "currency_code": app.config["CURRENCY_CODE"],
+            "mpesa_till_number": app.config["MPESA_TILL_NUMBER"],
         }
 
     @app.template_filter("currency")
@@ -331,7 +553,6 @@ def create_app():
             flash("Product not found.", "error")
             return redirect(url_for("products"))
         
-        # Calculate cart count for logged-in users
         cart_count = 0
         if current_user.is_authenticated:
             cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
@@ -342,7 +563,6 @@ def create_app():
     @app.route("/cart/count")
     @login_required
     def cart_count():
-        """Return current user's cart count as JSON"""
         from models import CartItem
         cart_count = CartItem.query.filter_by(user_id=current_user.id).count()
         return jsonify({'cart_count': cart_count})
@@ -350,7 +570,6 @@ def create_app():
     @app.route("/cart/sync")
     @login_required
     def cart_sync():
-        """Return full cart data for real-time sync"""
         from models import CartItem, Product
         cart_items = CartItem.query.filter_by(user_id=current_user.id).all()
         
@@ -456,10 +675,8 @@ def create_app():
         quantity = int(request.form.get("quantity", 1))
         if quantity <= 0:
             db.session.delete(cart_item)
-            # Remove flash message to prevent display on login page
         else:
             cart_item.quantity = quantity
-            # Remove flash message to prevent display on login page
 
         db.session.commit()
         return redirect(url_for("cart"))
@@ -475,7 +692,6 @@ def create_app():
         
         db.session.delete(cart_item)
         db.session.commit()
-        # Remove flash message to prevent display on login page
         return redirect(url_for("cart"))
 
     # ========== CHECKOUT & PAYMENT ==========
@@ -489,7 +705,6 @@ def create_app():
             flash("Your cart is empty.", "warning")
             return redirect(url_for("cart"))
         
-        # Check stock availability and prevent checkout if insufficient stock
         stock_issues = []
         for item in cart_items:
             if not item.product.is_active:
@@ -583,12 +798,10 @@ def create_app():
             db.session.flush()
             
             for cart_item in cart_items:
-                # Decrement product stock
                 product = cart_item.product
                 if product.stock >= cart_item.quantity:
                     product.stock -= cart_item.quantity
                 else:
-                    # Handle insufficient stock (shouldn't happen due to checkout validation)
                     flash(f"Insufficient stock for {product.name}. Order cancelled.", "error")
                     db.session.rollback()
                     return redirect(url_for("cart"))
@@ -615,6 +828,7 @@ def create_app():
             shipping_cost=shipping_cost,
             grand_total=grand_total,
             checkout_info=checkout_info,
+            cart_count=len(cart_items),
         )
 
     # ========== ORDER ROUTES ==========
@@ -952,7 +1166,6 @@ def create_app():
         
         if request.method == "POST":
             new_status = request.form.get("status", "").strip()
-            old_status = order.status
             if new_status in ("pending", "processing", "shipped", "delivered", "cancelled"):
                 order.status = new_status
                 order.updated_at = datetime.utcnow()
@@ -1155,18 +1368,13 @@ def create_app():
     @login_required
     @admin_required
     def cleanup_orders():
-        """Delete all orders and order items to start fresh"""
         from models import Order, OrderItem
         
         try:
-            # Count current orders and items for debugging
             current_orders = Order.query.count()
             current_items = OrderItem.query.count()
             
-            # Delete all order items first (due to foreign key constraints)
             order_items_deleted = OrderItem.query.delete()
-            
-            # Delete all orders
             orders_deleted = Order.query.delete()
             
             db.session.commit()
@@ -1183,7 +1391,6 @@ def create_app():
     @login_required
     @admin_required
     def test_cleanup():
-        """Test route to check current order counts"""
         from models import Order, OrderItem
         
         order_count = Order.query.count()
