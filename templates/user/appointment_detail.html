@@ -2,615 +2,993 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Appointment Details - HerbalCare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{{ practitioner.name }} | Shifaa Herbal Practitioner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2e7d32;
-            --primary-light: #e8f5e8;
-            --secondary-color: #1b5e20;
-            --success-color: #06d6a0;
-            --warning-color: #ffd166;
-            --danger-color: #ef476f;
-            --dark-color: #121826;
-            --light-color: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-color);
-            color: var(--gray-800);
-            line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
         }
-        
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 2.5rem 0;
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
-        
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .header-content h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .header-content p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Navigation */
-        .page-nav {
-            margin-bottom: 2rem;
-        }
-        
-        .back-btn {
-            display: inline-flex;
+
+        .logo-area {
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-            background: white;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
         }
-        
-        .back-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            transform: translateX(-4px);
-            border-color: var(--primary-color);
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
-        
-        /* Appointment Layout */
-        .appointment-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 3rem;
-        }
-        
-        /* Appointment Details Card */
-        .appointment-details-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
-        }
-        
-        .appointment-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-        
-        .appointment-header h2 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-        }
-        
-        .appointment-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.25rem;
-            border-radius: 20px;
-            font-size: 14px;
+
+        .logo-text {
             font-weight: 600;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: #2e7d32;
         }
-        
-        .status-scheduled {
-            background: rgba(255, 209, 102, 0.15);
-            color: #b45309;
-            border: 1px solid var(--warning-color);
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
         }
-        
-        .status-completed {
-            background: rgba(6, 214, 160, 0.15);
-            color: #047857;
-            border: 1px solid var(--success-color);
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
         }
-        
-        .status-cancelled {
-            background: rgba(239, 71, 111, 0.15);
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
+
+        .nav-link:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
-        
-        /* Details Grid */
-        .details-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2.5rem;
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
-        
-        .detail-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            border-left: 4px solid var(--primary-color);
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
         }
-        
-        .detail-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            background: var(--primary-light);
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
+            color: white;
+            font-size: 0.75rem;
         }
-        
-        .detail-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--gray-600);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-        }
-        
-        .detail-content {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .detail-content p {
-            font-weight: normal;
-            color: var(--gray-700);
-            margin: 0.5rem 0 0 0;
-        }
-        
-        /* Notes Section */
-        .notes-section {
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .notes-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .notes-header i {
-            color: var(--primary-color);
-            font-size: 1.25rem;
-        }
-        
-        .notes-header h4 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin: 0;
-        }
-        
-        .notes-content {
-            color: var(--gray-700);
-            line-height: 1.6;
-        }
-        
-        /* Actions Card */
-        .actions-card {
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
             background: white;
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
-            position: sticky;
-            top: 2rem;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
         }
-        
-        .actions-header {
-            margin-bottom: 2rem;
+
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
         }
-        
-        .actions-header h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
+
+        .breadcrumb-bar a:hover {
+            color: #2e7d32;
         }
-        
-        .actions-header p {
-            color: var(--gray-500);
-            font-size: 14px;
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 1.25rem;
         }
-        
-        .action-buttons {
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 0.25rem;
+        }
+
+        .page-header p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Quick Actions Bar */
+        .quick-actions {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
         }
-        
-        .btn-action {
-            padding: 1rem 1.5rem;
-            border-radius: var(--radius-md);
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #2e7d32;
+            text-decoration: none;
+            font-size: 0.75rem;
             font-weight: 500;
-            font-size: 15px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .action-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .quick-action-btn {
+            padding: 0.4rem 0.8rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            color: #64748b;
+            font-size: 0.7rem;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
-            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .quick-action-btn:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        /* Practitioner Layout */
+        .practitioner-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.25rem;
+        }
+
+        /* Sidebar Card */
+        .sidebar-card {
+            background: white;
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            position: sticky;
+            top: 5rem;
+            height: fit-content;
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            margin: 0 auto 1rem;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            text-align: center;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            border: none;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            color: white;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--gray-300);
-            color: var(--gray-700);
-        }
-        
-        .btn-outline:hover {
-            background: var(--primary-light);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-        }
-        
-        .btn-danger {
-            background: rgba(239, 71, 111, 0.1);
-            border: 1px solid var(--danger-color);
-            color: var(--danger-color);
-        }
-        
-        .btn-danger:hover {
-            background: var(--danger-color);
-            color: white;
-        }
-        
-        /* Practitioner Info */
-        .practitioner-info {
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .practitioner-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .practitioner-image {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-        
-        .practitioner-image img {
+
+        .profile-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
-        .practitioner-image i {
-            font-size: 1.5rem;
-            color: var(--gray-500);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+
+        .profile-image i {
+            font-size: 3rem;
+            color: #94a3b8;
         }
-        
-        .practitioner-details h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--dark-color);
+
+        .profile-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a1a2e;
             margin-bottom: 0.25rem;
         }
-        
-        .practitioner-details p {
-            font-size: 13px;
-            color: var(--gray-500);
-            margin: 0;
+
+        .profile-title {
+            font-size: 0.7rem;
+            color: #2e7d32;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
         }
-        
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .appointment-layout {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-card {
-                position: relative;
-                top: 0;
-            }
+
+        .availability-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.65rem;
+            font-weight: 600;
         }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-            }
-            
-            .header-content h1 {
-                font-size: 1.5rem;
-            }
-            
-            .details-grid {
-                grid-template-columns: 1fr;
-            }
+
+        .availability-badge.available {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
-        
-        /* Print Styles */
+
+        .availability-badge.unavailable {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .contact-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .contact-list {
+            list-style: none;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0;
+            font-size: 0.7rem;
+            color: #334155;
+        }
+
+        .contact-item i {
+            width: 20px;
+            color: #2e7d32;
+            font-size: 0.8rem;
+        }
+
+        .contact-item a {
+            color: #334155;
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            color: #2e7d32;
+        }
+
+        /* Book Button */
+        .book-section {
+            padding: 1.25rem;
+        }
+
+        .book-btn {
+            width: 100%;
+            background: #2e7d32;
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .book-btn:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        .book-btn.disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Main Content Card */
+        .main-card {
+            background: white;
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .card-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .card-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: #e8f5e9;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e7d32;
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .section-content {
+            font-size: 0.8rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* Specialties Grid */
+        .specialties-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .specialty-tag {
+            background: #f1f5f9;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        /* Qualifications List */
+        .qualifications-list {
+            list-style: none;
+        }
+
+        .qualification-item {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .qualification-item:last-child {
+            border-bottom: none;
+        }
+
+        .qualification-icon {
+            width: 24px;
+            height: 24px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e7d32;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+        }
+
+        .qualification-content h4 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.2rem;
+        }
+
+        .qualification-content p {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 2rem;
+        }
+
+        /* Floating Cart */
+        .floating-cart {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: #2e7d32;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(46,125,50,0.25);
+            z-index: 1000;
+        }
+
+        .floating-cart:hover {
+            transform: scale(1.03);
+            background: #1b5e20;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef476f;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 0.1rem 0.3rem;
+            border-radius: 50%;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* Print Styles - Compact */
         @media print {
-            .page-nav,
-            .actions-card {
-                display: none;
+            .top-nav, .breadcrumb-bar, .quick-actions, .book-section, .floating-cart, .footer {
+                display: none !important;
             }
-            
+
             body {
                 background: white;
+                padding: 0;
+                margin: 0;
             }
-            
-            .appointment-details-card {
-                box-shadow: none;
+
+            .main-container {
+                padding: 0;
+                margin: 0;
+            }
+
+            .page-header {
+                display: none;
+            }
+
+            .practitioner-layout {
+                display: block;
+            }
+
+            .sidebar-card, .main-card {
                 border: 1px solid #ddd;
+                margin-bottom: 1rem;
+                page-break-inside: avoid;
             }
+
+            .profile-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .profile-header h2 {
+                font-size: 1rem;
+            }
+
+            .card-section {
+                padding: 0.75rem;
+            }
+
+            .stats-grid {
+                gap: 0.5rem;
+            }
+
+            .stat-card {
+                padding: 0.5rem;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            .specialty-tag {
+                padding: 0.2rem 0.6rem;
+                font-size: 0.6rem;
+            }
+
+            .qualification-item {
+                padding: 0.4rem 0;
+            }
+
+            .section-content {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .nav-links {
+                gap: 0.5rem;
+            }
+
+            .nav-link span {
+                display: none;
+            }
+
+            .practitioner-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .sidebar-card {
+                position: static;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .action-group {
+                justify-content: center;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sidebar-card, .main-card {
+            animation: fadeInUp 0.3s ease forwards;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="page-header">
-        <div class="header-content">
-            <h1>Appointment Details</h1>
-            <p>Consultation #{{ appointment.id }} • {{ appointment.appointment_date.strftime('%B %d, %Y') }}</p>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Remedies</span>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Navigation -->
-        <nav class="page-nav">
-            <a href="{{ url_for('appointments') }}" class="back-btn">
-                <i class="bi bi-arrow-left"></i> Back to Appointments
+        
+        <div class="nav-links">
+            <a href="{{ url_for('cart') }}" class="nav-link">
+                <i class="bi bi-cart"></i> <span>Cart</span>
             </a>
-        </nav>
-
-        <!-- Appointment Layout -->
-        <div class="appointment-layout">
-            <!-- Appointment Details -->
-            <div class="appointment-details-card">
-                <div class="appointment-header">
-                    <h2>Appointment Details</h2>
-                    <div class="appointment-status status-{{ appointment.status }}">
-                        <i class="bi bi-circle-fill"></i>
-                        {{ appointment.status|title }}
-                    </div>
-                </div>
-                
-                <!-- Details Grid -->
-                <div class="details-grid">
-                    <div class="detail-card">
-                        <div class="detail-icon">
-                            <i class="bi bi-calendar"></i>
-                        </div>
-                        <div class="detail-title">Date & Time</div>
-                        <div class="detail-content">
-                            {{ appointment.appointment_date.strftime('%B %d, %Y') }}
-                            <p>{{ appointment.appointment_date.strftime('%I:%M %p') }}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="detail-card">
-                        <div class="detail-icon">
-                            <i class="bi bi-heart-pulse"></i>
-                        </div>
-                        <div class="detail-title">Consultation Type</div>
-                        <div class="detail-content">{{ appointment.appointment_type|title }}</div>
-                    </div>
-                    
-                    <div class="detail-card">
-                        <div class="detail-icon">
-                            <i class="bi bi-person"></i>
-                        </div>
-                        <div class="detail-title">Practitioner</div>
-                        <div class="detail-content">{{ appointment.practitioner.name }}</div>
-                    </div>
-                    
-                    <div class="detail-card">
-                        <div class="detail-icon">
-                            <i class="bi bi-clock-history"></i>
-                        </div>
-                        <div class="detail-title">Duration</div>
-                        <div class="detail-content">
-                            {% if appointment.appointment_type == 'initial consultation' %}60 minutes
-                            {% elif appointment.appointment_type == 'follow-up' %}30 minutes
-                            {% elif appointment.appointment_type == 'herbal prescription' %}45 minutes
-                            {% else %}20 minutes{% endif %}
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Notes Section -->
-                {% if appointment.notes %}
-                <div class="notes-section">
-                    <div class="notes-header">
-                        <i class="bi bi-journal-text"></i>
-                        <h4>Your Notes</h4>
-                    </div>
-                    <div class="notes-content">
-                        {{ appointment.notes }}
-                    </div>
-                </div>
-                {% else %}
-                <div class="notes-section">
-                    <div class="notes-header">
-                        <i class="bi bi-journal-text"></i>
-                        <h4>No Additional Notes</h4>
-                    </div>
-                    <div class="notes-content">
-                        No additional notes were provided for this appointment.
-                    </div>
-                </div>
-                {% endif %}
-                
-                <!-- Print Button -->
-                <button onclick="window.print()" class="btn-outline btn-action">
-                    <i class="bi bi-printer"></i> Print Appointment Details
+            <a href="{{ url_for('products') }}" class="nav-link">
+                <i class="bi bi-grid"></i> <span>Products</span>
+            </a>
+            <a href="{{ url_for('practitioners') }}" class="nav-link">
+                <i class="bi bi-people"></i> <span>Practitioners</span>
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <a href="{{ url_for('practitioners') }}">Practitioners</a>
+        <span>/</span>
+        <span style="color: #2e7d32;">{{ practitioner.name }}</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Practitioner Profile</h1>
+            <p>Expert herbal medicine specialist</p>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('practitioners') }}" class="back-link">
+                <i class="bi bi-arrow-left"></i> Back to Practitioners
+            </a>
+            <div class="action-group">
+                <button class="quick-action-btn" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Print Profile
+                </button>
+                <button class="quick-action-btn" id="shareBtn">
+                    <i class="bi bi-share"></i> Share
                 </button>
             </div>
+        </div>
 
-            <!-- Actions Card -->
-            <div class="actions-card">
-                <div class="actions-header">
-                    <h3>Appointment Actions</h3>
-                    <p>Manage your consultation</p>
-                </div>
-                
-                <div class="action-buttons">
-                    <a href="{{ url_for('book_appointment', practitioner_id=appointment.practitioner.id) }}" class="btn-primary btn-action">
-                        <i class="bi bi-calendar-plus"></i> Book Another Appointment
-                    </a>
-                    
-                    <a href="{{ url_for('practitioner_detail', practitioner_id=appointment.practitioner.id) }}" class="btn-outline btn-action">
-                        <i class="bi bi-person"></i> View Practitioner Profile
-                    </a>
-                    
-                    {% if appointment.status == 'scheduled' %}
-                    <form method="POST" action="{{ url_for('cancel_appointment', appointment_id=appointment.id) }}" style="width: 100%;">
-                        <button type="submit" class="btn-danger btn-action" onclick="return confirm('Are you sure you want to cancel this appointment?')">
-                            <i class="bi bi-x-circle"></i> Cancel Appointment
-                        </button>
-                    </form>
-                    {% endif %}
-                </div>
-                
-                <!-- Practitioner Info -->
-                <div class="practitioner-info">
-                    <div class="practitioner-header">
-                        <div class="practitioner-image">
-                            {% if appointment.practitioner.image_url %}
-                            <img src="{{ appointment.practitioner.image_url }}" alt="{{ appointment.practitioner.name }}">
-                            {% else %}
-                            <i class="bi bi-person-circle"></i>
-                            {% endif %}
-                        </div>
-                        <div class="practitioner-details">
-                            <h4>{{ appointment.practitioner.name }}</h4>
-                            <p>{{ appointment.practitioner.title or 'Herbal Medicine Specialist' }}</p>
-                        </div>
+        <!-- Practitioner Layout -->
+        <div class="practitioner-layout">
+            <!-- Sidebar Card -->
+            <aside class="sidebar-card">
+                <div class="profile-header">
+                    <div class="profile-image">
+                        {% if practitioner.image_url %}
+                        <img src="{{ practitioner.image_url }}" alt="{{ practitioner.name }}">
+                        {% else %}
+                        <i class="bi bi-person-circle"></i>
+                        {% endif %}
                     </div>
                     
-                    {% if appointment.practitioner.specialties %}
-                    <p style="font-size: 13px; color: var(--gray-600); margin: 0;">
-                        <strong>Specialties:</strong> {{ appointment.practitioner.specialties }}
-                    </p>
+                    <h2>{{ practitioner.name }}</h2>
+                    <p class="profile-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
+                    
+                    <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
+                        <i class="bi bi-circle-fill"></i>
+                        {% if practitioner.available %}Available for Consultations{% else %}Currently Unavailable{% endif %}
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="contact-section">
+                    <div class="contact-title">
+                        <i class="bi bi-envelope"></i> Contact
+                    </div>
+                    <ul class="contact-list">
+                        {% if practitioner.email %}
+                        <li class="contact-item">
+                            <i class="bi bi-envelope"></i>
+                            <a href="mailto:{{ practitioner.email }}">{{ practitioner.email }}</a>
+                        </li>
+                        {% endif %}
+                        {% if practitioner.phone %}
+                        <li class="contact-item">
+                            <i class="bi bi-telephone"></i>
+                            <a href="tel:{{ practitioner.phone }}">{{ practitioner.phone }}</a>
+                        </li>
+                        {% endif %}
+                        <li class="contact-item">
+                            <i class="bi bi-clock"></i>
+                            <span>Response: 24-48 hours</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Consultation Details -->
+                <div class="contact-section">
+                    <div class="contact-title">
+                        <i class="bi bi-calendar-check"></i> Consultation
+                    </div>
+                    <ul class="contact-list">
+                        <li class="contact-item">
+                            <i class="bi bi-camera-video"></i>
+                            <span>Virtual sessions available</span>
+                        </li>
+                        <li class="contact-item">
+                            <i class="bi bi-clock-history"></i>
+                            <span>30-60 minute sessions</span>
+                        </li>
+                        <li class="contact-item">
+                            <i class="bi bi-cash-stack"></i>
+                            <span>KES {{ practitioner.consultation_fee or '5,000' }} per session</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Book Button -->
+                <div class="book-section">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" 
+                       class="book-btn {% if not practitioner.available %}disabled{% endif %}">
+                        <i class="bi bi-calendar-check"></i>
+                        {% if practitioner.available %}Book Appointment{% else %}Not Available{% endif %}
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="book-btn">
+                        <i class="bi bi-box-arrow-in-right"></i> Login to Book
+                    </a>
                     {% endif %}
+                </div>
+            </aside>
+
+            <!-- Main Content Card -->
+            <div class="main-card">
+                <!-- About Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-person-badge"></i>
+                        </div>
+                        <div class="section-title">About {{ practitioner.name.split(' ')[0] }}</div>
+                    </div>
+                    <div class="section-content">
+                        {% if practitioner.bio %}
+                        <p>{{ practitioner.bio }}</p>
+                        {% else %}
+                        <p>With extensive experience in herbal medicine and holistic wellness, {{ practitioner.name }} is dedicated to helping clients achieve optimal health through natural remedies and personalized treatment plans.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Specialties Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        <div class="section-title">Areas of Expertise</div>
+                    </div>
+                    <div class="specialties-grid">
+                        {% if practitioner.specialties %}
+                            {% for specialty in practitioner.specialties.split(',') %}
+                            <span class="specialty-tag">{{ specialty.strip() }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="specialty-tag">Herbal Medicine</span>
+                            <span class="specialty-tag">Nutrition</span>
+                            <span class="specialty-tag">Stress Management</span>
+                            <span class="specialty-tag">Digestive Health</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Qualifications Section -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+                        <div class="section-title">Qualifications</div>
+                    </div>
+                    <ul class="qualifications-list">
+                        <li class="qualification-item">
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
+                            <div class="qualification-content">
+                                <h4>Certified Herbalist</h4>
+                                <p>International Association of Herbal Practitioners</p>
+                            </div>
+                        </li>
+                        <li class="qualification-item">
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
+                            <div class="qualification-content">
+                                <h4>Advanced Nutrition Certification</h4>
+                                <p>Institute for Functional Medicine</p>
+                            </div>
+                        </li>
+                        <li class="qualification-item">
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
+                            <div class="qualification-content">
+                                <h4>Traditional Medicine Training</h4>
+                                <p>{{ practitioner.experience_years or '10+' }} years of practical experience</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Statistics -->
+                <div class="card-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <div class="section-title">Practice Statistics</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.experience_years or '10+' }}</div>
+                            <div class="stat-label">Years</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.rating or '4.9' }}</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ practitioner.patients_count or '500+' }}</div>
+                            <div class="stat-label">Patients</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">98%</div>
+                            <div class="stat-label">Satisfaction</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </main>
-
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+    
+    <!-- Floating Cart -->
+    <a href="{{ url_for('cart') }}" class="floating-cart">
+        <i class="bi bi-cart-fill"></i>
+        <span class="cart-badge">{{ cart_count|default(0) }}</span>
+    </a>
+    
+    <!-- Toast -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg"></span>
+    </div>
+    
     <script>
-        // Update status badge color
-        const statusBadge = document.querySelector('.appointment-status');
-        if (statusBadge) {
-            const status = statusBadge.classList[1].replace('status-', '');
-            statusBadge.classList.add(`status-${status}`);
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.style.background = isError ? '#dc2626' : '#1e293b';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
         
-        // Add confirmation for cancel button
-        const cancelForm = document.querySelector('form[action*="cancel"]');
-        if (cancelForm) {
-            cancelForm.addEventListener('submit', function(e) {
-                if (!confirm('Are you sure you want to cancel this appointment?')) {
-                    e.preventDefault();
+        // Share functionality
+        const shareBtn = document.getElementById('shareBtn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: '{{ practitioner.name }} - Shifaa Herbal Practitioner',
+                        text: 'Expert herbal medicine practitioner at Shifaa Herbal',
+                        url: window.location.href
+                    }).catch(() => {
+                        showToast('Share cancelled', false);
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    showToast('Profile link copied to clipboard!', false);
                 }
             });
         }
-        
-        // Initialize animations
-        document.addEventListener('DOMContentLoaded', function() {
-            const detailCards = document.querySelectorAll('.detail-card');
-            
-            // Add animation to detail cards
-            detailCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 100 + (index * 100));
-            });
-        });
     </script>
 </body>
 </html>

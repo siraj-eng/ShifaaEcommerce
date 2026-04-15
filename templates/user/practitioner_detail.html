@@ -2,522 +2,774 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ practitioner.name }} - HerbalCare Practitioner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>{{ practitioner.name }} | Shifaa Herbal Practitioner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2e7d32;
-            --primary-light: #e8f5e8;
-            --secondary-color: #1b5e20;
-            --success-color: #06d6a0;
-            --warning-color: #ffd166;
-            --danger-color: #ef476f;
-            --dark-color: #121826;
-            --light-color: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--light-color);
-            color: var(--gray-800);
-            line-height: 1.5;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.3;
         }
-        
-        /* Header */
-        .page-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            padding: 2.5rem 0;
-            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+
+        /* Top Navigation - Screen only */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-        
-        .header-content h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-        
-        .header-content p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Navigation */
-        .page-nav {
-            margin-bottom: 2rem;
-        }
-        
-        .back-btn {
-            display: inline-flex;
+
+        .logo-area {
+            display: flex;
             align-items: center;
             gap: 0.5rem;
-            color: var(--primary-color);
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.5rem;
             text-decoration: none;
+            font-size: 0.8rem;
             font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-sm);
             transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
             background: white;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
         }
-        
-        .back-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary-color);
-            transform: translateX(-4px);
-            border-color: var(--primary-color);
+
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
         }
-        
+
+        /* Main Container */
+        .main-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Quick Actions Bar - Screen only */
+        .quick-actions {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: #2e7d32;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .quick-action-btn {
+            padding: 0.4rem 0.8rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            color: #64748b;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .quick-action-btn:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
         /* Practitioner Layout */
         .practitioner-layout {
             display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 3rem;
+            grid-template-columns: 300px 1fr;
+            gap: 1.25rem;
         }
-        
+
         /* Sidebar */
         .practitioner-sidebar {
             background: white;
-            border-radius: var(--radius-lg);
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
-            position: sticky;
-            top: 2rem;
-        }
-        
-        .profile-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .profile-image {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--gray-200), var(--gray-300));
-            margin: 0 auto 1.5rem;
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
             overflow: hidden;
-            border: 6px solid white;
-            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 5rem;
+            height: fit-content;
         }
-        
+
+        .profile-header {
+            padding: 1.25rem;
+            text-align: center;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .profile-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+            margin: 0 auto 0.75rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
         .profile-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        
+
         .profile-image i {
-            font-size: 4rem;
-            color: var(--gray-500);
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            font-size: 2.5rem;
+            color: #94a3b8;
         }
-        
+
         .profile-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--dark-color);
+            color: #1a1a2e;
+            margin-bottom: 0.2rem;
+        }
+
+        .profile-title {
+            font-size: 0.65rem;
+            color: #2e7d32;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        
-        .profile-title {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-        
+
         .availability-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            background: var(--success-color);
-            color: white;
-            padding: 0.5rem 1.25rem;
-            border-radius: 20px;
-            font-size: 14px;
+            gap: 0.3rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 2rem;
+            font-size: 0.6rem;
             font-weight: 600;
-            margin-bottom: 2rem;
         }
-        
+
+        .availability-badge.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
         .availability-badge.unavailable {
-            background: var(--gray-400);
+            background: #fee2e2;
+            color: #dc2626;
         }
-        
-        /* Contact Info */
-        .contact-info {
-            margin-bottom: 2rem;
+
+        /* Contact Section - Compact */
+        .contact-section {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eef2f6;
         }
-        
+
         .contact-title {
-            font-size: 1rem;
+            font-size: 0.65rem;
             font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 1rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
         }
-        
-        .contact-title i {
-            color: var(--primary-color);
-        }
-        
+
         .contact-list {
             list-style: none;
         }
-        
+
         .contact-item {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+            font-size: 0.65rem;
+            color: #334155;
         }
-        
-        .contact-item:hover {
-            background: var(--gray-100);
-        }
-        
+
         .contact-item i {
-            width: 20px;
-            color: var(--gray-500);
+            width: 18px;
+            color: #2e7d32;
+            font-size: 0.7rem;
         }
-        
-        .contact-item a {
-            color: var(--gray-700);
-            text-decoration: none;
-            flex: 1;
-        }
-        
-        .contact-item a:hover {
-            color: var(--primary-color);
-        }
-        
+
         /* Book Button */
+        .book-section {
+            padding: 1rem;
+        }
+
         .book-btn {
             width: 100%;
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: #2e7d32;
             border: none;
             color: white;
-            padding: 1rem 2rem;
-            border-radius: var(--radius-md);
-            font-size: 1.1rem;
+            padding: 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
+            gap: 0.4rem;
             cursor: pointer;
-            transition: all 0.3s;
             text-decoration: none;
-            margin-top: 1.5rem;
         }
-        
-        .book-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-            color: white;
-        }
-        
-        .book-btn:disabled {
-            background: var(--gray-400);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
+
         /* Main Content */
         .practitioner-content {
             background: white;
-            border-radius: var(--radius-lg);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--gray-200);
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
         }
-        
-        /* Section Styling */
+
         .content-section {
-            margin-bottom: 3rem;
+            padding: 1rem;
+            border-bottom: 1px solid #eef2f6;
         }
-        
+
+        .content-section:last-child {
+            border-bottom: none;
+        }
+
         .section-header {
             display: flex;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--gray-200);
+            gap: 0.6rem;
+            margin-bottom: 0.75rem;
         }
-        
+
         .section-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius-md);
-            background: var(--primary-light);
+            width: 28px;
+            height: 28px;
+            background: #e8f5e9;
+            border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.5rem;
+            color: #2e7d32;
+            font-size: 0.8rem;
         }
-        
+
         .section-title {
-            font-size: 1.5rem;
+            font-size: 0.85rem;
             font-weight: 600;
-            color: var(--dark-color);
+            color: #1a1a2e;
         }
-        
+
         .section-content {
-            color: var(--gray-700);
-            line-height: 1.7;
-            font-size: 1.05rem;
+            font-size: 0.7rem;
+            color: #64748b;
+            line-height: 1.4;
         }
-        
+
         /* Specialties */
         .specialties-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 0.5rem;
         }
-        
-        .specialty-card {
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.2s;
-            flex: 1;
-            min-width: 200px;
+
+        .specialty-tag {
+            background: #f1f5f9;
+            padding: 0.25rem 0.7rem;
+            border-radius: 1.5rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: #334155;
         }
-        
-        .specialty-card:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-        }
-        
-        .specialty-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            background: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.25rem;
-        }
-        
-        .specialty-content h4 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-        }
-        
-        .specialty-content p {
-            font-size: 13px;
-            color: var(--gray-500);
-            margin: 0;
-        }
-        
+
         /* Qualifications */
         .qualifications-list {
             list-style: none;
         }
-        
+
         .qualification-item {
             display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
-            background: var(--gray-100);
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--success-color);
+            gap: 0.6rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid #eef2f6;
         }
-        
+
+        .qualification-item:last-child {
+            border-bottom: none;
+        }
+
         .qualification-icon {
-            width: 24px;
-            height: 24px;
-            background: var(--success-color);
+            width: 20px;
+            height: 20px;
+            background: #e8f5e9;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 12px;
-            margin-top: 0.25rem;
+            color: #2e7d32;
+            font-size: 0.6rem;
             flex-shrink: 0;
         }
-        
+
         .qualification-content h4 {
-            font-size: 1rem;
+            font-size: 0.7rem;
             font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
+            color: #1a1a2e;
+            margin-bottom: 0.15rem;
         }
-        
+
         .qualification-content p {
-            font-size: 14px;
-            color: var(--gray-500);
-            margin: 0;
+            font-size: 0.6rem;
+            color: #64748b;
         }
-        
+
         /* Stats */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
         }
-        
+
         .stat-card {
-            background: linear-gradient(135deg, var(--primary-light), white);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
             text-align: center;
-            border: 1px solid var(--gray-200);
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
         }
-        
+
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--primary-color);
-            line-height: 1;
-            margin-bottom: 0.5rem;
+            color: #2e7d32;
         }
-        
+
         .stat-label {
-            font-size: 14px;
-            color: var(--gray-600);
-            font-weight: 500;
+            font-size: 0.55rem;
+            color: #64748b;
+            margin-top: 0.15rem;
         }
-        
-        /* Responsive */
-        @media (max-width: 1024px) {
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 1.5rem;
+        }
+
+        /* Floating Cart - Screen only */
+        .floating-cart {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            background: #2e7d32;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(46,125,50,0.25);
+            z-index: 1000;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef476f;
+            color: white;
+            font-size: 0.55rem;
+            font-weight: 700;
+            padding: 0.1rem 0.3rem;
+            border-radius: 50%;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 4.5rem;
+            right: 1.2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* ========== COMPACT PRINT STYLES - FITS ON ONE PAGE ========== */
+        @media print {
+            /* Hide all screen-only elements */
+            .top-nav, .breadcrumb-bar, .quick-actions, .floating-cart, .footer, .toast-notification, .book-section {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .main-container {
+                padding: 0.25rem;
+                margin: 0;
+                max-width: 100%;
+            }
+
+            /* Single column layout for print */
+            .practitioner-layout {
+                display: block;
+                gap: 0;
+            }
+
+            /* Sidebar becomes inline */
+            .practitioner-sidebar {
+                position: static;
+                border: 1px solid #ddd;
+                margin-bottom: 0.5rem;
+                page-break-inside: avoid;
+            }
+
+            .practitioner-content {
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            /* Ultra compact for print */
+            .profile-header {
+                padding: 0.5rem;
+            }
+
+            .profile-image {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 0.35rem;
+            }
+
+            .profile-header h2 {
+                font-size: 0.9rem;
+            }
+
+            .profile-title {
+                font-size: 0.55rem;
+            }
+
+            .contact-section {
+                padding: 0.4rem 0.6rem;
+            }
+
+            .contact-item {
+                padding: 0.15rem 0;
+                font-size: 0.55rem;
+            }
+
+            .content-section {
+                padding: 0.5rem;
+            }
+
+            .section-header {
+                margin-bottom: 0.4rem;
+            }
+
+            .section-icon {
+                width: 22px;
+                height: 22px;
+                font-size: 0.65rem;
+            }
+
+            .section-title {
+                font-size: 0.7rem;
+            }
+
+            .section-content {
+                font-size: 0.6rem;
+            }
+
+            .specialty-tag {
+                padding: 0.15rem 0.5rem;
+                font-size: 0.55rem;
+            }
+
+            .qualification-item {
+                padding: 0.25rem 0;
+            }
+
+            .qualification-content h4 {
+                font-size: 0.6rem;
+            }
+
+            .qualification-content p {
+                font-size: 0.55rem;
+            }
+
+            .stats-grid {
+                gap: 0.3rem;
+            }
+
+            .stat-card {
+                padding: 0.3rem;
+            }
+
+            .stat-value {
+                font-size: 0.8rem;
+            }
+
+            .stat-label {
+                font-size: 0.5rem;
+            }
+
+            /* Print header with logo */
+            .print-header {
+                display: block;
+                text-align: center;
+                margin-bottom: 0.5rem;
+                padding-bottom: 0.3rem;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .print-header .print-logo {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .print-header .print-logo img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .print-header h3 {
+                font-size: 0.9rem;
+                margin: 0;
+                color: #2e7d32;
+            }
+
+            .print-header p {
+                font-size: 0.55rem;
+                color: #666;
+                margin: 0.15rem 0 0;
+            }
+
+            /* Force compact page breaks */
+            .practitioner-sidebar, .practitioner-content {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            /* Remove backgrounds for print */
+            .stat-card, .qualification-icon, .section-icon, .availability-badge, .specialty-tag {
+                background: #f5f5f5 !important;
+                -webkit-print-color-adjust: economy;
+                print-color-adjust: economy;
+            }
+
+            body, .section-content, .contact-item {
+                color: black;
+            }
+        }
+
+        /* Print header - hidden on screen */
+        .print-header {
+            display: none;
+        }
+
+        @media print {
+            .print-header {
+                display: block;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .user-name, .nav-link span {
+                display: none;
+            }
+
             .practitioner-layout {
                 grid-template-columns: 1fr;
-                gap: 2rem;
+                gap: 1rem;
             }
-            
+
             .practitioner-sidebar {
-                position: relative;
-                top: 0;
+                position: static;
             }
-            
-            .specialties-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem;
-            }
-            
-            .header-content h1 {
-                font-size: 1.5rem;
-            }
-            
+
             .stats-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
             }
-            
-            .specialty-card {
-                min-width: 100%;
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
-        }
-        
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+
+            .action-group {
+                justify-content: center;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .practitioner-sidebar,
-        .practitioner-content {
-            animation: fadeIn 0.5s ease forwards;
-        }
-        
-        .practitioner-sidebar {
-            animation-delay: 0.1s;
-        }
-        
-        .practitioner-content {
-            animation-delay: 0.2s;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="page-header">
-        <div class="header-content">
-            <h1>Practitioner Profile</h1>
-            <p>Expert guidance for your wellness journey</p>
+    <!-- Top Navigation - Screen only -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Remedies</span>
         </div>
-    </header>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('cart') }}" class="nav-link"><i class="bi bi-cart"></i> <span>Cart</span></a>
+            <a href="{{ url_for('products') }}" class="nav-link"><i class="bi bi-grid"></i> <span>Products</span></a>
+            <a href="{{ url_for('practitioners') }}" class="nav-link"><i class="bi bi-people"></i> <span>Practitioners</span></a>
+            <a href="{{ url_for('dashboard') }}" class="nav-link"><i class="bi bi-speedometer2"></i> <span>Dashboard</span></a>
+        </div>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name }}</span>
+            <div class="user-avatar"><i class="bi bi-person"></i></div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> <span>/</span>
+        <a href="{{ url_for('practitioners') }}">Practitioners</a> <span>/</span>
+        <span style="color: #2e7d32;">{{ practitioner.name }}</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Quick Actions - Screen only -->
+        <div class="quick-actions">
+            <a href="{{ url_for('practitioners') }}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Practitioners</a>
+            <div>
+                <button class="quick-action-btn" onclick="window.print()"><i class="bi bi-printer"></i> Print / Save as PDF</button>
+                <button class="quick-action-btn" id="shareBtn"><i class="bi bi-share"></i> Share</button>
+            </div>
+        </div>
 
-    <!-- Main Content -->
-    <main class="container">
-        <!-- Navigation -->
-        <nav class="page-nav">
-            <a href="{{ url_for('practitioners') }}" class="back-btn">
-                <i class="bi bi-arrow-left"></i> Back to Practitioners
-            </a>
-        </nav>
+        <!-- Print Header (only visible when printing) -->
+        <div class="print-header">
+            <div class="print-logo">
+                <img src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+                <h3>SHIFAA HERBAL REMEDIES</h3>
+            </div>
+            <p>Practitioner Profile • {{ practitioner.name }}</p>
+        </div>
 
         <!-- Practitioner Layout -->
         <div class="practitioner-layout">
@@ -531,258 +783,170 @@
                         <i class="bi bi-person-circle"></i>
                         {% endif %}
                     </div>
-                    
                     <h2>{{ practitioner.name }}</h2>
                     <p class="profile-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
-                    
                     <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
                         <i class="bi bi-circle-fill"></i>
-                        {% if practitioner.available %}Available for Consultations{% else %}Currently Unavailable{% endif %}
+                        {% if practitioner.available %}Available{% else %}Unavailable{% endif %}
                     </div>
                 </div>
                 
-                <!-- Contact Info -->
-                <div class="contact-info">
-                    <h3 class="contact-title">
-                        <i class="bi bi-info-circle"></i>
-                        Contact Information
-                    </h3>
+                <div class="contact-section">
+                    <div class="contact-title"><i class="bi bi-envelope"></i> Contact</div>
                     <ul class="contact-list">
                         {% if practitioner.email %}
-                        <li class="contact-item">
-                            <i class="bi bi-envelope"></i>
-                            <a href="mailto:{{ practitioner.email }}">{{ practitioner.email }}</a>
-                        </li>
+                        <li class="contact-item"><i class="bi bi-envelope"></i> {{ practitioner.email }}</li>
                         {% endif %}
-                        
                         {% if practitioner.phone %}
-                        <li class="contact-item">
-                            <i class="bi bi-telephone"></i>
-                            <a href="tel:{{ practitioner.phone }}">{{ practitioner.phone }}</a>
-                        </li>
+                        <li class="contact-item"><i class="bi bi-telephone"></i> {{ practitioner.phone }}</li>
                         {% endif %}
-                        
-                        <li class="contact-item">
-                            <i class="bi bi-clock"></i>
-                            <span>Response time: 24-48 hours</span>
-                        </li>
+                        <li class="contact-item"><i class="bi bi-clock"></i> Response: 24-48 hours</li>
                     </ul>
                 </div>
                 
-                <!-- Consultation Info -->
-                <div class="contact-info">
-                    <h3 class="contact-title">
-                        <i class="bi bi-calendar-check"></i>
-                        Consultation Details
-                    </h3>
+                <div class="contact-section">
+                    <div class="contact-title"><i class="bi bi-calendar-check"></i> Consultation</div>
                     <ul class="contact-list">
-                        <li class="contact-item">
-                            <i class="bi bi-camera-video"></i>
-                            <span>Virtual consultations available</span>
-                        </li>
-                        <li class="contact-item">
-                            <i class="bi bi-clock-history"></i>
-                            <span>Sessions: 30-60 minutes</span>
-                        </li>
-                        <li class="contact-item">
-                            <i class="bi bi-cash-stack"></i>
-                            <span>From {{ currency_symbol }} 10,000 per session</span>
-                        </li>
+                        <li class="contact-item"><i class="bi bi-camera-video"></i> Virtual sessions</li>
+                        <li class="contact-item"><i class="bi bi-clock-history"></i> 30-60 min sessions</li>
+                        <li class="contact-item"><i class="bi bi-cash-stack"></i> KES {{ practitioner.consultation_fee or '5,000' }}/session</li>
                     </ul>
                 </div>
                 
-                <!-- Book Button -->
-                {% if current_user.is_authenticated %}
-                <a 
-                    href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" 
-                    class="book-btn"
-                    {% if not practitioner.available %}style="opacity: 0.6; pointer-events: none;"{% endif %}
-                >
-                    <i class="bi bi-calendar-check"></i>
-                    {% if practitioner.available %}Book Appointment{% else %}Not Available{% endif %}
-                </a>
-                {% else %}
-                <a href="{{ url_for('login') }}" class="book-btn">
-                    <i class="bi bi-calendar-check"></i> Book Appointment
-                </a>
-                {% endif %}
+                <!-- Book button - Screen only -->
+                <div class="book-section">
+                    {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="book-btn">
+                        <i class="bi bi-calendar-check"></i> Book Appointment
+                    </a>
+                    {% else %}
+                    <a href="{{ url_for('login') }}" class="book-btn"><i class="bi bi-box-arrow-in-right"></i> Login to Book</a>
+                    {% endif %}
+                </div>
             </aside>
 
             <!-- Main Content -->
             <div class="practitioner-content">
-                <!-- About Section -->
-                <section class="content-section">
+                <div class="content-section">
                     <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-person-badge"></i>
-                        </div>
-                        <h3 class="section-title">About {{ practitioner.name.split(' ')[0] }}</h3>
+                        <div class="section-icon"><i class="bi bi-person-badge"></i></div>
+                        <div class="section-title">About</div>
                     </div>
-                    
                     <div class="section-content">
                         {% if practitioner.bio %}
                         <p>{{ practitioner.bio }}</p>
                         {% else %}
-                        <p>With extensive experience in herbal medicine and holistic wellness, {{ practitioner.name }} is dedicated to helping clients achieve optimal health through natural remedies and personalized treatment plans. Their approach combines traditional herbal knowledge with modern scientific understanding.</p>
+                        <p>With extensive experience in herbal medicine and holistic wellness, {{ practitioner.name }} is dedicated to helping clients achieve optimal health through natural remedies and personalized treatment plans.</p>
                         {% endif %}
                     </div>
-                </section>
+                </div>
 
-                <!-- Specialties Section -->
-                <section class="content-section">
+                <div class="content-section">
                     <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-stars"></i>
-                        </div>
-                        <h3 class="section-title">Areas of Expertise</h3>
+                        <div class="section-icon"><i class="bi bi-stars"></i></div>
+                        <div class="section-title">Areas of Expertise</div>
                     </div>
-                    
                     <div class="specialties-grid">
                         {% if practitioner.specialties %}
-                        {% for specialty in practitioner.specialties.split(',') %}
-                        <div class="specialty-card">
-                            <div class="specialty-icon">
-                                <i class="bi bi-heart-pulse"></i>
-                            </div>
-                            <div class="specialty-content">
-                                <h4>{{ specialty.strip() }}</h4>
-                                <p>Personalized treatment plans</p>
-                            </div>
-                        </div>
-                        {% endfor %}
+                            {% for specialty in practitioner.specialties.split(',') %}
+                            <span class="specialty-tag">{{ specialty.strip() }}</span>
+                            {% endfor %}
                         {% else %}
-                        <div class="specialty-card">
-                            <div class="specialty-icon">
-                                <i class="bi bi-capsule"></i>
-                            </div>
-                            <div class="specialty-content">
-                                <h4>Herbal Medicine</h4>
-                                <p>Custom herbal formulations</p>
-                            </div>
-                        </div>
-                        <div class="specialty-card">
-                            <div class="specialty-icon">
-                                <i class="bi bi-nutrition"></i>
-                            </div>
-                            <div class="specialty-content">
-                                <h4>Nutrition</h4>
-                                <p>Dietary guidance & supplements</p>
-                            </div>
-                        </div>
-                        <div class="specialty-card">
-                            <div class="specialty-icon">
-                                <i class="bi bi-flower1"></i>
-                            </div>
-                            <div class="specialty-content">
-                                <h4>Stress Management</h4>
-                                <p>Holistic stress relief techniques</p>
-                            </div>
-                        </div>
+                            <span class="specialty-tag">Herbal Medicine</span>
+                            <span class="specialty-tag">Nutrition</span>
+                            <span class="specialty-tag">Stress Management</span>
+                            <span class="specialty-tag">Digestive Health</span>
                         {% endif %}
                     </div>
-                </section>
+                </div>
 
-                <!-- Qualifications Section -->
-                <section class="content-section">
+                <div class="content-section">
                     <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-award"></i>
-                        </div>
-                        <h3 class="section-title">Qualifications & Certifications</h3>
+                        <div class="section-icon"><i class="bi bi-award"></i></div>
+                        <div class="section-title">Qualifications</div>
                     </div>
-                    
                     <ul class="qualifications-list">
                         <li class="qualification-item">
-                            <div class="qualification-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
                             <div class="qualification-content">
                                 <h4>Certified Herbalist</h4>
                                 <p>International Association of Herbal Practitioners</p>
                             </div>
                         </li>
                         <li class="qualification-item">
-                            <div class="qualification-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
                             <div class="qualification-content">
                                 <h4>Advanced Nutrition Certification</h4>
                                 <p>Institute for Functional Medicine</p>
                             </div>
                         </li>
                         <li class="qualification-item">
-                            <div class="qualification-icon">
-                                <i class="bi bi-check"></i>
-                            </div>
+                            <div class="qualification-icon"><i class="bi bi-check"></i></div>
                             <div class="qualification-content">
                                 <h4>Traditional Medicine Training</h4>
-                                <p>10+ years of practical experience</p>
+                                <p>{{ practitioner.experience_years or '10+' }} years experience</p>
                             </div>
                         </li>
                     </ul>
-                </section>
+                </div>
 
-                <!-- Statistics -->
-                <section class="content-section">
+                <div class="content-section">
                     <div class="section-header">
-                        <div class="section-icon">
-                            <i class="bi bi-graph-up"></i>
-                        </div>
-                        <h3 class="section-title">Practice Statistics</h3>
+                        <div class="section-icon"><i class="bi bi-graph-up"></i></div>
+                        <div class="section-title">Statistics</div>
                     </div>
-                    
                     <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value">{{ practitioner.experience_years or '10+' }}</div>
-                            <div class="stat-label">Years Experience</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">{{ practitioner.rating or '4.9' }}</div>
-                            <div class="stat-label">Patient Rating</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">{{ practitioner.appointments or '500+' }}</div>
-                            <div class="stat-label">Consultations</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">98%</div>
-                            <div class="stat-label">Satisfaction Rate</div>
-                        </div>
+                        <div class="stat-card"><div class="stat-value">{{ practitioner.experience_years or '10+' }}</div><div class="stat-label">Years</div></div>
+                        <div class="stat-card"><div class="stat-value">{{ practitioner.rating or '4.9' }}</div><div class="stat-label">Rating</div></div>
+                        <div class="stat-card"><div class="stat-value">{{ practitioner.patients_count or '500+' }}</div><div class="stat-label">Patients</div></div>
+                        <div class="stat-card"><div class="stat-value">98%</div><div class="stat-label">Satisfaction</div></div>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
-    </main>
-
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+    
+    <!-- Floating Cart -->
+    <a href="{{ url_for('cart') }}" class="floating-cart">
+        <i class="bi bi-cart-fill"></i>
+        <span class="cart-badge">{{ cart_count|default(0) }}</span>
+    </a>
+    
+    <!-- Toast -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg"></span>
+    </div>
+    
     <script>
-        // Add animation to specialty cards
-        document.addEventListener('DOMContentLoaded', function() {
-            const specialtyCards = document.querySelectorAll('.specialty-card');
-            const statCards = document.querySelectorAll('.stat-card');
-            
-            // Initialize animations
-            specialtyCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 300 + (index * 100));
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.style.background = isError ? '#dc2626' : '#1e293b';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        const shareBtn = document.getElementById('shareBtn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                if (navigator.share) {
+                    navigator.share({
+                        title: '{{ practitioner.name }} - Shifaa Herbal Practitioner',
+                        url: window.location.href
+                    }).catch(() => showToast('Share cancelled', false));
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    showToast('Profile link copied!', false);
+                }
             });
-            
-            statCards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 600 + (index * 100));
-            });
-        });
+        }
     </script>
 </body>
 </html>

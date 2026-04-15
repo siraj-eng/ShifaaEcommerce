@@ -4,7 +4,7 @@ import json
 import time
 import requests
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from functools import wraps
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
@@ -17,6 +17,17 @@ load_dotenv()
 from extensions import db, login_manager
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+# Configure timezone (Kenya - EAT)
+TIMEZONE = timezone(timedelta(hours=3))  # EAT is UTC+3
+
+def get_local_time():
+    """Get current local time in Kenya timezone"""
+    return datetime.now(TIMEZONE)
+
+def get_utc_time():
+    """Get current UTC time"""
+    return datetime.now(timezone.utc)
 
 # M-Pesa Credentials
 CONSUMER_KEY = "KUcFWGrg76dsOqJWI8jNzvnATok3FduXRVS8PSEpPwRf4Ih4"
@@ -317,6 +328,50 @@ def create_app():
         if value is None:
             return ""
         return f"{app.config['CURRENCY_SYMBOL']} {float(value):,.2f}"
+
+    @app.template_filter("relative_time")
+    def relative_time_filter(dt):
+        """Convert datetime to relative time (e.g., '2 hours ago', 'Yesterday', '3 days ago')"""
+        if not dt:
+            return ""
+        
+        from datetime import datetime as dt, timedelta
+        
+        now = dt.utcnow()
+        diff = now - dt
+        
+        if diff.days == 0:
+            if diff.seconds < 60:
+                return "Just now"
+            elif diff.seconds < 3600:
+                hours = diff.seconds // 3600
+                minutes = (diff.seconds % 3600) // 60
+                if hours == 0:
+                    return f"{minutes} minute{'s' if minutes != 1 else ''} ago"
+                return f"{hours} hour{'s' if hours != 1 else ''} ago"
+            else:
+                hours = diff.seconds // 3600
+                return f"{hours} hour{'s' if hours != 1 else ''} ago"
+        elif diff.days == 1:
+            return "Yesterday"
+        elif diff.days < 7:
+            return f"{diff.days} days ago"
+        elif diff.days < 30:
+            weeks = diff.days // 7
+            return f"{weeks} week{'s' if weeks != 1 else ''} ago"
+        elif diff.days < 365:
+            months = diff.days // 30
+            return f"{months} month{'s' if months != 1 else ''} ago"
+        else:
+            years = diff.days // 365
+            return f"{years} year{'s' if years != 1 else ''} ago"
+    
+    @app.template_filter("format_datetime")
+    def format_datetime_filter(dt):
+        """Format datetime in a readable way"""
+        if not dt:
+            return ""
+        return dt.strftime('%b %d, %Y at %I:%M %p')
 
     def admin_required(f):
         @wraps(f)
@@ -934,12 +989,31 @@ def create_app():
             try:
                 appointment_datetime = datetime.strptime(f"{appointment_date_str} {appointment_time}", "%Y-%m-%d %H:%M")
             except ValueError:
-                flash("Invalid date or time format.", "error")
+                flash("Invalid date or time format. Please use date picker and time dropdown.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
-            if appointment_datetime < datetime.utcnow():
-                flash("Cannot book appointments in the past.", "error")
+            # Check if appointment is at least 2 hours in the future (reasonable booking time)
+            from datetime import timedelta
+            min_appointment_time = get_local_time() + timedelta(hours=2)
+            if appointment_datetime < min_appointment_time:
+                flash("Appointments must be booked at least 2 hours in advance.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
+            
+            # Check if appointment is within business hours (8AM-6PM)
+            if appointment_datetime.hour < 8 or appointment_datetime.hour > 18:
+                flash("Appointments are only available between 8:00 AM and 6:00 PM.", "error")
+                return render_template("user/book_appointment.html", practitioner=practitioner)
+            
+            # Check if appointment is not too far in future (max 30 days)
+            max_appointment_time = get_local_time() + timedelta(days=30)
+            if appointment_datetime > max_appointment_time:
+                flash("Appointments cannot be booked more than 30 days in advance.", "error")
+                return render_template("user/book_appointment.html", practitioner=practitioner)
+            
+            # Check if appointment is on weekend (optional - add weekend premium)
+            if appointment_datetime.weekday() >= 5:  # Saturday (5) or Sunday (6)
+                flash("Weekend appointments require special arrangement. Please contact us directly.", "warning")
+                # Don't block weekend bookings, just warn user
             
             appointment = Appointment(
                 user_id=current_user.id,
