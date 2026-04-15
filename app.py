@@ -10,32 +10,15 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
+load_dotenv()
+
 from extensions import db, login_manager
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-load_dotenv()
 
 
 def create_app():
     app = Flask(__name__)
-
-    # #region agent log
-    def _dbg(hypothesisId: str, location: str, message: str, data: dict | None = None):
-        try:
-            payload = {
-                "sessionId": "6e968a",
-                "runId": "pre-fix",
-                "hypothesisId": hypothesisId,
-                "location": location,
-                "message": message,
-                "data": data or {},
-                "timestamp": int(time.time() * 1000),
-            }
-            with open("debug-6e968a.log", "a", encoding="utf-8") as f:
-                f.write(json.dumps(payload, ensure_ascii=False) + "\n")
-        except Exception:
-            pass
-    # #endregion agent log
 
     # ========== SECURITY CONFIGURATION ==========
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-me-in-production")
@@ -470,19 +453,6 @@ def create_app():
             flash("Unauthorized action.", "error")
             return redirect(url_for("cart"))
 
-        # #region agent log
-        _dbg(
-            "A",
-            "app.py:update_cart:entry",
-            "update_cart called",
-            {
-                "item_id": item_id,
-                "raw_quantity": request.form.get("quantity"),
-                "qty_before": getattr(cart_item, "quantity", None),
-            },
-        )
-        # #endregion agent log
-
         quantity = int(request.form.get("quantity", 1))
         if quantity <= 0:
             db.session.delete(cart_item)
@@ -490,15 +460,6 @@ def create_app():
         else:
             cart_item.quantity = quantity
             # Remove flash message to prevent display on login page
-
-        # #region agent log
-        _dbg(
-            "B",
-            "app.py:update_cart:before_commit",
-            "update_cart about to commit",
-            {"item_id": item_id, "parsed_quantity": quantity, "qty_after": getattr(cart_item, "quantity", None)},
-        )
-        # #endregion agent log
 
         db.session.commit()
         return redirect(url_for("cart"))
@@ -570,20 +531,6 @@ def create_app():
                 shipping_cost = float(shipping_cost_raw) if shipping_cost_raw else 0.0
             except (TypeError, ValueError):
                 shipping_cost = 0.0
-
-            # #region agent log
-            _dbg(
-                "C",
-                "app.py:checkout:save_session",
-                "Saving checkout_info and redirecting to payment",
-                {
-                    "delivery_option": delivery_option,
-                    "shipping_cost": shipping_cost,
-                    "shipping_address_len": len(shipping_address or ""),
-                    "cart_items": len(cart_items),
-                },
-            )
-            # #endregion agent log
             
             session["checkout_info"] = {
                 "shipping_address": shipping_address,
@@ -607,15 +554,6 @@ def create_app():
         from models import CartItem, Order, OrderItem
         import random
 
-        # #region agent log
-        _dbg(
-            "D",
-            "app.py:payment:entry",
-            "payment route entered",
-            {"has_checkout_info": "checkout_info" in session, "method": request.method},
-        )
-        # #endregion agent log
-        
         if "checkout_info" not in session:
             flash("Please complete the checkout process first.", "warning")
             return redirect(url_for("checkout"))
@@ -631,21 +569,6 @@ def create_app():
         shipping_cost = float(checkout_info.get("shipping_cost", 0) or 0)
         grand_total = float(total) + shipping_cost
 
-        # #region agent log
-        _dbg(
-            "E",
-            "app.py:payment:computed",
-            "Computed payment totals",
-            {
-                "delivery_option": checkout_info.get("delivery_option"),
-                "items": len(cart_items),
-                "subtotal": float(total),
-                "shipping_cost": shipping_cost,
-                "grand_total": grand_total,
-            },
-        )
-        # #endregion agent log
-        
         if request.method == "POST":
             order_number = f"SHF{random.randint(100000, 999999)}"
             order = Order(
@@ -1029,10 +952,12 @@ def create_app():
         
         if request.method == "POST":
             new_status = request.form.get("status", "").strip()
+            old_status = order.status
             if new_status in ("pending", "processing", "shipped", "delivered", "cancelled"):
                 order.status = new_status
                 order.updated_at = datetime.utcnow()
                 db.session.commit()
+                
                 flash(f"Order #{order.order_number} status updated to {new_status}.", "success")
             return redirect(url_for("admin_order_detail", order_id=order.id))
         return render_template("admin/order_detail.html", order=order)
@@ -1221,7 +1146,50 @@ def create_app():
             total_revenue_all_time=float(total_all_time) if total_all_time else 0,
             orders=paginated_orders.items,
             pagination=paginated_orders,
+            page=page,
+            total_pages=paginated_orders.pages,
         )
+
+    # ========== CLEANUP ROUTES ==========
+    @app.route("/admin/cleanup-orders", methods=["POST"])
+    @login_required
+    @admin_required
+    def cleanup_orders():
+        """Delete all orders and order items to start fresh"""
+        from models import Order, OrderItem
+        
+        try:
+            # Count current orders and items for debugging
+            current_orders = Order.query.count()
+            current_items = OrderItem.query.count()
+            
+            # Delete all order items first (due to foreign key constraints)
+            order_items_deleted = OrderItem.query.delete()
+            
+            # Delete all orders
+            orders_deleted = Order.query.delete()
+            
+            db.session.commit()
+            
+            flash(f"Successfully deleted {orders_deleted} orders and {order_items_deleted} order items. (Was {current_orders} orders, {current_items} items before deletion). System is now fresh!", "success")
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error during cleanup: {str(e)}", "error")
+        
+        return redirect(url_for("admin_orders"))
+    
+    @app.route("/admin/test-cleanup", methods=["GET"])
+    @login_required
+    @admin_required
+    def test_cleanup():
+        """Test route to check current order counts"""
+        from models import Order, OrderItem
+        
+        order_count = Order.query.count()
+        item_count = OrderItem.query.count()
+        
+        return f"Current database: {order_count} orders, {item_count} order items"
 
     # ========== CLI COMMANDS ==========
     @app.cli.command("init-db")

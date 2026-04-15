@@ -1,36 +1,40 @@
 # Shifaa Herbal Commerce Portal
 
-A comprehensive e-commerce platform for herbal medicine store with user and admin portals.
+A lightweight Flask-based herbal e-commerce platform with user and admin portals.
 
 ## Features
 
-- **User Portal**: Product browsing, shopping cart, orders, appointments with practitioners
-- **Admin Portal**: Management dashboard
-- **Authentication**: Secure login/registration with email validation (@shifaaherbal.com domain)
-- **Database**: SQLite with SQLAlchemy ORM
+- User product browsing, shopping cart, checkout, and orders
+- Admin order and practitioner management
+- Secure authentication with email validation
+- SQLite database using SQLAlchemy
 
 ## Installation
 
-1. **Install dependencies**
+1. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **Initialize database**
+2. Create a `.env` file with your configuration.
+
+3. Initialize the database:
 ```bash
 flask --app app:create_app init-db
 ```
 
-## Running the Application
+## Running the application
 
-Simply run:
+Run locally with:
 ```bash
 python app.py
 ```
+or with Gunicorn:
+```bash
+gunicorn --bind 0.0.0.0:5000 wsgi:app
+```
 
-The server will start at: **http://127.0.0.1:5000**
-
-Press `Ctrl+C` to stop the server.
+Visit `http://127.0.0.1:5000` in your browser.
 
 ## Default Admin Account
 
