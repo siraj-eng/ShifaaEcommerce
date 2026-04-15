@@ -79,8 +79,8 @@
         </div>
         <div class="card-admin">
             <div class="card-body">
-                <p class="mb-0 small text-muted">Placed {{ order.created_at.strftime('%b %d, %Y at %I:%M %p') }}</p>
-                {% if order.updated_at %}<p class="mb-0 small text-muted">Updated {{ order.updated_at.strftime('%b %d, %Y') }}</p>{% endif %}
+                <p class="mb-0 small text-muted">Placed {{ order.created_at|local_strftime('%b %d, %Y at %I:%M %p') }}</p>
+                {% if order.updated_at %}<p class="mb-0 small text-muted">Updated {{ order.updated_at|local_strftime('%b %d, %Y') }}</p>{% endif %}
             </div>
         </div>
     </div>

@@ -4,6 +4,10 @@ import json
 import time
 import requests
 import base64
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    ZoneInfo = None
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from functools import wraps
@@ -19,15 +23,58 @@ from extensions import db, login_manager
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Configure timezone (Kenya - EAT)
-TIMEZONE = timezone(timedelta(hours=3))  # EAT is UTC+3
+try:
+    # Use Kenya timezone (EAT = UTC+3)
+    if ZoneInfo is not None:
+        local_tz = ZoneInfo('Africa/Nairobi')
+    else:
+        raise RuntimeError('ZoneInfo unavailable')
+    current_time = datetime.now(local_tz)
+    print(f"Timezone set to: {local_tz}")
+    print(f"Current Kenya time: {current_time.strftime('%Y-%m-%d %I:%M %p')}")
+    print(f"UTC time for reference: {datetime.now(timezone.utc).strftime('%Y-%m-%d %I:%M %p')}")
+except Exception as e:
+    # Fallback to manual timezone if timezone support fails
+    print(f"Timezone error: {e}, using manual EAT timezone")
+    # Kenya is UTC+3, so use a fixed UTC+3 offset
+    local_tz = timezone(timedelta(hours=3))
+    current_time = datetime.now(local_tz)
+    print(f"Manual timezone time: {current_time.strftime('%Y-%m-%d %I:%M %p')}")
 
 def get_local_time():
     """Get current local time in Kenya timezone"""
-    return datetime.now(TIMEZONE)
+    try:
+        return datetime.now(local_tz)
+    except:
+        # Fallback if timezone fails
+        return datetime.now(timezone.utc) + timedelta(hours=3)
+
+
+def parse_local_datetime(date_str, time_str):
+    """Parse local Kenya date/time strings and return UTC naive datetime."""
+    naive_dt = datetime.strptime(f"{date_str} {time_str}", "%Y-%m-%d %H:%M")
+    try:
+        aware_local = local_tz.localize(naive_dt)
+    except AttributeError:
+        aware_local = naive_dt.replace(tzinfo=local_tz)
+    utc_dt = aware_local.astimezone(timezone.utc)
+    return utc_dt.replace(tzinfo=None)
+
 
 def get_utc_time():
     """Get current UTC time"""
     return datetime.now(timezone.utc)
+
+def format_local_time(dt):
+    """Format datetime in local timezone for display"""
+    try:
+        if dt.tzinfo is None:
+            # If datetime has no timezone info, assume it's UTC and convert
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(local_tz)
+    except:
+        # Fallback: just return the datetime as-is
+        return dt
 
 # M-Pesa Credentials
 CONSUMER_KEY = "KUcFWGrg76dsOqJWI8jNzvnATok3FduXRVS8PSEpPwRf4Ih4"
@@ -54,7 +101,7 @@ def create_app():
     # Business configuration
     app.config["CURRENCY_SYMBOL"] = os.getenv("CURRENCY_SYMBOL", "KES")
     app.config["CURRENCY_CODE"] = os.getenv("CURRENCY_CODE", "KES")
-    app.config["MPESA_TILL_NUMBER"] = os.getenv("MPESA_TILL_NUMBER", "622255")
+    app.config["MPESA_TILL_NUMBER"] = "622255"
     
     # Security settings
     app.config["SESSION_COOKIE_SECURE"] = os.getenv("SESSION_COOKIE_SECURE", "False").lower() == "true"
@@ -366,12 +413,49 @@ def create_app():
             years = diff.days // 365
             return f"{years} year{'s' if years != 1 else ''} ago"
     
+    @app.template_filter("local_date")
+    def local_date_filter(dt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime('%Y-%m-%d')
+
+    @app.template_filter("local_day")
+    def local_day_filter(dt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime('%d')
+
+    @app.template_filter("local_month")
+    def local_month_filter(dt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime('%b')
+
+    @app.template_filter("local_time")
+    def local_time_filter(dt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime('%I:%M %p')
+
+    @app.template_filter("local_weekday_time")
+    def local_weekday_time_filter(dt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime('%A, %I:%M %p')
+
+    @app.template_filter("local_strftime")
+    def local_strftime_filter(dt, fmt):
+        if not dt:
+            return ""
+        return format_local_time(dt).strftime(fmt)
+
     @app.template_filter("format_datetime")
     def format_datetime_filter(dt):
         """Format datetime in a readable way"""
         if not dt:
             return ""
-        return dt.strftime('%b %d, %Y at %I:%M %p')
+        local_dt = format_local_time(dt)
+        return local_dt.strftime('%b %d, %Y at %I:%M %p')
 
     def admin_required(f):
         @wraps(f)
@@ -987,31 +1071,32 @@ def create_app():
             notes = sanitize_input(request.form.get("notes", ""))
             
             try:
-                appointment_datetime = datetime.strptime(f"{appointment_date_str} {appointment_time}", "%Y-%m-%d %H:%M")
+                appointment_datetime = parse_local_datetime(appointment_date_str, appointment_time)
             except ValueError:
                 flash("Invalid date or time format. Please use date picker and time dropdown.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
             # Check if appointment is at least 2 hours in the future (reasonable booking time)
             from datetime import timedelta
-            min_appointment_time = get_local_time() + timedelta(hours=2)
+            min_appointment_time = get_local_time().astimezone(timezone.utc).replace(tzinfo=None) + timedelta(hours=2)
             if appointment_datetime < min_appointment_time:
                 flash("Appointments must be booked at least 2 hours in advance.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
-            # Check if appointment is within business hours (8AM-6PM)
-            if appointment_datetime.hour < 8 or appointment_datetime.hour > 18:
+            # Check if appointment is within business hours (8AM-6PM) in Nairobi local time
+            local_appointment_datetime = format_local_time(appointment_datetime)
+            if local_appointment_datetime.hour < 8 or local_appointment_datetime.hour > 18:
                 flash("Appointments are only available between 8:00 AM and 6:00 PM.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
             # Check if appointment is not too far in future (max 30 days)
-            max_appointment_time = get_local_time() + timedelta(days=30)
+            max_appointment_time = get_local_time().astimezone(timezone.utc).replace(tzinfo=None) + timedelta(days=30)
             if appointment_datetime > max_appointment_time:
                 flash("Appointments cannot be booked more than 30 days in advance.", "error")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
             
             # Check if appointment is on weekend (optional - add weekend premium)
-            if appointment_datetime.weekday() >= 5:  # Saturday (5) or Sunday (6)
+            if local_appointment_datetime.weekday() >= 5:  # Saturday (5) or Sunday (6)
                 flash("Weekend appointments require special arrangement. Please contact us directly.", "warning")
                 # Don't block weekend bookings, just warn user
             

@@ -705,7 +705,7 @@
                         <div class="order-number">#{{ order.order_number }}</div>
                         <div class="order-date">
                             <i class="bi bi-calendar3"></i>
-                            {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                            {{ order.created_at|local_strftime('%d %b %Y, %I:%M %p') }}
                         </div>
                     </div>
                     <div class="status-badge status-{{ order.status }}">

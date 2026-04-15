@@ -133,7 +133,7 @@
                     {% for order in recent_orders %}
                     <tr>
                         <td><strong>#{{ order.order_number }}</strong></td>
-                        <td>{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>{{ order.created_at|local_strftime('%b %d, %Y') }}</td>
                         <td>{{ order.total_amount|currency }}</td>
                         <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
                         <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
@@ -161,12 +161,12 @@
                 {% for apt in upcoming_appointments %}
                 <div class="appointment-item">
                     <div class="appointment-date">
-                        <div class="date-day">{{ apt.appointment_date.strftime('%d') }}</div>
-                        <div class="date-month">{{ apt.appointment_date.strftime('%b') }}</div>
+                        <div class="date-day">{{ apt.appointment_date|local_day }}</div>
+                        <div class="date-month">{{ apt.appointment_date|local_month }}</div>
                     </div>
                     <div class="flex-grow-1">
                         <strong>{{ apt.practitioner.name }}</strong><br>
-                        <small class="text-muted">{{ apt.appointment_date.strftime('%I:%M %p') }} · {{ apt.appointment_type|title }}</small>
+                        <small class="text-muted">{{ apt.appointment_date|local_time }} · {{ apt.appointment_type|title }}</small>
                     </div>
                 </div>
                 {% endfor %}

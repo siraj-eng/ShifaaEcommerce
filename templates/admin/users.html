@@ -28,7 +28,7 @@
                         <td><strong>{{ u.name }}</strong></td>
                         <td>{{ u.email }}</td>
                         <td><span class="badge-status {% if u.role == 'admin' %}badge-processing{% else %}badge-delivered{% endif %}">{{ u.role|title }}</span></td>
-                        <td>{{ u.created_at.strftime('%b %d, %Y') if u.created_at else '—' }}</td>
+                        <td>{{ u.created_at|local_strftime('%b %d, %Y') if u.created_at else '—' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

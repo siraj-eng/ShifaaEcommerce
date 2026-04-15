@@ -1152,7 +1152,7 @@
                                         {% for order in recent_orders[:5] %}
                                         <tr>
                                             <td class="order-number">#{{ order.order_number }}</td>
-                                            <td class="order-date">{{ order.created_at.strftime('%b %d, %Y') }}</td>
+                                            <td class="order-date">{{ order.created_at|local_strftime('%b %d, %Y') }}</td>
                                             <td class="order-amount">{{ order.total_amount|currency }}</td>
                                             <td>
                                                 <span class="status-badge status-{{ order.status }}" aria-label="Status: {{ order.status }}">
@@ -1199,14 +1199,14 @@
                                 {% for appointment in upcoming_appointments[:3] %}
                                 <article class="appointment-card">
                                     <div class="appointment-date">
-                                        <div class="date-day">{{ appointment.appointment_date.strftime('%d') }}</div>
-                                        <div class="date-month">{{ appointment.appointment_date.strftime('%b') }}</div>
+                                        <div class="date-day">{{ appointment.appointment_date|local_day }}</div>
+                                        <div class="date-month">{{ appointment.appointment_date|local_month }}</div>
                                     </div>
                                     <div class="appointment-details">
                                         <h3>{{ appointment.practitioner.name }}</h3>
                                         <p class="appointment-time">
                                             <i class="bi bi-clock" aria-hidden="true"></i>
-                                            {{ appointment.appointment_date.strftime('%I:%M %p') }}
+                                            {{ appointment.appointment_date|local_time }}
                                         </p>
                                         <span class="appointment-type">{{ appointment.appointment_type|title }}</span>
                                     </div>

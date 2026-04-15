@@ -531,7 +531,7 @@
                     </div>
                     <div class="text-end">
                         <div style="font-size: 0.6rem; color: #64748b;">DATE</div>
-                        <div class="order-date">{{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</div>
+                        <div class="order-date">{{ order.created_at|local_strftime('%d %b %Y, %I:%M %p') }}</div>
                     </div>
                     <div>
                         <div style="font-size: 0.6rem; color: #64748b;">STATUS</div>

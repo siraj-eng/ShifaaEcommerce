@@ -768,7 +768,7 @@
                         <span class="info-label">Member Since</span>
                         <span class="info-value">
                             {% if current_user.created_at %}
-                                {{ current_user.created_at.strftime('%B %d, %Y') }}
+                                {{ current_user.created_at|local_strftime('%B %d, %Y') }}
                             {% else %}
                                 N/A
                             {% endif %}
@@ -792,7 +792,7 @@
                         <span class="info-label">Last Login</span>
                         <span class="info-value">
                             {% if current_user.last_login %}
-                                {{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') }}
+                                {{ current_user.last_login|local_strftime('%B %d, %Y at %I:%M %p') }}
                             {% else %}
                                 N/A
                             {% endif %}

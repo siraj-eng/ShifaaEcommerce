@@ -755,12 +755,12 @@
             
             <div class="timeline" id="appointmentsList">
                 {% for appointment in appointments %}
-                <div class="timeline-item" data-status="{{ appointment.status }}" data-date="{{ appointment.appointment_date.strftime('%Y-%m-%d') }}">
+                <div class="timeline-item" data-status="{{ appointment.status }}" data-date="{{ appointment.appointment_date|local_date }}">
                     <div class="timeline-marker">
                         <div class="appointment-date">
-                            <div class="date-day">{{ appointment.appointment_date.strftime('%d') }}</div>
-                            <div class="date-month">{{ appointment.appointment_date.strftime('%b') }}</div>
-                            <div class="date-time">{{ appointment.appointment_date.strftime('%I:%M %p') }}</div>
+                            <div class="date-day">{{ appointment.appointment_date|local_day }}</div>
+                            <div class="date-month">{{ appointment.appointment_date|local_month }}</div>
+                            <div class="date-time">{{ appointment.appointment_date|local_time }}</div>
                         </div>
                     </div>
                     
@@ -769,7 +769,7 @@
                             <h4 class="practitioner-name">{{ appointment.practitioner.name }}</h4>
                             <div class="appointment-time">
                                 <i class="bi bi-clock"></i>
-                                {{ appointment.appointment_date.strftime('%A, %I:%M %p') }}
+                                {{ appointment.appointment_date|local_weekday_time }}
                             </div>
                         </div>
                         

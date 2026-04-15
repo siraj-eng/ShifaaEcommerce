@@ -49,7 +49,7 @@
                     <tr>
                         <td><strong>#{{ order.order_number }}</strong></td>
                         <td>{{ order.user.name }}<br><small class="text-muted">{{ order.user.email }}</small></td>
-                        <td>{{ order.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                        <td>{{ order.created_at|local_strftime('%b %d, %Y %H:%M') }}</td>
                         <td>{{ order.total_amount|currency }}</td>
                         <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
                         <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
