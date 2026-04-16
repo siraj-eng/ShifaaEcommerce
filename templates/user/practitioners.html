@@ -255,8 +255,6 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: #06d6a0;
-            color: white;
             padding: 0.25rem 0.6rem;
             border-radius: 2rem;
             font-size: 0.6rem;
@@ -266,12 +264,20 @@
             gap: 0.3rem;
         }
 
-        .availability-badge i {
-            font-size: 0.5rem;
+        .availability-badge.available {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
         }
 
         .availability-badge.unavailable {
-            background: #94a3b8;
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .availability-badge i {
+            font-size: 0.5rem;
         }
 
         .practitioner-image {
@@ -423,8 +429,14 @@
         }
 
         .btn-book.disabled {
-            opacity: 0.5;
-            pointer-events: none;
+            background: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-book.disabled:hover {
+            background: #cbd5e1;
+            transform: none;
         }
 
         /* Empty State */
@@ -652,9 +664,9 @@
             {% for practitioner in practitioners %}
             <div class="practitioner-card" data-specialties="{{ practitioner.specialties|lower if practitioner.specialties else '' }}" data-name="{{ practitioner.name|lower }}" data-title="{{ practitioner.title|lower if practitioner.title else '' }}" data-bio="{{ practitioner.bio|lower if practitioner.bio else '' }}">
                 <div class="card-header">
-                    <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
+                    <div class="availability-badge {% if practitioner.is_active %}available{% else %}unavailable{% endif %}">
                         <i class="bi bi-circle-fill"></i>
-                        {% if practitioner.available %}Available{% else %}Unavailable{% endif %}
+                        {% if practitioner.is_active %}Available{% else %}Unavailable{% endif %}
                     </div>
                     
                     <div class="practitioner-image">
@@ -704,12 +716,18 @@
                             <i class="bi bi-eye"></i> Profile
                         </a>
                         {% if current_user.is_authenticated %}
-                        <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn-book {% if not practitioner.available %}disabled{% endif %}">
-                            <i class="bi bi-calendar-check"></i> Book
-                        </a>
+                            {% if practitioner.is_active %}
+                            <a href="{{ url_for('book_appointment', practitioner_id=practitioner.id) }}" class="btn-book">
+                                <i class="bi bi-calendar-check"></i> Book
+                            </a>
+                            {% else %}
+                            <button class="btn-book disabled" disabled>
+                                <i class="bi bi-calendar-x"></i> Unavailable
+                            </button>
+                            {% endif %}
                         {% else %}
                         <a href="{{ url_for('login') }}" class="btn-book">
-                            <i class="bi bi-calendar-check"></i> Login to Book
+                            <i class="bi bi-box-arrow-in-right"></i> Login to Book
                         </a>
                         {% endif %}
                     </div>

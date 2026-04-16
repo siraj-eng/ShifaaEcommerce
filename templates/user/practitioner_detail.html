@@ -785,9 +785,9 @@
                     </div>
                     <h2>{{ practitioner.name }}</h2>
                     <p class="profile-title">{{ practitioner.title or 'Herbal Medicine Specialist' }}</p>
-                    <div class="availability-badge {% if practitioner.available %}available{% else %}unavailable{% endif %}">
+                    <div class="availability-badge {% if practitioner.is_active %}available{% else %}unavailable{% endif %}">
                         <i class="bi bi-circle-fill"></i>
-                        {% if practitioner.available %}Available{% else %}Unavailable{% endif %}
+                        {% if practitioner.is_active %}Available{% else %}Unavailable{% endif %}
                     </div>
                 </div>
                 

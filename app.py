@@ -1060,7 +1060,25 @@ def create_app():
     def book_appointment(practitioner_id):
         from models import Practitioner, Appointment
         practitioner = db.session.get(Practitioner, practitioner_id)
-        if not practitioner or not practitioner.is_active:
+        
+        # Debug information
+        print(f"Looking for practitioner with ID: {practitioner_id}")
+        print(f"Practitioner found: {practitioner}")
+        if practitioner:
+            print(f"Practitioner name: {practitioner.name}")
+            print(f"Practitioner is_active: {practitioner.is_active}")
+        
+        # Check all practitioners in database
+        all_practitioners = Practitioner.query.all()
+        print(f"Total practitioners in database: {len(all_practitioners)}")
+        for p in all_practitioners:
+            print(f"  - ID: {p.id}, Name: {p.name}, Active: {p.is_active}")
+        
+        if not practitioner:
+            flash("Practitioner not found.", "error")
+            return redirect(url_for("practitioners"))
+        
+        if not practitioner.is_active:
             flash("This practitioner is currently unavailable.", "error")
             return redirect(url_for("practitioners"))
         
@@ -1351,6 +1369,60 @@ def create_app():
                              users=paginated_users.items,
                              pagination=paginated_users,
                              search=search)
+
+    @app.route("/admin/create-sample-practitioners", methods=["POST"])
+    @login_required
+    @admin_required
+    def create_sample_practitioners():
+        from models import Practitioner
+        
+        sample_practitioners = [
+            {
+                "name": "Dr. Sarah Johnson",
+                "title": "Herbal Medicine Specialist",
+                "bio": "Specializing in traditional herbal remedies and natural healing methods.",
+                "specialties": "Herbal Medicine, Natural Healing",
+                "email": "sarah.johnson@shifaaherbal.com",
+                "phone": "+254712345678"
+            },
+            {
+                "name": "Dr. Michael Kimani",
+                "title": "Traditional Medicine Practitioner",
+                "bio": "Expert in traditional African medicine and holistic wellness approaches.",
+                "specialties": "Traditional Medicine, Holistic Wellness",
+                "email": "michael.kimani@shifaaherbal.com",
+                "phone": "+254723456789"
+            },
+            {
+                "name": "Dr. Grace Wanjiru",
+                "title": "Wellness Consultant",
+                "bio": "Focused on wellness consulting and preventive herbal treatments.",
+                "specialties": "Wellness Consulting, Preventive Care",
+                "email": "grace.wanjiru@shifaaherbal.com",
+                "phone": "+254734567890"
+            }
+        ]
+        
+        created_count = 0
+        for practitioner_data in sample_practitioners:
+            # Check if practitioner already exists
+            existing = Practitioner.query.filter_by(email=practitioner_data["email"]).first()
+            if not existing:
+                practitioner = Practitioner(
+                    name=practitioner_data["name"],
+                    title=practitioner_data["title"],
+                    bio=practitioner_data["bio"],
+                    specialties=practitioner_data["specialties"],
+                    email=practitioner_data["email"],
+                    phone=practitioner_data["phone"],
+                    is_active=True
+                )
+                db.session.add(practitioner)
+                created_count += 1
+        
+        db.session.commit()
+        flash(f"Created {created_count} sample practitioners.", "success")
+        return redirect(url_for("admin_practitioners"))
 
     @app.route("/admin/practitioners")
     @login_required
