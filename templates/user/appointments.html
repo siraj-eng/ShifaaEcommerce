@@ -704,6 +704,18 @@
             <h1>My Appointments</h1>
             <p>Manage your consultations and wellness sessions</p>
         </div>
+
+        <div class="flash-container" style="margin-bottom: 1rem;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else 'warning' if category == 'warning' else 'success' }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         
         {% if appointments %}
         <!-- Stats Cards -->

@@ -1117,7 +1117,17 @@ def create_app():
             if local_appointment_datetime.weekday() >= 5:  # Saturday (5) or Sunday (6)
                 flash("Weekend appointments require special arrangement. Please contact us directly.", "warning")
                 # Don't block weekend bookings, just warn user
-            
+
+            # Check if the selected time slot is already booked for this practitioner
+            existing_appointment = Appointment.query.filter_by(
+                practitioner_id=practitioner_id,
+                appointment_date=appointment_datetime,
+                status="scheduled"
+            ).first()
+            if existing_appointment:
+                flash("That time slot is already taken. Please choose a different time.", "warning")
+                return render_template("user/book_appointment.html", practitioner=practitioner)
+
             appointment = Appointment(
                 user_id=current_user.id,
                 practitioner_id=practitioner_id,
@@ -1128,53 +1138,75 @@ def create_app():
             )
             db.session.add(appointment)
             db.session.commit()
-            flash("Appointment booked successfully!", "success")
-            return redirect(url_for("appointments"))
-        
-        return render_template("user/book_appointment.html", practitioner=practitioner)
-    
-    @app.route("/appointments/<int:appointment_id>")
-    @login_required
-    def appointment_detail(appointment_id):
-        from models import Appointment
-        appointment = db.session.get(Appointment, appointment_id)
-        if not appointment or (appointment.user_id != current_user.id and current_user.role != "admin"):
-            flash("Appointment not found or unauthorized access.", "error")
-            return redirect(url_for("appointments"))
-        
-        return render_template("user/appointment_detail.html", appointment=appointment)
+            
+            # Send confirmation email (if email is configured)
+            try:
+                from flask_mail import Message
+                msg = Message(
+                    f"Appointment Confirmed - {practitioner.name}",
+                    recipients=[current_user.email],
+                    body=f"""Dear {current_user.name},
 
-    # ========== PROFILE ROUTES ==========
+Your appointment has been successfully booked!
+
+Appointment Details:
+- Practitioner: {practitioner.name}
+- Date: {format_local_time(appointment_datetime).strftime('%A, %B %d, %Y')}
+- Time: {format_local_time(appointment_datetime).strftime('%I:%M %p')}
+- Type: {appointment_type}
+- Status: Scheduled
+
+Please arrive 10 minutes early. If you need to reschedule, please contact us at least 24 hours in advance.
+
+Best regards,
+Shifaa Herbal Team"""
+                )
+                mail.send(msg)
+                flash("Appointment booked successfully! A confirmation email has been sent.", "success")
+            except Exception as e:
+                print(f"Email sending failed: {e}")
+                flash("Appointment booked successfully! Email confirmation will be sent once email support is ready.", "success")
+
+            return redirect(url_for("appointments"))
+
+        return render_template("user/book_appointment.html", practitioner=practitioner)
+
     @app.route("/profile", methods=["GET", "POST"])
     @login_required
     def profile():
+        from models import Order, Appointment
+
         if request.method == "POST":
+            current_password = request.form.get("current_password", "")
+            new_password = request.form.get("new_password", "").strip()
+
+            if new_password:
+                if not current_password or not check_password_hash(current_user.password_hash, current_password):
+                    flash("Current password is required and must be correct to change password.", "error")
+                    return redirect(url_for("profile"))
+
+                is_valid, msg = validate_password_strength(new_password)
+                if not is_valid:
+                    flash(msg, "error")
+                    return redirect(url_for("profile"))
+
+                current_user.password_hash = generate_password_hash(new_password, method="pbkdf2:sha256")
+                flash("Password updated successfully.", "success")
+
             current_user.name = sanitize_input(request.form.get("name", current_user.name))
             current_user.phone = sanitize_input(request.form.get("phone", current_user.phone))
             current_user.address = sanitize_input(request.form.get("address", current_user.address))
-            
-            new_password = request.form.get("new_password", "")
-            if new_password:
-                is_valid, msg = validate_password_strength(new_password)
-                if is_valid:
-                    current_user.password_hash = generate_password_hash(new_password, method="pbkdf2:sha256")
-                    flash("Password updated successfully.", "success")
-                else:
-                    flash(msg, "error")
-                    return redirect(url_for("profile"))
-            
             db.session.commit()
             flash("Profile updated successfully.", "success")
             return redirect(url_for("profile"))
-        
-        from models import Order, Appointment
+
         recent_orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.created_at.desc()).limit(5).all()
         upcoming_appointments = Appointment.query.filter_by(user_id=current_user.id).filter(
             Appointment.appointment_date >= datetime.utcnow()
         ).order_by(Appointment.appointment_date.asc()).limit(5).all()
-        
-        return render_template("user/profile.html", 
-                             recent_orders=recent_orders, 
+
+        return render_template("user/profile.html",
+                             recent_orders=recent_orders,
                              upcoming_appointments=upcoming_appointments)
 
     # ========== STATIC PAGES ==========

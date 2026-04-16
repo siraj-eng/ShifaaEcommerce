@@ -583,7 +583,7 @@
                                     name="date_of_birth" 
                                     id="date_of_birth" 
                                     class="form-control" 
-                                    value="{{ current_user.date_of_birth or '' }}"
+                                    value="{{ attribute(current_user, 'date_of_birth') or '' }}"
                                     aria-label="Date of birth"
                                 >
                             </div>
