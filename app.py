@@ -1054,6 +1054,19 @@ def create_app():
         return render_template("user/appointments.html", 
                              appointments=paginated_appointments.items,
                              pagination=paginated_appointments)
+
+    @app.route("/appointments/<int:appointment_id>")
+    @login_required
+    def appointment_detail(appointment_id):
+        from models import Appointment
+        appointment = db.session.get(Appointment, appointment_id)
+        if not appointment or (appointment.user_id != current_user.id and current_user.role != "admin"):
+            flash("Appointment not found or unauthorized access.", "error")
+            return redirect(url_for("appointments"))
+        if not appointment.practitioner:
+            flash("Appointment practitioner not found.", "error")
+            return redirect(url_for("appointments"))
+        return render_template("user/appointment_detail.html", appointment=appointment)
     
     @app.route("/appointments/book/<int:practitioner_id>", methods=["GET", "POST"])
     @login_required
