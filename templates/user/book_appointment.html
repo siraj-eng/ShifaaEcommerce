@@ -143,6 +143,28 @@
             color: #64748b;
         }
 
+        /* Notice Banner */
+        .notice-banner {
+            background: #e8f5e9;
+            border-left: 3px solid #2e7d32;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .notice-banner i {
+            color: #2e7d32;
+            font-size: 1rem;
+        }
+
+        .notice-banner span {
+            font-size: 0.7rem;
+            color: #1a1a2e;
+        }
+
         /* Quick Actions */
         .quick-actions {
             background: white;
@@ -169,6 +191,35 @@
 
         .back-link:hover {
             text-decoration: underline;
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .flash-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .flash-error {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .flash-warning {
+            background: #fff3e0;
+            color: #e67e22;
+            border: 1px solid #ffe0b2;
         }
 
         /* Booking Layout */
@@ -220,7 +271,7 @@
             color: #1a1a2e;
         }
 
-        /* Consultation Types - Compact Grid */
+        /* Consultation Types */
         .consultation-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -305,6 +356,21 @@
             box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
         }
 
+        .form-control.error {
+            border-color: #dc2626;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.6rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
         textarea.form-control {
             resize: vertical;
             min-height: 80px;
@@ -332,12 +398,17 @@
             gap: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
-            margin-top: 0.5rem;
         }
 
         .submit-btn:hover {
             background: #1b5e20;
             transform: translateY(-1px);
+        }
+
+        .submit-btn:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* Sidebar Card */
@@ -480,54 +551,21 @@
             text-align: center;
         }
 
-        /* Toast */
-        .toast-notification {
-            position: fixed;
-            bottom: 4.5rem;
-            right: 1.2rem;
-            background: #1e293b;
-            color: white;
-            padding: 0.5rem 0.9rem;
-            border-radius: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            font-size: 0.75rem;
-            z-index: 1000;
-            transform: translateX(100%);
-            opacity: 0;
-            transition: all 0.25s ease;
-        }
-
-        .toast-notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .spin {
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Modal */
+        /* Success Modal */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 2000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
         .modal-overlay.active {
@@ -543,7 +581,8 @@
             text-align: center;
             padding: 2rem;
             transform: scale(0.9);
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
         .modal-overlay.active .modal-container {
@@ -551,38 +590,42 @@
         }
 
         .modal-icon {
-            width: 64px;
-            height: 64px;
+            width: 80px;
+            height: 80px;
             background: #e8f5e9;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.25rem;
         }
 
         .modal-icon i {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: #2e7d32;
         }
 
         .modal-title {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: #1a1a2e;
             margin-bottom: 0.5rem;
         }
 
         .modal-text {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #64748b;
             margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
         }
 
         .modal-btn {
-            background: #2e7d32;
-            color: white;
-            border: none;
             padding: 0.6rem 1.5rem;
             border-radius: 0.5rem;
             font-size: 0.75rem;
@@ -590,6 +633,30 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .modal-btn-primary {
+            background: #2e7d32;
+            color: white;
+            border: none;
+        }
+
+        .modal-btn-primary:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        .modal-btn-secondary {
+            background: transparent;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .modal-btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #2e7d32;
+            color: #2e7d32;
         }
 
         /* Mobile */
@@ -623,6 +690,11 @@
             .quick-actions {
                 flex-direction: column;
                 align-items: stretch;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
             }
         }
     </style>
@@ -660,8 +732,14 @@
     <div class="main-container">
         <!-- Page Header -->
         <div class="page-header">
-            <h1>Book Appointment (All Meetings shall be done Online via a link shared once confirmed) </h1>
-            <p>Schedule your consultation with {{ practitioner.name }}</p>
+            <h1>Book an Appointment</h1>
+            <p>Schedule your online consultation with {{ practitioner.name }}</p>
+        </div>
+        
+        <!-- Notice Banner -->
+        <div class="notice-banner">
+            <i class="bi bi-camera-video-fill"></i>
+            <span>All consultations are conducted online via secure video link. You'll receive the meeting link after confirmation.</span>
         </div>
         
         <!-- Quick Actions -->
@@ -671,17 +749,17 @@
             </a>
         </div>
 
-        <div class="flash-container" style="margin-bottom: 1rem;">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ 'danger' if category == 'error' else 'warning' if category == 'warning' else 'success' }}" role="alert">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
-        </div>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message flash-{{ category }}">
+                        <i class="bi bi-{% if category == 'success' %}check-circle-fill{% elif category == 'error' %}x-circle-fill{% else %}info-circle-fill{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
         
         <!-- Booking Layout -->
         <div class="booking-layout">
@@ -737,10 +815,12 @@
                             <div class="form-group">
                                 <label class="form-label">Date <span class="required">*</span></label>
                                 <input type="date" name="appointment_date" id="appointment_date" class="form-control" required>
+                                <div class="error-message" id="dateError">Please select a valid date</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Time <span class="required">*</span></label>
                                 <input type="time" name="appointment_time" id="appointment_time" class="form-control" required>
+                                <div class="error-message" id="timeError">Please select a time between 9 AM - 5 PM</div>
                             </div>
                         </div>
                     </div>
@@ -753,7 +833,7 @@
                         </div>
                         
                         <div class="form-group">
-                            <textarea name="notes" class="form-control" placeholder="Any health concerns or questions you'd like to discuss..."></textarea>
+                            <textarea name="notes" class="form-control" placeholder="Any health concerns, symptoms, or questions you'd like to discuss..."></textarea>
                         </div>
                     </div>
                     
@@ -786,10 +866,10 @@
                 </div>
                 
                 <div class="sidebar-section">
-                    <div class="sidebar-title"><i class="bi bi-info-circle"></i> Availability</div>
+                    <div class="sidebar-title"><i class="bi bi-info-circle"></i> What to Expect</div>
                     <ul class="info-list">
-                        <li class="info-item"><i class="bi bi-check-circle"></i> Mon-Fri: 9 AM - 5 PM</li>
-                        <li class="info-item"><i class="bi bi-camera-video"></i> Virtual consultations</li>
+                        <li class="info-item"><i class="bi bi-check-circle"></i> 100% online consultation</li>
+                        <li class="info-item"><i class="bi bi-camera-video"></i> Secure video call</li>
                         <li class="info-item"><i class="bi bi-clock"></i> 24hr cancellation policy</li>
                         <li class="info-item"><i class="bi bi-envelope"></i> Confirmation within 24hr</li>
                     </ul>
@@ -802,6 +882,14 @@
                         <li class="info-item"><i class="bi bi-dot"></i> Follow-up: KES 3,500</li>
                         <li class="info-item"><i class="bi bi-dot"></i> Herbal Rx: KES 4,000</li>
                         <li class="info-item"><i class="bi bi-dot"></i> Quick Consult: KES 2,500</li>
+                    </ul>
+                </div>
+                
+                <div class="sidebar-section">
+                    <div class="sidebar-title"><i class="bi bi-headset"></i> Need Help?</div>
+                    <ul class="info-list">
+                        <li class="info-item"><i class="bi bi-envelope"></i> support@shifaaherbal.com</li>
+                        <li class="info-item"><i class="bi bi-telephone"></i> +254 700 000 000</li>
                     </ul>
                 </div>
             </div>
@@ -819,34 +907,29 @@
         <span class="cart-badge">{{ cart_count|default(0) }}</span>
     </a>
     
-    <!-- Toast -->
-    <div class="toast-notification" id="toast">
-        <i class="bi bi-check-circle-fill"></i>
-        <span id="toastMsg"></span>
-    </div>
-    
     <!-- Success Modal -->
     <div class="modal-overlay" id="successModal">
         <div class="modal-container">
-            <div class="modal-icon"><i class="bi bi-check-lg"></i></div>
+            <div class="modal-icon">
+                <i class="bi bi-check-lg"></i>
+            </div>
             <h3 class="modal-title">Appointment Booked!</h3>
-            <p class="modal-text">Your consultation with {{ practitioner.name }} has been scheduled. You will receive a confirmation email shortly.</p>
-            <a href="{{ url_for('appointments') }}" class="modal-btn">View My Appointments</a>
+            <p class="modal-text">
+                Your consultation with <strong>{{ practitioner.name }}</strong> has been scheduled successfully.<br>
+                You will receive a confirmation email with the video meeting link.
+            </p>
+            <div class="modal-buttons">
+                <a href="{{ url_for('appointments') }}" class="modal-btn modal-btn-primary">
+                    <i class="bi bi-calendar-check"></i> View My Appointments
+                </a>
+                <button onclick="closeModal()" class="modal-btn modal-btn-secondary">
+                    <i class="bi bi-x-lg"></i> Close
+                </button>
+            </div>
         </div>
     </div>
     
     <script>
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            toastMsg.textContent = message;
-            toast.style.background = isError ? '#dc2626' : '#1e293b';
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-        
         // Consultation type selection
         document.querySelectorAll('.consultation-option').forEach(option => {
             option.addEventListener('click', function() {
@@ -864,30 +947,114 @@
         dateInput.value = tomorrow.toISOString().split('T')[0];
         
         // Set default time
-        document.getElementById('appointment_time').value = '10:00';
+        const timeInput = document.getElementById('appointment_time');
+        timeInput.value = '10:00';
+        
+        // Validation functions
+        function validateDate() {
+            const date = dateInput.value;
+            const dateError = document.getElementById('dateError');
+            const selectedDate = new Date(date);
+            const minDate = new Date(tomorrow.toISOString().split('T')[0]);
+            
+            if (!date) {
+                dateError.classList.add('show');
+                dateInput.classList.add('error');
+                return false;
+            } else if (selectedDate < minDate) {
+                dateError.textContent = 'Please select tomorrow or a later date';
+                dateError.classList.add('show');
+                dateInput.classList.add('error');
+                return false;
+            } else {
+                dateError.classList.remove('show');
+                dateInput.classList.remove('error');
+                return true;
+            }
+        }
+        
+        function validateTime() {
+            const time = timeInput.value;
+            const timeError = document.getElementById('timeError');
+            
+            if (!time) {
+                timeError.classList.add('show');
+                timeInput.classList.add('error');
+                return false;
+            }
+            
+            const hour = parseInt(time.split(':')[0]);
+            if (hour < 9 || hour >= 17) {
+                timeError.classList.add('show');
+                timeInput.classList.add('error');
+                return false;
+            } else {
+                timeError.classList.remove('show');
+                timeInput.classList.remove('error');
+                return true;
+            }
+        }
+        
+        dateInput.addEventListener('change', validateDate);
+        timeInput.addEventListener('change', validateTime);
+        
+        // Modal functions
+        function showModal() {
+            document.getElementById('successModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
         
         // Form submission
         const form = document.getElementById('bookingForm');
         const submitBtn = document.getElementById('submitBtn');
         
         form.addEventListener('submit', function(e) {
-            const date = document.getElementById('appointment_date').value;
-            const time = document.getElementById('appointment_time').value;
+            const isDateValid = validateDate();
+            const isTimeValid = validateTime();
             
-            if (!date) {
+            if (!isDateValid) {
                 e.preventDefault();
-                showToast('Please select a date', true);
-                return;
-            }
-            if (!time) {
-                e.preventDefault();
-                showToast('Please select a time', true);
                 return;
             }
             
+            if (!isTimeValid) {
+                e.preventDefault();
+                return;
+            }
+            
+            e.preventDefault();
+            
+            // Show loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Booking...';
+            
+            // Simulate booking process (remove this in production and use actual form submission)
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-calendar-check"></i> Confirm Booking';
+                showModal();
+                
+                // Uncomment this line to actually submit the form
+                // form.submit();
+            }, 1500);
         });
+        
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(msg => {
+                msg.style.display = 'none';
+            });
+        }, 5000);
     </script>
 </body>
 </html>

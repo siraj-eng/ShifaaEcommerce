@@ -1036,7 +1036,7 @@ def create_app():
         from models import Practitioner
         practitioner = db.session.get(Practitioner, practitioner_id)
         if not practitioner or not practitioner.is_active:
-            flash("Practitioner not found.", "error")
+            flash("Practitioner not found or not available.", "error")
             return redirect(url_for("practitioners"))
         return render_template("user/practitioner_detail.html", practitioner=practitioner)
 
@@ -1047,14 +1047,22 @@ def create_app():
         from models import Appointment
         page = request.args.get('page', 1, type=int)
         
+        # Get all appointments for this user, including past ones for debugging
         paginated_appointments = Appointment.query.filter_by(user_id=current_user.id)\
             .order_by(Appointment.appointment_date.desc())\
             .paginate(page=page, per_page=app.config["APPOINTMENTS_PER_PAGE"], error_out=False)
         
+        # Debug: Print all appointments for this user
+        all_user_appointments = Appointment.query.filter_by(user_id=current_user.id).all()
+        print(f"Total appointments for user {current_user.id}: {len(all_user_appointments)}")
+        for appt in all_user_appointments:
+            local_time = format_local_time(appt.appointment_date)
+            print(f"  - ID: {appt.id}, Date: {local_time}, Status: {appt.status}")
+        
         return render_template("user/appointments.html", 
                              appointments=paginated_appointments.items,
                              pagination=paginated_appointments)
-
+    
     @app.route("/appointments/<int:appointment_id>")
     @login_required
     def appointment_detail(appointment_id):
@@ -1131,14 +1139,26 @@ def create_app():
                 flash("Weekend appointments require special arrangement. Please contact us directly.", "warning")
                 # Don't block weekend bookings, just warn user
 
-            # Check if the selected time slot is already booked for this practitioner
-            existing_appointment = Appointment.query.filter_by(
-                practitioner_id=practitioner_id,
-                appointment_date=appointment_datetime,
-                status="scheduled"
-            ).first()
-            if existing_appointment:
-                flash("That time slot is already taken. Please choose a different time.", "warning")
+            # Check if the selected time slot conflicts with existing appointments for this practitioner
+            # Assume appointments are 1 hour long - check for overlapping appointments
+            conflict_start = appointment_datetime
+            conflict_end = appointment_datetime + timedelta(hours=1)
+            
+            conflicting_appointments = Appointment.query.filter(
+                Appointment.practitioner_id == practitioner_id,
+                Appointment.status == "scheduled",
+                Appointment.appointment_date < conflict_end,
+                Appointment.appointment_date >= conflict_start - timedelta(hours=1)
+            ).all()
+            
+            if conflicting_appointments:
+                # Format conflicting times for user display
+                conflict_times = []
+                for conf_appt in conflicting_appointments:
+                    local_conf_time = format_local_time(conf_appt.appointment_date)
+                    conflict_times.append(local_conf_time.strftime('%I:%M %p'))
+                
+                flash(f"Time slot conflicts with existing appointment(s) at {', '.join(conflict_times)}. Please choose a different time.", "warning")
                 return render_template("user/book_appointment.html", practitioner=practitioner)
 
             appointment = Appointment(
@@ -1230,6 +1250,105 @@ Shifaa Herbal Team"""
     @app.route("/community")
     def community():
         return render_template("user/community.html")
+    
+    @app.route("/ask_question", methods=["POST"])
+    @login_required
+    def ask_question():
+        from models import Question
+        question = sanitize_input(request.form.get("question", ""))
+        
+        if not question:
+            flash("Please enter a question.", "error")
+            return redirect(url_for("community"))
+        
+        # Save question to database
+        new_question = Question(
+            question=question,
+            user_id=current_user.id
+        )
+        db.session.add(new_question)
+        db.session.commit()
+        
+        flash("Your question has been submitted to our practitioners. We'll respond within 24 hours.", "success")
+        return redirect(url_for("community"))
+    
+    @app.route("/submit_story", methods=["POST"])
+    @login_required
+    def submit_story():
+        from models import Story
+        condition = sanitize_input(request.form.get("condition", ""))
+        story = sanitize_input(request.form.get("story", ""))
+        
+        if not condition or not story:
+            flash("Please select a condition and share your story.", "error")
+            return redirect(url_for("community"))
+        
+        # Save story to database
+        new_story = Story(
+            condition=condition,
+            story=story,
+            user_id=current_user.id
+        )
+        db.session.add(new_story)
+        db.session.commit()
+        
+        flash("Thank you for sharing your success story! Your experience helps others in our community.", "success")
+        return redirect(url_for("community"))
+    
+    @app.route("/submit_support", methods=["POST"])
+    @login_required
+    def submit_support():
+        from models import SupportRequest
+        name = sanitize_input(request.form.get("name", ""))
+        email = sanitize_input(request.form.get("email", ""))
+        subject = sanitize_input(request.form.get("subject", ""))
+        message = sanitize_input(request.form.get("message", ""))
+        
+        if not name or not email or not subject or not message:
+            flash("Please fill in all required fields.", "error")
+            return redirect(url_for("support"))
+        
+        # Validate email format
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash("Please enter a valid email address.", "error")
+            return redirect(url_for("support"))
+        
+        # Save support request to database
+        new_support_request = SupportRequest(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message,
+            user_id=current_user.id
+        )
+        db.session.add(new_support_request)
+        db.session.commit()
+        
+        flash("Your support request has been submitted. We'll respond within 24 hours.", "success")
+        return redirect(url_for("support"))
+    
+    @app.route("/create_topic", methods=["POST"])
+    @login_required
+    def create_topic():
+        from models import Discussion
+        title = sanitize_input(request.form.get("title", ""))
+        content = sanitize_input(request.form.get("content", ""))
+        
+        if not title or not content:
+            flash("Please enter both a title and content for your discussion.", "error")
+            return redirect(url_for("community"))
+        
+        # Save discussion topic to database
+        new_discussion = Discussion(
+            title=title,
+            content=content,
+            user_id=current_user.id
+        )
+        db.session.add(new_discussion)
+        db.session.commit()
+        
+        flash("Your discussion topic has been created successfully!", "success")
+        return redirect(url_for("community"))
     
     @app.route("/support")
     def support():

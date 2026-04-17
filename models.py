@@ -20,6 +20,10 @@ class User(UserMixin, db.Model):
     orders = db.relationship('Order', backref='user', lazy='dynamic')
     cart_items = db.relationship('CartItem', backref='user', lazy='dynamic', cascade='all, delete-orphan')
     appointments = db.relationship('Appointment', backref='user', lazy='dynamic')
+    discussions = db.relationship('Discussion', backref='user', lazy='dynamic')
+    questions = db.relationship('Question', backref='user', lazy='dynamic')
+    stories = db.relationship('Story', backref='user', lazy='dynamic')
+    support_requests = db.relationship('SupportRequest', backref='user', lazy='dynamic')
     
     def __repr__(self):
         return f'<User {self.email}>'
@@ -47,6 +51,67 @@ class Product(db.Model):
     
     def __repr__(self):
         return f'<Product {self.name}>'
+    
+class Discussion(db.Model):
+    __tablename__ = 'discussion'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship defined in User model with backref='discussions'
+    
+    def __repr__(self):
+        return f'<Discussion {self.title}>'
+
+class Question(db.Model):
+    __tablename__ = 'question'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    question = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    practitioner_id = db.Column(db.Integer, db.ForeignKey('practitioner.id'), nullable=True)
+    answered = db.Column(db.Boolean, default=False)
+    answer = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships defined in User and Practitioner models with backrefs
+    
+    def __repr__(self):
+        return f'<Question {self.id}>'
+
+class Story(db.Model):
+    __tablename__ = 'story'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    condition = db.Column(db.String(100), nullable=False)
+    story = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship defined in User model with backref='stories'
+    
+    def __repr__(self):
+        return f'<Story {self.id}>'
+
+class SupportRequest(db.Model):
+    __tablename__ = 'support_request'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    subject = db.Column(db.String(200), nullable=False)
+    message = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    status = db.Column(db.String(20), default='pending')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationship defined in User model with backref='support_requests'
+    
+    def __repr__(self):
+        return f'<SupportRequest {self.id}>'
     
     @property
     def in_stock(self):
