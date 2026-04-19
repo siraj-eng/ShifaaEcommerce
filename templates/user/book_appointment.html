@@ -1032,21 +1032,12 @@
                 return;
             }
             
-            e.preventDefault();
-            
             // Show loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Booking...';
             
-            // Simulate booking process (remove this in production and use actual form submission)
-            setTimeout(() => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="bi bi-calendar-check"></i> Confirm Booking';
-                showModal();
-                
-                // Uncomment this line to actually submit the form
-                // form.submit();
-            }, 1500);
+            // Actually submit the form
+            form.submit();
         });
         
         // Auto-hide flash messages after 5 seconds
