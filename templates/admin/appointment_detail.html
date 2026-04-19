@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Appointment #{{ appointment.id }}{% endblock %}
+{% block page_title %}Appointment #{{ appointment.id }}{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap gap-3 mb-4">
+    <a href="{{ url_for('admin_appointments') }}" class="btn-sm-admin"><i class="bi bi-arrow-left"></i> Back to appointments</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card-admin">
+            <div class="card-header">Appointment Details</div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Date & Time:</strong></p>
+                        <p class="text-muted">{{ appointment.appointment_date|format_datetime }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Type:</strong></p>
+                        <p class="text-muted">{{ appointment.appointment_type|title if appointment.appointment_type else 'General advice' }}</p>
+                    </div>
+                    <div class="col-12">
+                        <p class="mb-1"><strong>Notes:</strong></p>
+                        <p class="text-muted">{{ appointment.notes or 'No notes provided' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card-admin">
+            <div class="card-header">Customer</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>{{ appointment.user.name }}</strong></p>
+                <p class="text-muted mb-2">{{ appointment.user.email }}</p>
+                {% if appointment.user.phone %}<p class="mb-0">Phone: {{ appointment.user.phone }}</p>{% endif %}
+            </div>
+        </div>
+        <div class="card-admin">
+            <div class="card-header">Practitioner</div>
+            <div class="card-body">
+                <p class="mb-1"><strong>{{ appointment.practitioner.name }}</strong></p>
+                <p class="text-muted mb-2">{{ appointment.practitioner.title or 'Practitioner' }}</p>
+                {% if appointment.practitioner.specialization %}<p class="mb-0">Specialization: {{ appointment.practitioner.specialization }}</p>{% endif %}
+            </div>
+        </div>
+        <div class="card-admin">
+            <div class="card-header">Update Status</div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                            <option value="scheduled" {% if appointment.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                            <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Completed</option>
+                            <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Admin Notes (optional)</label>
+                        <textarea name="admin_notes" class="form-control" rows="3" placeholder="Add internal notes...">{{ appointment.notes }}</textarea>
+                    </div>
+                    <button type="submit" class="btn-admin w-100"><i class="bi bi-check-lg"></i> Update Status</button>
+                </form>
+            </div>
+        </div>
+        <div class="card-admin">
+            <div class="card-body">
+                <p class="mb-0 small text-muted">Booked {{ appointment.created_at|local_strftime('%b %d, %Y at %I:%M %p') }}</p>
+                {% if appointment.updated_at %}<p class="mb-0 small text-muted">Updated {{ appointment.updated_at|local_strftime('%b %d, %Y') }}</p>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

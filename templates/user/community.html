@@ -831,23 +831,23 @@
                     <div class="question-header">
                         <div class="question-author">
                             <div class="author-avatar"><i class="bi bi-person"></i></div>
-                            <span class="author-name">{{ question.author_name }}</span>
+                            <span class="author-name">{{ question.user.name }}</span>
                         </div>
                         <span class="question-date">{{ question.created_at.strftime('%b %d, %Y') }}</span>
                     </div>
-                    <div class="question-title">{{ question.title }}</div>
-                    <div class="question-text">{{ question.content }}</div>
+                    <div class="question-text">{{ question.question }}</div>
+                    {% if question.answer %}
                     <div class="answer-section">
-                        {% for answer in question.answers %}
                         <div class="answer">
                             <div class="answer-author">
                                 <i class="bi bi-chat-dots-fill"></i>
-                                <span>{{ answer.author_name }} (Practitioner)</span>
+                                <span>{{ question.practitioner.name if question.practitioner else 'Practitioner' }} (Practitioner)</span>
                             </div>
-                            <div class="answer-text">{{ answer.content }}</div>
+                            <div class="answer-text">{{ question.answer }}</div>
                         </div>
-                        {% endfor %}
-                        {% if current_user.is_authenticated %}
+                    </div>
+                    {% endif %}
+                    {% if current_user.is_authenticated %}
                         <form method="POST" action="{{ url_for('answer_question', question_id=question.id) }}" class="reply-input">
                             <input type="text" name="answer" placeholder="Write an answer..." required>
                             <button type="submit" class="reply-btn">Reply</button>
@@ -870,20 +870,11 @@
             <div class="stories-grid">
                 {% for story in stories %}
                 <div class="story-card">
-                    <div class="story-rating">
-                        {% for i in range(5) %}
-                            {% if i < story.rating %}
-                            <i class="bi bi-star-fill"></i>
-                            {% else %}
-                            <i class="bi bi-star"></i>
-                            {% endif %}
-                        {% endfor %}
-                    </div>
-                    <div class="story-text">"{{ story.content }}"</div>
+                    <div class="story-text">"{{ story.story }}"</div>
                     <div class="story-author">
                         <i class="bi bi-person-circle"></i>
                         <div class="story-author-info">
-                            <h4>{{ story.author_name }}</h4>
+                            <h4>{{ story.user.name }}</h4>
                             <p>{{ story.condition }} • {{ story.created_at.strftime('%b %Y') }}</p>
                         </div>
                     </div>
@@ -967,13 +958,6 @@
                     <option value="Immune Support">Immune Support</option>
                     <option value="Skin Health">Skin Health</option>
                     <option value="Energy & Vitality">Energy & Vitality</option>
-                </select>
-                <select name="rating" class="modal-input" required>
-                    <option value="5">★★★★★ (5 stars)</option>
-                    <option value="4">★★★★☆ (4 stars)</option>
-                    <option value="3">★★★☆☆ (3 stars)</option>
-                    <option value="2">★★☆☆☆ (2 stars)</option>
-                    <option value="1">★☆☆☆☆ (1 star)</option>
                 </select>
                 <textarea name="story" class="modal-input" rows="4" placeholder="Share your wellness journey..." required></textarea>
                 <div class="modal-buttons">

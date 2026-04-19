@@ -1249,7 +1249,18 @@ Shifaa Herbal Team"""
     
     @app.route("/community")
     def community():
-        return render_template("user/community.html")
+        from models import Question, Story
+        
+        # Get recent questions with answers
+        questions = Question.query.order_by(Question.created_at.desc()).limit(10).all()
+        
+        # Get recent stories
+        stories = Story.query.order_by(Story.created_at.desc()).limit(12).all()
+        
+        # For now, pass empty topics list until discussion functionality is implemented
+        topics = []
+        
+        return render_template("user/community.html", questions=questions, stories=stories, topics=topics)
     
     @app.route("/ask_question", methods=["POST"])
     @login_required
@@ -1701,6 +1712,63 @@ Shifaa Herbal Team"""
                              appointments=paginated_appointments.items,
                              pagination=paginated_appointments,
                              status_filter=status_filter)
+
+    @app.route("/admin/appointments/<int:appointment_id>", methods=["GET", "POST"])
+    @login_required
+    @admin_required
+    def admin_appointment_detail(appointment_id):
+        from models import Appointment
+        appointment = db.session.get(Appointment, appointment_id)
+        if not appointment:
+            flash("Appointment not found.", "error")
+            return redirect(url_for("admin_appointments"))
+        
+        if request.method == "POST":
+            new_status = request.form.get("status")
+            admin_notes = sanitize_input(request.form.get("admin_notes", ""))
+            
+            if new_status and new_status in ["scheduled", "completed", "cancelled"]:
+                appointment.status = new_status
+                if admin_notes:
+                    appointment.notes = admin_notes
+                db.session.commit()
+                flash(f"Appointment status updated to {new_status}.", "success")
+                
+                # Send notification email to user if status changed
+                try:
+                    from flask_mail import Message
+                    status_messages = {
+                        "completed": "Your appointment has been marked as completed.",
+                        "cancelled": "Your appointment has been cancelled."
+                    }
+                    if new_status in status_messages:
+                        msg = Message(
+                            f"Appointment Update - {appointment.practitioner.name}",
+                            recipients=[appointment.user.email],
+                            body=f"""Dear {appointment.user.name},
+
+{status_messages[new_status]}
+
+Appointment Details:
+- Practitioner: {appointment.practitioner.name}
+- Date: {format_local_time(appointment.appointment_date).strftime('%A, %B %d, %Y')}
+- Time: {format_local_time(appointment.appointment_date).strftime('%I:%M %p')}
+- Type: {appointment.appointment_type}
+
+If you have any questions, please contact us.
+
+Best regards,
+Shifaa Herbal Team"""
+                        )
+                        mail.send(msg)
+                except Exception as e:
+                    print(f"Email sending failed: {e}")
+                
+                return redirect(url_for("admin_appointment_detail", appointment_id=appointment_id))
+            else:
+                flash("Invalid status selected.", "error")
+        
+        return render_template("admin/appointment_detail.html", appointment=appointment)
 
     @app.route("/admin/sales")
     @login_required

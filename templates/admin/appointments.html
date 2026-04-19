@@ -31,7 +31,7 @@
                 <tbody>
                     {% for apt in appointments %}
                     <tr>
-                        <td>{{ apt.appointment_date|format_datetime }}</td>
+                        <td><a href="{{ url_for('admin_appointment_detail', appointment_id=apt.id) }}" class="text-decoration-none">{{ apt.appointment_date|format_datetime }}</a></td>
                         <td>{{ apt.user.name }}<br><small class="text-muted">{{ apt.user.email }}</small></td>
                         <td><strong>{{ apt.practitioner.name }}</strong><br><small class="text-muted">{{ apt.practitioner.title or '—' }}</small></td>
                         <td>{{ apt.appointment_type|title if apt.appointment_type else '—' }}</td>
