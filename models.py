@@ -24,6 +24,7 @@ class User(UserMixin, db.Model):
     questions = db.relationship('Question', backref='user', lazy='dynamic')
     stories = db.relationship('Story', backref='user', lazy='dynamic')
     support_requests = db.relationship('SupportRequest', backref='user', lazy='dynamic')
+    question_replies = db.relationship('QuestionReply', lazy='dynamic')
     
     def __repr__(self):
         return f'<User {self.email}>'
@@ -112,6 +113,22 @@ class SupportRequest(db.Model):
     
     def __repr__(self):
         return f'<SupportRequest {self.id}>'
+
+class QuestionReply(db.Model):
+    __tablename__ = 'question_reply'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    reply = db.Column(db.Text, nullable=False)
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    question = db.relationship('Question', backref='replies')
+    user = db.relationship('User')
+    
+    def __repr__(self):
+        return f'<QuestionReply {self.id}>'
     
     @property
     def in_stock(self):
@@ -210,6 +227,7 @@ class Practitioner(db.Model):
     
     # Relationships
     appointments = db.relationship('Appointment', backref='practitioner', lazy='dynamic')
+    questions = db.relationship('Question', backref='practitioner', lazy='dynamic')
     
     def __repr__(self):
         return f'<Practitioner {self.name}>'
