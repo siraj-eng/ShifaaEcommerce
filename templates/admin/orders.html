@@ -1,72 +1,908 @@
-{% extends "admin/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Orders | Shifaa Herbal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Orders{% endblock %}
-{% block page_title %}Orders{% endblock %}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
+        }
 
-{% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <form method="get" class="d-flex gap-2 flex-wrap">
-        <select name="status" class="form-select" style="max-width: 220px;">
-            <option value="">All statuses</option>
-            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
-            <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>Processing</option>
-            <option value="shipped" {% if status_filter == 'shipped' %}selected{% endif %}>Shipped</option>
-            <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
-            <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
-        </select>
-        <button type="submit" class="btn-admin"><i class="bi bi-funnel"></i> Filter</button>
-    </form>
-    
-    <div class="d-flex gap-2">
-        <a href="{{ url_for('test_cleanup') }}" class="btn-info" style="background: #0ea5e9; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem; text-decoration: none;">
-            <i class="bi bi-info-circle"></i> Test Count
-        </a>
-        <form method="POST" action="{{ url_for('cleanup_orders') }}" onsubmit="return confirm('WARNING: This will delete ALL orders and order items permanently. This action cannot be undone. Are you sure you want to start fresh?');">
-            <button type="submit" class="btn-danger" style="background: #dc2626; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.375rem;">
-                <i class="bi bi-trash"></i> Delete All Orders
-            </button>
-        </form>
-    </div>
-</div>
+        /* Top Navigation - Simple */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
 
-<div class="card-admin">
-    <div class="card-body p-0">
-        {% if orders %}
-        <div class="table-responsive">
-            <table class="table-admin">
-                <thead>
-                    <tr>
-                        <th>Order #</th>
-                        <th>Customer</th>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th style="width: 100px;">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for order in orders %}
-                    <tr>
-                        <td><strong>#{{ order.order_number }}</strong></td>
-                        <td>{{ order.user.name }}<br><small class="text-muted">{{ order.user.email }}</small></td>
-                        <td>{{ order.created_at|local_strftime('%b %d, %Y %H:%M') }}</td>
-                        <td>{{ order.total_amount|currency }}</td>
-                        <td><span class="badge-status badge-{{ order.status }}">{{ order.status|title }}</span></td>
-                        <td><a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-sm-admin">View</a></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            color: #334155;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .breadcrumb-bar a:hover {
+            color: #2e7d32;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-header h1 i {
+            color: #2e7d32;
+            font-size: 1.8rem;
+        }
+
+        .page-header p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #2e7d32;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            color: #334155;
+            cursor: pointer;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .btn-filter {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-filter:hover {
+            background: #1b5e20;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        .btn-info {
+            background: #0ea5e9;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn-info:hover {
+            background: #0284c7;
+        }
+
+        /* Tabs */
+        .orders-tabs {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .tabs-nav {
+            display: inline-flex;
+            padding: 0.5rem;
+            gap: 0.25rem;
+        }
+
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 0.5rem;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover {
+            background: #f1f5f9;
+            color: #2e7d32;
+        }
+
+        .tab-btn.active {
+            background: #2e7d32;
+            color: white;
+        }
+
+        /* Orders List */
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #cbd5e1;
+        }
+
+        .order-card-header {
+            padding: 1rem;
+            background: #fafcff;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .order-number {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #1a1a2e;
+            font-family: monospace;
+        }
+
+        .order-date {
+            font-size: 0.7rem;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .customer-info {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .customer-info strong {
+            color: #1a1a2e;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e67e22;
+        }
+
+        .status-processing {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-shipped {
+            background: #e0f7fa;
+            color: #00838f;
+        }
+
+        .status-delivered {
+            background: #e0f7fa;
+            color: #00838f;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .order-card-body {
+            padding: 1rem;
+        }
+
+        /* Items Preview */
+        .items-preview {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .preview-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .preview-item-image {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eef2f6;
+            overflow: hidden;
+        }
+
+        .preview-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-item-image i {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        .preview-item-details {
+            flex: 1;
+        }
+
+        .preview-item-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .preview-item-meta {
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+
+        .preview-item-price {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .more-items {
+            font-size: 0.65rem;
+            color: #64748b;
+            text-align: center;
+            padding: 0.25rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        /* Order Info Row */
+        .order-info-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            font-size: 0.6rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        /* Order Actions */
+        .order-actions {
+            display: flex;
+            gap: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #eef2f6;
+        }
+
+        .btn-view, .btn-update {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-view {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-view:hover {
+            background: #f1f5f9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .btn-update {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-update:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        .status-select {
+            padding: 0.4rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            flex: 1;
+        }
+
+        /* Empty State */
+        .empty-state {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .page-link {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.2s;
+        }
+
+        .page-link:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .page-link.active {
+            background: #2e7d32;
+            border-color: #2e7d32;
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 2rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .order-info-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .order-actions {
+                flex-direction: column;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Admin</span>
         </div>
-        {% else %}
-        <div class="card-body">
-            <div class="empty-state">
-                <i class="bi bi-cart-x"></i>
-                <h4>No orders</h4>
-                <p>Orders will appear here when customers place them.</p>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name if current_user.is_authenticated else 'Admin' }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
             </div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <span style="color: #2e7d32;">Orders</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-cart-check"></i> Orders</h1>
+            <p>Manage and track all customer orders</p>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <a href="{{ url_for('admin_orders') }}" class="stat-card">
+                <div class="stat-number">{{ total_orders }}</div>
+                <div class="stat-label">Total Orders</div>
+            </a>
+            <a href="{{ url_for('admin_orders') }}?status=pending" class="stat-card">
+                <div class="stat-number">{{ pending_count }}</div>
+                <div class="stat-label">Pending</div>
+            </a>
+            <a href="{{ url_for('admin_orders') }}?status=processing" class="stat-card">
+                <div class="stat-number">{{ processing_count }}</div>
+                <div class="stat-label">Processing</div>
+            </a>
+            <a href="{{ url_for('admin_orders') }}?status=delivered" class="stat-card">
+                <div class="stat-number">{{ delivered_count }}</div>
+                <div class="stat-label">Delivered</div>
+            </a>
+            <a href="{{ url_for('admin_orders') }}?status=cancelled" class="stat-card">
+                <div class="stat-number">{{ cancelled_count }}</div>
+                <div class="stat-label">Cancelled</div>
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <form method="get" class="filter-group">
+                <select name="status" class="filter-select">
+                    <option value="">All statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>Processing</option>
+                    <option value="shipped" {% if status_filter == 'shipped' %}selected{% endif %}>Shipped</option>
+                    <option value="delivered" {% if status_filter == 'delivered' %}selected{% endif %}>Delivered</option>
+                    <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button type="submit" class="btn-filter"><i class="bi bi-funnel"></i> Filter</button>
+            </form>
+            
+            <div class="filter-group">
+                <a href="{{ url_for('test_cleanup') }}" class="btn-info">
+                    <i class="bi bi-info-circle"></i> Test Count
+                </a>
+                <form method="POST" action="{{ url_for('cleanup_orders') }}" onsubmit="return confirm('WARNING: This will delete ALL orders permanently. This action cannot be undone. Are you sure?');">
+                    <button type="submit" class="btn-danger">
+                        <i class="bi bi-trash"></i> Delete All
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="orders-tabs">
+            <nav class="tabs-nav">
+                <button class="tab-btn {% if not status_filter %}active{% endif %}" onclick="filterOrders('all')">All</button>
+                <button class="tab-btn {% if status_filter == 'pending' %}active{% endif %}" onclick="filterOrders('pending')">Pending</button>
+                <button class="tab-btn {% if status_filter == 'processing' %}active{% endif %}" onclick="filterOrders('processing')">Processing</button>
+                <button class="tab-btn {% if status_filter == 'delivered' %}active{% endif %}" onclick="filterOrders('delivered')">Delivered</button>
+                <button class="tab-btn {% if status_filter == 'cancelled' %}active{% endif %}" onclick="filterOrders('cancelled')">Cancelled</button>
+            </nav>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-list">
+            {% if orders %}
+                {% for order in orders %}
+                <div class="order-card" data-status="{{ order.status }}">
+                    <div class="order-card-header">
+                        <div>
+                            <div class="order-number">#{{ order.order_number }}</div>
+                            <div class="order-date">
+                                <i class="bi bi-calendar3"></i>
+                                {{ order.created_at|local_strftime('%d %b %Y, %I:%M %p') }}
+                            </div>
+                        </div>
+                        <div class="customer-info">
+                            <strong>{{ order.user.name }}</strong><br>
+                            <small>{{ order.user.email }}</small>
+                        </div>
+                        <div class="status-badge status-{{ order.status }}">
+                            {{ order.status|upper }}
+                        </div>
+                    </div>
+                    
+                    <div class="order-card-body">
+                        <!-- Items Preview -->
+                        <div class="items-preview">
+                            {% for item in order.items.all()[:2] %}
+                            <div class="preview-item">
+                                <div class="preview-item-image">
+                                    {% if item.product.image_url %}
+                                    <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                                    {% else %}
+                                    <i class="bi bi-capsule"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="preview-item-details">
+                                    <div class="preview-item-name">{{ item.product.name|truncate(35) }}</div>
+                                    <div class="preview-item-meta">Qty: {{ item.quantity }}</div>
+                                </div>
+                                <div class="preview-item-price">{{ (item.price * item.quantity)|currency }}</div>
+                            </div>
+                            {% endfor %}
+                            {% if order.items.count() > 2 %}
+                            <div class="more-items">
+                                +{{ order.items.count() - 2 }} more item(s)
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Order Info -->
+                        <div class="order-info-row">
+                            <div class="info-item">
+                                <div class="info-label">Total Amount</div>
+                                <div class="info-value">{{ order.total_amount|currency }}</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Items</div>
+                                <div class="info-value">{{ order.items.count() }} item(s)</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label">Payment</div>
+                                <div class="info-value">{{ order.payment_method|title if order.payment_method else 'M-Pesa' }}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="order-actions">
+                            <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="btn-view">
+                                <i class="bi bi-eye"></i> View Details
+                            </a>
+                            <form method="POST" action="{{ url_for('admin_order_detail', order_id=order.id) }}" class="status-update-form" style="flex:1; display: flex; gap: 0.5rem;">
+                                <select name="status" class="status-select">
+                                    <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
+                                    <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
+                                    <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                    <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                                <button type="submit" class="btn-update">
+                                    <i class="bi bi-pencil"></i> Update
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <i class="bi bi-cart-x"></i>
+                    <h3>No Orders Yet</h3>
+                    <p>Orders will appear here when customers place them.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination and pagination.pages > 1 %}
+        <div class="pagination">
+            {% if pagination.has_prev %}
+            <a href="{{ url_for('admin_orders', page=pagination.prev_num, status=status_filter) }}" class="page-link">&laquo; Prev</a>
+            {% endif %}
+            
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    <a href="{{ url_for('admin_orders', page=page, status=status_filter) }}" class="page-link {% if page == pagination.page %}active{% endif %}">{{ page }}</a>
+                {% else %}
+                    <span class="page-link">...</span>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+            <a href="{{ url_for('admin_orders', page=pagination.next_num, status=status_filter) }}" class="page-link">Next &raquo;</a>
+            {% endif %}
         </div>
         {% endif %}
     </div>
-</div>
-{% endblock %}
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+
+    <script>
+        // Filter orders by status (for tabs)
+        function filterOrders(status) {
+            const url = new URL(window.location.href);
+            if (status === 'all') {
+                url.searchParams.delete('status');
+            } else {
+                url.searchParams.set('status', status);
+            }
+            window.location.href = url.toString();
+        }
+        
+        // Confirm status update
+        document.querySelectorAll('.status-update-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const newStatus = this.querySelector('select[name="status"]').value;
+                if (!confirm(`Change order status to ${newStatus.toUpperCase()}?`)) {
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

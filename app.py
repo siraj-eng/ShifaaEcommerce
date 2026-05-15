@@ -1310,6 +1310,19 @@ def create_app():
 
 
 
+    @app.route("/admin/community")
+    @login_required
+    @admin_required
+    def admin_community():
+        return redirect(url_for("community"))
+
+    @app.route("/admin/profile")
+    @login_required
+    @admin_required
+    def admin_profile():
+        return redirect(url_for("profile"))
+
+
     # ========== PRODUCT ROUTES ==========
 
     @app.route("/products")
