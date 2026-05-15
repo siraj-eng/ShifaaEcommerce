@@ -242,6 +242,7 @@ class Appointment(db.Model):
     appointment_type = db.Column(db.String(100), default='general advice')
     appointment_date = db.Column(db.DateTime, nullable=False, index=True)  # Added index
     notes = db.Column(db.Text)
+    admin_notes = db.Column(db.Text)
     status = db.Column(db.String(50), default='scheduled', index=True)  # Added index
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

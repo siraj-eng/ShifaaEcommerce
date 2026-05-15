@@ -1,77 +1,620 @@
-{% extends "admin/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Products | Shifaa Herbal Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Products{% endblock %}
-{% block page_title %}Products{% endblock %}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
+        }
 
-{% block content %}
-<div class="page-header">
-    <h2>Manage products</h2>
-    <a href="{{ url_for('admin_product_new') }}" class="btn-admin"><i class="bi bi-plus-lg"></i> Add product</a>
-</div>
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
 
-<form method="get" class="d-flex gap-2 flex-wrap mb-4">
-    <input type="text" name="search" class="form-control" style="max-width: 280px;" placeholder="Search by name or description..." value="{{ search }}">
-    <select name="category" class="form-select" style="max-width: 200px;">
-        <option value="">All categories</option>
-        {% for c in categories %}
-        <option value="{{ c }}" {% if c == current_category %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="btn-admin"><i class="bi bi-search"></i> Filter</button>
-</form>
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-<div class="card-admin">
-    <div class="card-body p-0">
-        {% if products %}
-        <div class="table-responsive">
-            <table class="table-admin">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Category</th>
-                        <th>Price</th>
-                        <th>Stock</th>
-                        <th>Status</th>
-                        <th style="width: 140px;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in products %}
-                    <tr>
-                        <td>
-                            <strong>{{ p.name }}</strong>
-                            {% if p.description %}<br><small class="text-muted">{{ p.description[:60] }}{% if p.description|length > 60 %}…{% endif %}</small>{% endif %}
-                        </td>
-                        <td>{{ p.category or '—' }}</td>
-                        <td>{{ p.price|currency }}</td>
-                        <td>
-                            {{ p.stock }}
-                            {% if p.stock > 0 and p.stock < 10 %}<span class="badge bg-warning text-dark ms-1">Low</span>{% endif %}
-                        </td>
-                        <td>
-                            {% if p.is_active %}<span class="badge-status badge-delivered">Active</span>{% else %}<span class="badge-status badge-cancelled">Inactive</span>{% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ url_for('admin_product_edit', product_id=p.id) }}" class="btn-sm-admin"><i class="bi bi-pencil"></i> Edit</a>
-                            <form method="post" action="{{ url_for('admin_product_toggle', product_id=p.id) }}" class="d-inline">
-                                <button type="submit" class="btn-sm-admin">{{ 'Deactivate' if p.is_active else 'Activate' }}</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .breadcrumb-bar a:hover {
+            color: #2e7d32;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-header h1 i {
+            color: #2e7d32;
+            font-size: 1.8rem;
+        }
+
+        .btn-primary {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            background: #1b5e20;
+            transform: translateY(-1px);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            width: 260px;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn-filter {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-filter:hover {
+            background: #1b5e20;
+        }
+
+        /* Products Card */
+        .products-card {
+            background: white;
+            border-radius: 0.875rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        /* Products Table */
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .products-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #eef2f6;
+            background: #fafcff;
+        }
+
+        .products-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .products-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .products-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .product-desc {
+            font-size: 0.65rem;
+            color: #64748b;
+            margin-top: 0.2rem;
+        }
+
+        .stock-badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            margin-left: 0.4rem;
+        }
+
+        .stock-low {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-active {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 0.2rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .btn-sm:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 2rem;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.2rem;
+            background: #1a1a2e;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .user-name, .nav-link span {
+                display: none;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: center;
+            }
+
+            .products-table {
+                font-size: 0.7rem;
+            }
+
+            .products-table th, .products-table td {
+                padding: 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-sm {
+                justify-content: center;
+            }
+        }
+
+        /* Print */
+        @media print {
+            .top-nav, .breadcrumb-bar, .filter-bar, .action-buttons, .footer {
+                display: none !important;
+            }
+
+            .products-card {
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Admin</span>
         </div>
-        {% else %}
-        <div class="card-body">
+        
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin_orders') }}" class="nav-link">
+                <i class="bi bi-cart-check"></i> <span>Orders</span>
+            </a>
+            <a href="{{ url_for('admin_products') }}" class="nav-link active">
+                <i class="bi bi-box-seam"></i> <span>Products</span>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name if current_user.is_authenticated else 'Admin' }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <span style="color: #2e7d32;">Products</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container" style="max-width: 1400px; margin: 0 auto; padding: 1rem 1.25rem;">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1><i class="bi bi-box-seam"></i> Products</h1>
+            <a href="{{ url_for('admin_product_new') }}" class="btn-primary">
+                <i class="bi bi-plus-lg"></i> Add Product
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+            <form method="get" class="filter-group">
+                <input type="text" name="search" class="filter-input" placeholder="Search by name or description..." value="{{ search }}">
+                <select name="category" class="filter-select">
+                    <option value="">All categories</option>
+                    {% for c in categories %}
+                    <option value="{{ c }}" {% if c == current_category %}selected{% endif %}>{{ c }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn-filter">
+                    <i class="bi bi-search"></i> Filter
+                </button>
+            </form>
+        </div>
+
+        <!-- Products Card -->
+        <div class="products-card">
+            {% if products %}
+            <div class="table-responsive">
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th style="width: 140px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in products %}
+                        <tr>
+                            <td>
+                                <div class="product-name">{{ p.name }}</div>
+                                {% if p.description %}
+                                <div class="product-desc">{{ p.description[:60] }}{% if p.description|length > 60 %}…{% endif %}</div>
+                                {% endif %}
+                            </div>
+                            <td>{{ p.category or '—' }}</div>
+                            <td>{{ p.price|currency }}</div>
+                            <td>
+                                {{ p.stock }}
+                                {% if p.stock > 0 and p.stock < 10 %}
+                                <span class="stock-badge stock-low">Low</span>
+                                {% endif %}
+                            </div>
+                            <td>
+                                {% if p.is_active %}
+                                <span class="status-active">Active</span>
+                                {% else %}
+                                <span class="status-inactive">Inactive</span>
+                                {% endif %}
+                            </div>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ url_for('admin_product_edit', product_id=p.id) }}" class="btn-sm">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <form method="post" action="{{ url_for('admin_product_toggle', product_id=p.id) }}" class="d-inline">
+                                        <button type="submit" class="btn-sm">
+                                            {{ 'Deactivate' if p.is_active else 'Activate' }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
             <div class="empty-state">
                 <i class="bi bi-box-seam"></i>
                 <h4>No products</h4>
                 <p>Add your first product to start selling.</p>
-                <a href="{{ url_for('admin_product_new') }}" class="btn-admin mt-2"><i class="bi bi-plus-lg"></i> Add product</a>
+                <a href="{{ url_for('admin_product_new') }}" class="btn-primary mt-2">
+                    <i class="bi bi-plus-lg"></i> Add Product
+                </a>
             </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
-</div>
-{% endblock %}
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg"></span>
+    </div>
+    
+    <script>
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.style.background = isError ? '#dc2626' : '#2e7d32';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    showToast('{{ message }}', '{{ category }}' === 'error');
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+</body>
+</html>

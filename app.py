@@ -3505,14 +3505,43 @@ Shifaa Herbal Team"""
 
         
 
+        total_appointments = Appointment.query.count()
+        scheduled_count = Appointment.query.filter_by(status="scheduled").count()
+        completed_count = Appointment.query.filter_by(status="completed").count()
         return render_template("admin/appointments.html", 
-
                              appointments=paginated_appointments.items,
-
                              pagination=paginated_appointments,
+                             status_filter=status_filter,
+                             total_appointments=total_appointments,
+                             scheduled_count=scheduled_count,
+                             completed_count=completed_count)
 
-                             status_filter=status_filter)
 
+
+    @app.route("/admin/appointments/<int:appointment_id>", methods=["GET", "POST"])
+    @login_required
+    @admin_required
+    def admin_appointment_detail(appointment_id):
+        from models import Appointment
+
+        appointment = db.session.get(Appointment, appointment_id)
+        if not appointment:
+            flash("Appointment not found.", "error")
+            return redirect(url_for("admin_appointments"))
+
+        if request.method == "POST":
+            status = request.form.get("status", appointment.status)
+            if status not in ("scheduled", "completed", "cancelled"):
+                flash("Invalid appointment status.", "error")
+                return redirect(url_for("admin_appointment_detail", appointment_id=appointment_id))
+
+            appointment.status = status
+            appointment.admin_notes = request.form.get("admin_notes", appointment.admin_notes)
+            db.session.commit()
+            flash("Appointment updated successfully.", "success")
+            return redirect(url_for("admin_appointment_detail", appointment_id=appointment_id))
+
+        return render_template("admin/appointment_detail.html", appointment=appointment)
 
 
     @app.route("/admin/sales")

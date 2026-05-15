@@ -2,1381 +2,941 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - {{ current_user.name }} | Shifaa Herbal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Dashboard | Shifaa Herbal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #2e7d32;
-            --primary-light: #e8f5e9;
-            --primary-dark: #1b5e20;
-            --secondary-color: #4a7c59;
-            --success-color: #2e7d32;
-            --warning-color: #ffd166;
-            --danger-color: #ef476f;
-            --dark-color: #121826;
-            --light-color: #f8fafc;
-            --gray-50: #f9fafb;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --radius-sm: 0.5rem;
-            --radius-md: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.25rem;
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
+
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--light-color) 0%, #e8f5e9 100%);
-            color: var(--gray-800);
-            line-height: 1.6;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
         }
-        
-        /* Layout */
+
+        /* Dashboard Wrapper */
         .dashboard-wrapper {
             display: flex;
             min-height: 100vh;
-            position: relative;
         }
-        
+
         /* Sidebar */
         .sidebar {
-            width: 280px;
-            background: linear-gradient(180deg, #ffffff 0%, #f8fff8 100%);
-            border-right: 1px solid rgba(46, 125, 50, 0.1);
-            padding: 1.5rem 1rem;
+            width: 260px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            z-index: 1000;
-            transition: var(--transition-smooth);
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            transition: transform 0.3s ease;
         }
-        
+
         .sidebar-header {
-            padding: 0.5rem 0 1rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
+
         .logo {
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             text-decoration: none;
         }
-        
+
         .logo-image {
-            width: 120px;
-            height: 120px;
+            width: 32px;
+            height: 32px;
             object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
-            transition: all 0.3s ease;
         }
-        
-        .logo-image:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(46, 125, 50, 0.25);
-        }
-        
+
         .logo-text {
             font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--primary-dark);
-            letter-spacing: -0.025em;
+            font-size: 0.95rem;
+            color: #2e7d32;
+            white-space: nowrap;
         }
-        
-        .user-profile {
-            padding: 1rem;
-            background: var(--primary-light);
-            border-radius: var(--radius-md);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            border: 1px solid rgba(46, 125, 50, 0.2);
-            transition: var(--transition-base);
+
+        .close-sidebar {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            color: #64748b;
+            cursor: pointer;
+            padding: 0.25rem;
         }
-        
-        .user-profile:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            padding: 1rem 0;
         }
-        
-        .user-avatar {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.125rem;
-            flex-shrink: 0;
-        }
-        
-        .user-info h2 {
-            font-weight: 600;
-            font-size: 0.875rem;
-            color: var(--dark-color);
-            margin-bottom: 0.125rem;
-            line-height: 1.2;
-        }
-        
-        .user-info p {
-            font-size: 0.75rem;
-            color: var(--gray-600);
-        }
-        
+
         .nav-section {
             margin-bottom: 1.5rem;
         }
-        
+
         .nav-title {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: var(--gray-500);
-            margin-bottom: 0.75rem;
-            padding: 0 0.5rem;
+            color: #94a3b8;
+            padding: 0 1rem;
+            margin-bottom: 0.5rem;
         }
-        
+
         .nav-list {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
         }
-        
+
         .nav-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.75rem 0.75rem;
-            border-radius: var(--radius-sm);
-            color: var(--gray-700);
+            padding: 0.6rem 1rem;
+            margin: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            color: #64748b;
             text-decoration: none;
+            font-size: 0.8rem;
             font-weight: 500;
-            font-size: 0.875rem;
-            transition: var(--transition-base);
-            position: relative;
+            transition: all 0.2s;
         }
-        
+
         .nav-item:hover {
-            background: var(--gray-100);
-            color: var(--primary-color);
-            padding-left: 1rem;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
-        
+
         .nav-item.active {
-            background: var(--primary-light);
-            color: var(--primary-color);
+            background: #e8f5e9;
+            color: #2e7d32;
             font-weight: 600;
         }
-        
-        .nav-item.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 60%;
-            background: var(--primary-color);
-            border-radius: 0 3px 3px 0;
+
+        .nav-item i {
+            width: 20px;
+            font-size: 1rem;
         }
-        
-        .nav-icon {
-            font-size: 1.125rem;
-            width: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
+
         .nav-badge {
-            background: var(--primary-color);
+            background: #ef476f;
             color: white;
-            font-size: 0.6875rem;
-            padding: 0.125rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            padding: 0.1rem 0.4rem;
             border-radius: 1rem;
             margin-left: auto;
-            font-weight: 600;
-            min-width: 1.25rem;
-            text-align: center;
         }
-        
+
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-left: 260px;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
         }
-        
+
         /* Top Bar */
         .top-bar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-            padding: 1.25rem 2rem;
+            background: white;
+            padding: 0.75rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 99;
         }
-        
-        .greeting h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.025em;
-        }
-        
-        .greeting p {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-        
-        .search-container {
-            position: relative;
-            width: 360px;
-        }
-        
-        .search-bar {
-            display: flex;
-            align-items: center;
-            background: var(--gray-50);
-            border: 2px solid transparent;
-            border-radius: var(--radius-lg);
-            padding: 0.75rem 1rem;
-            transition: var(--transition-base);
-        }
-        
-        .search-bar:focus-within {
-            background: white;
-            border-color: var(--primary-light);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
-        }
-        
-        .search-bar i {
-            color: var(--gray-500);
-            margin-right: 0.75rem;
-            font-size: 1rem;
-        }
-        
-        .search-input {
-            border: none;
-            background: transparent;
-            width: 100%;
-            font-size: 0.875rem;
-            color: var(--gray-700);
-            outline: none;
-        }
-        
-        .search-input::placeholder {
-            color: var(--gray-400);
-        }
-        
+
         .menu-toggle {
             display: none;
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            color: #334155;
+            font-size: 1.2rem;
+        }
+
+        .menu-toggle:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .greeting h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin: 0;
+        }
+
+        .greeting p {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: var(--radius-md);
-            background: var(--gray-50);
-            color: var(--gray-700);
-            cursor: pointer;
-            font-size: 1.25rem;
-            border: none;
-            transition: var(--transition-base);
+            color: white;
+            font-size: 0.8rem;
         }
-        
-        .menu-toggle:hover {
-            background: var(--gray-200);
-            transform: rotate(90deg);
+
+        .user-details {
+            text-align: right;
         }
-        
-        /* Content Area */
-        .content-area {
-            padding: 2rem;
-            flex: 1;
+
+        .user-details .name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1a1a2e;
         }
-        
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+
+        .user-details .role {
+            font-size: 0.65rem;
+            color: #2e7d32;
         }
-        
-        .stat-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            border: 1px solid var(--gray-200);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition-smooth);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
+
+        /* Dropdown Menu */
+        .user-dropdown {
             position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-width: 200px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .user-dropdown.show {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #eef2f6;
+            margin: 0.25rem 0;
+        }
+
+        /* Sidebar Overlay */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
         }
-        
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
+
+        .sidebar-overlay.active {
+            display: block;
         }
-        
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .stat-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--primary-light), rgba(46, 125, 50, 0.1));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-        
-        .stat-trend {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--success-color);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-        
-        .stat-content h3 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-            line-height: 1;
-        }
-        
-        .stat-content p {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-        
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .dashboard-card {
-            background: white;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-            transition: var(--transition-base);
-        }
-        
-        .dashboard-card:hover {
-            box-shadow: var(--shadow-lg);
-        }
-        
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--gray-200);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--gray-50);
-        }
-        
-        .card-header h2 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin: 0;
-        }
-        
-        .view-all {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            transition: var(--transition-base);
-        }
-        
-        .view-all:hover {
-            gap: 0.5rem;
-            color: var(--primary-dark);
-        }
-        
-        .card-body {
-            padding: 1.5rem;
-        }
-        
-        /* Tables */
-        .table-container {
-            overflow-x: auto;
-        }
-        
-        .orders-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .orders-table thead {
-            background: var(--gray-50);
-        }
-        
-        .orders-table th {
-            text-align: left;
-            padding: 0.75rem 1rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-bottom: 2px solid var(--gray-200);
-            white-space: nowrap;
-        }
-        
-        .orders-table tbody tr {
-            border-bottom: 1px solid var(--gray-200);
-            transition: var(--transition-base);
-        }
-        
-        .orders-table tbody tr:hover {
-            background: var(--gray-50);
-        }
-        
-        .orders-table td {
-            padding: 1rem;
-            font-size: 0.875rem;
-            vertical-align: middle;
-        }
-        
-        .order-number {
-            color: var(--dark-color);
-            font-weight: 600;
-            font-family: 'SF Mono', monospace;
-        }
-        
-        .order-date {
-            color: var(--gray-500);
-            white-space: nowrap;
-        }
-        
-        .order-amount {
-            font-weight: 600;
-            color: var(--dark-color);
-        }
-        
-        .status-badge {
-            padding: 0.375rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            text-transform: capitalize;
-            letter-spacing: 0.025em;
-        }
-        
-        .status-pending { background: linear-gradient(135deg, var(--warning-color), #ffb142); color: #7c5019; }
-        .status-delivered { background: linear-gradient(135deg, var(--success-color), #2e7d32); color: white; }
-        .status-processing { background: linear-gradient(135deg, var(--primary-light), #d4edd4); color: var(--primary-dark); }
-        .status-cancelled { background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; }
-        
-        .btn-view {
-            background: transparent;
-            border: 2px solid var(--gray-300);
-            color: var(--gray-700);
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.8125rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition-base);
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn-view:hover {
-            background: var(--primary-light);
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            transform: translateY(-1px);
-        }
-        
-        /* Appointments */
-        .appointments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .appointment-card {
-            display: flex;
-            align-items: center;
+
+        /* Content Area */
+        .content-area {
             padding: 1.25rem;
-            background: var(--gray-50);
-            border-radius: var(--radius-md);
-            border-left: 4px solid var(--primary-color);
-            transition: var(--transition-base);
         }
-        
-        .appointment-card:hover {
-            background: white;
-            box-shadow: var(--shadow-sm);
-        }
-        
-        .appointment-date {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 60px;
-            margin-right: 1.25rem;
-            padding: 0.5rem;
-            background: white;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--gray-200);
-        }
-        
-        .date-day {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--dark-color);
-            line-height: 1;
-        }
-        
-        .date-month {
-            font-size: 0.75rem;
-            color: var(--gray-500);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .appointment-details {
-            flex: 1;
-        }
-        
-        .appointment-details h3 {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.25rem;
-            font-size: 1rem;
-        }
-        
-        .appointment-time {
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            display: flex;
-            align-items: center;
-            gap: 0.375rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .appointment-type {
-            display: inline-block;
-            background: var(--primary-light);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 2rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 2rem;
-            color: var(--gray-400);
-        }
-        
-        .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
-        
-        .empty-state h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--gray-500);
-        }
-        
-        .empty-state p {
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: var(--transition-base);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 2px 4px rgba(46, 125, 50, 0.2);
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.3);
-            color: white;
-        }
-        
-        /* Quick Actions */
-        .quick-actions {
-            background: white;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--gray-200);
-            padding: 2rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark-color);
-            margin: 0;
-        }
-        
-        .actions-grid {
+
+        /* Stats Grid */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .action-card {
-            background: var(--gray-50);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            text-decoration: none;
-            color: inherit;
-            transition: var(--transition-smooth);
-            border: 2px solid transparent;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .action-card:hover {
-            background: white;
-            border-color: var(--primary-color);
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-lg);
-            color: inherit;
-        }
-        
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 4px 8px rgba(46, 125, 50, 0.2);
-        }
-        
-        .action-card h3 {
-            font-weight: 600;
-            color: var(--dark-color);
-            margin-bottom: 0.5rem;
-            font-size: 1rem;
-        }
-        
-        .action-card p {
-            font-size: 0.875rem;
-            color: var(--gray-500);
-            margin: 0;
-            line-height: 1.5;
-        }
-        
-        /* Footer */
-        .dashboard-footer {
-            margin-top: auto;
-            padding: 2rem;
-            text-align: center;
-            color: var(--gray-500);
-            font-size: 0.875rem;
-            border-top: 1px solid var(--gray-200);
-            background: var(--gray-50);
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1200px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
+
         @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 300px;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .search-container {
-                width: 280px;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .top-bar {
-                padding: 1rem;
-            }
-            
-            .greeting h1 {
-                font-size: 1.5rem;
-            }
-            
-            .search-container {
-                display: none;
-            }
-            
-            .menu-toggle {
-                display: flex;
-            }
-            
-            .content-area {
-                padding: 1.5rem 1rem;
-            }
-            
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                gap: 0.75rem;
-                align-items: flex-start;
-            }
-            
-            .view-all {
-                align-self: flex-end;
             }
         }
-        
+
         @media (max-width: 576px) {
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .orders-table {
-                font-size: 0.8125rem;
-            }
-            
-            .orders-table th,
-            .orders-table td {
-                padding: 0.5rem;
-            }
-            
-            .appointment-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            
-            .appointment-date {
-                flex-direction: row;
-                min-width: auto;
-                gap: 0.5rem;
-            }
-            
-            .date-day {
-                font-size: 1.25rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-color: #2e7d32;
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            background: #e8f5e9;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2e7d32;
+            font-size: 1rem;
+        }
+
+        .stat-content h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-content p {
+            color: #64748b;
+            font-size: 0.65rem;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 992px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
             }
         }
-        
-        /* Accessibility */
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
+
+        /* Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
             overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
         }
-        
-        /* Focus Styles */
-        :focus-visible {
-            outline: 3px solid var(--primary-color);
-            outline-offset: 2px;
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eef2f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fafcff;
         }
-        
-        /* Loading States */
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
+
+        .card-header span {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1a1a2e;
         }
-        
-        /* Print Styles */
-        @media print {
-            .sidebar,
-            .top-bar,
-            .btn-view,
-            .view-all,
-            .btn-primary {
-                display: none !important;
+
+        .view-all {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .view-all:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .card-body {
+            padding: 0.75rem 1rem;
+        }
+
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 0.5rem 0;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            border-bottom: 1px solid #eef2f6;
+        }
+
+        .orders-table td {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 0.7rem;
+            vertical-align: middle;
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-number {
+            font-weight: 600;
+            color: #1a1a2e;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #fff3e0;
+            color: #e67e22;
+        }
+
+        .status-processing {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-delivered {
+            background: #e0f7fa;
+            color: #00838f;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-view {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.65rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-view:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        /* Appointments List */
+        .appointments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .appointment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border-left: 3px solid #2e7d32;
+        }
+
+        .appointment-date {
+            min-width: 42px;
+            text-align: center;
+            background: white;
+            padding: 0.3rem;
+            border-radius: 0.5rem;
+            border: 1px solid #eef2f6;
+        }
+
+        .date-day {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            line-height: 1;
+        }
+
+        .date-month {
+            font-size: 0.55rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .appointment-details {
+            flex: 1;
+        }
+
+        .appointment-details strong {
+            font-size: 0.75rem;
+            color: #1a1a2e;
+        }
+
+        .appointment-details small {
+            font-size: 0.6rem;
+            color: #64748b;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .empty-state i {
+            font-size: 1.5rem;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state h4 {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 0.25rem;
+        }
+
+        .empty-state p {
+            font-size: 0.65rem;
+            color: #94a3b8;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 0.75rem;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .actions-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .btn-action {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #64748b;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-action:hover {
+            background: #e8f5e9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1rem;
+            color: #94a3b8;
+            font-size: 0.7rem;
+            border-top: 1px solid #eef2f6;
+            background: white;
+            margin-top: 1rem;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 101;
             }
-            
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
             .main-content {
                 margin-left: 0;
+            }
+
+            .top-bar {
+                padding: 0.75rem 1rem;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .user-details {
+                display: none;
+            }
+
+            .close-sidebar {
+                display: block;
             }
         }
     </style>
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar" id="sidebar" aria-label="Main navigation">
-            <header class="sidebar-header">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
                 <a href="{{ url_for('dashboard') }}" class="logo">
-                    <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal Logo">
+                    <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+                    <span class="logo-text">Shifaa Herbal Remedies</span>
                 </a>
-            </header>
-            
-            <section class="user-profile" aria-labelledby="user-profile-title">
-                <div class="user-avatar" aria-hidden="true">
-                    <i class="bi bi-person" role="img" aria-label="User avatar"></i>
+                <button class="close-sidebar" onclick="closeSidebar()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-title">Menu</div>
+                    <ul class="nav-list">
+                        <li><a href="{{ url_for('dashboard') }}" class="nav-item active"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                        <li><a href="{{ url_for('products') }}" class="nav-item"><i class="bi bi-grid"></i> Products</a></li>
+                        <li><a href="{{ url_for('cart') }}" class="nav-item"><i class="bi bi-cart"></i> Cart 
+                            {% if cart_count > 0 %}<span class="nav-badge">{{ cart_count }}</span>{% endif %}
+                        </a></li>
+                        <li><a href="{{ url_for('orders') }}" class="nav-item"><i class="bi bi-box-seam"></i> My Orders</a></li>
+                    </ul>
                 </div>
-                <div class="user-info">
-                    <h2 id="user-profile-title">{{ current_user.name }}</h2>
-                    <p>{{ current_user.email }}</p>
+
+                <div class="nav-section">
+                    <div class="nav-title">Consultations</div>
+                    <ul class="nav-list">
+                        <li><a href="{{ url_for('practitioners') }}" class="nav-item"><i class="bi bi-person-badge"></i> Practitioners</a></li>
+                        <li><a href="{{ url_for('appointments') }}" class="nav-item"><i class="bi bi-calendar-check"></i> Appointments</a></li>
+                    </ul>
                 </div>
-            </section>
-            
-            <nav class="nav-section" aria-labelledby="nav-menu-title">
-                <h3 id="nav-menu-title" class="nav-title">Menu</h3>
-                <ul class="nav-list">
-                    <li>
-                        <a href="{{ url_for('dashboard') }}" class="nav-item active" aria-current="page">
-                            <i class="bi bi-speedometer2 nav-icon" aria-hidden="true"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('products') }}" class="nav-item">
-                            <i class="bi bi-clipboard2-pulse-fill nav-icon" aria-hidden="true"></i>
-                            <span>Products</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('cart') }}" class="nav-item">
-                            <i class="bi bi-basket nav-icon" aria-hidden="true"></i>
-                            <span>Cart & Checkout</span>
-                            {% if cart_count > 0 %}
-                            <span class="nav-badge" aria-label="{{ cart_count }} items in cart">{{ cart_count }}</span>
-                            {% endif %}
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('orders') }}" class="nav-item">
-                            <i class="bi bi-box-seam nav-icon" aria-hidden="true"></i>
-                            <span>My Orders</span>
-                        </a>
-                    </li>
-                </ul>
+
+                <div class="nav-section">
+                    <div class="nav-title">Resources</div>
+                    <ul class="nav-list">
+                        <li><a href="{{ url_for('health_info') }}" class="nav-item"><i class="bi bi-journal-text"></i> Health Info</a></li>
+                        <li><a href="{{ url_for('community') }}" class="nav-item"><i class="bi bi-people"></i> Community</a></li>
+                        <li><a href="{{ url_for('support') }}" class="nav-item"><i class="bi bi-headset"></i> Support</a></li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-title">Account</div>
+                    <ul class="nav-list">
+                        <li><a href="{{ url_for('profile') }}" class="nav-item"><i class="bi bi-gear"></i> Settings</a></li>
+                        <li><a href="{{ url_for('logout') }}" class="nav-item"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                    </ul>
+                </div>
             </nav>
-            
-            <nav class="nav-section" aria-labelledby="nav-consultations-title">
-                <h3 id="nav-consultations-title" class="nav-title">Consultations</h3>
-                <ul class="nav-list">
-                    <li>
-                        <a href="{{ url_for('practitioners') }}" class="nav-item">
-                            <i class="bi bi-person-badge nav-icon" aria-hidden="true"></i>
-                            <span>Consult Practitioner</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('appointments') }}" class="nav-item">
-                            <i class="bi bi-calendar-check nav-icon" aria-hidden="true"></i>
-                            <span>Appointments</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            
-            <nav class="nav-section" aria-labelledby="nav-resources-title">
-                <h3 id="nav-resources-title" class="nav-title">Resources</h3>
-                <ul class="nav-list">
-                    <li>
-                        <a href="{{ url_for('health_info') }}" class="nav-item">
-                            <i class="bi bi-journal-text nav-icon" aria-hidden="true"></i>
-                            <span>Health Information</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('community') }}" class="nav-item">
-                            <i class="bi bi-people nav-icon" aria-hidden="true"></i>
-                            <span>Community</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('support') }}" class="nav-item">
-                            <i class="bi bi-headset nav-icon" aria-hidden="true"></i>
-                            <span>Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            
-            <nav class="nav-section" aria-labelledby="nav-account-title">
-                <h3 id="nav-account-title" class="nav-title">Account</h3>
-                <ul class="nav-list">
-                    <li>
-                        <a href="{{ url_for('profile') }}" class="nav-item">
-                            <i class="bi bi-gear nav-icon" aria-hidden="true"></i>
-                            <span>Profile Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('logout') }}" class="nav-item">
-                            <i class="bi bi-box-arrow-right nav-icon" aria-hidden="true"></i>
-                            <span>Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </nav>
+        </aside>
 
         <!-- Main Content -->
-        <main class="main-content" id="main-content">
+        <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
+                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
                 <div class="greeting">
-                    <h1>Hello, {{ current_user.name }} <span aria-hidden="true">👋</span></h1>
+                    <h1>Hello, {{ current_user.name }} 👋</h1>
                     <p>Welcome back to your dashboard</p>
                 </div>
-                
-                <div class="search-container">
-                    <div class="search-bar">
-                        <i class="bi bi-search" aria-hidden="true"></i>
-                        <input type="search" class="search-input" placeholder="Search products, orders, appointments..." aria-label="Search dashboard">
+                <div class="user-info" id="userMenuBtn">
+                    <div class="user-details">
+                        <div class="name">{{ current_user.name }}</div>
+                        <div class="role">Customer</div>
+                    </div>
+                    <div class="user-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a href="{{ url_for('profile') }}" class="dropdown-item">
+                            <i class="bi bi-person-circle"></i> My Profile
+                        </a>
+                        <a href="{{ url_for('orders') }}" class="dropdown-item">
+                            <i class="bi bi-box-seam"></i> My Orders
+                        </a>
+                        <a href="{{ url_for('appointments') }}" class="dropdown-item">
+                            <i class="bi bi-calendar-check"></i> Appointments
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="{{ url_for('logout') }}" class="dropdown-item">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
                     </div>
                 </div>
-                
-                <button class="menu-toggle" id="menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="sidebar">
-                    <i class="bi bi-list" aria-hidden="true"></i>
-                </button>
             </header>
 
             <!-- Content Area -->
             <div class="content-area">
-                <!-- Stats Overview -->
-                <section class="stats-grid" aria-label="Dashboard statistics">
-                    <article class="stat-card">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon" aria-hidden="true">
-                                <i class="bi bi-box-seam"></i>
-                            </div>
-                            <div class="stat-trend">
-                                <i class="bi bi-arrow-up" aria-hidden="true"></i>
-                                Recent
-                            </div>
+                            <div class="stat-icon"><i class="bi bi-box-seam"></i></div>
                         </div>
                         <div class="stat-content">
                             <h3>{{ recent_orders|length }}</h3>
                             <p>Recent Orders</p>
                         </div>
-                    </article>
-                    
-                    <article class="stat-card">
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon" aria-hidden="true">
-                                <i class="bi bi-calendar-check"></i>
-                            </div>
-                            <div class="stat-trend">
-                                <i class="bi bi-calendar" aria-hidden="true"></i>
-                                Upcoming
-                            </div>
+                            <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
                         </div>
                         <div class="stat-content">
                             <h3>{{ upcoming_appointments|length }}</h3>
                             <p>Appointments</p>
                         </div>
-                    </article>
-                    
-                    <article class="stat-card">
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon" aria-hidden="true">
-                                <i class="bi bi-basket"></i>
-                            </div>
-                            <div class="stat-trend">
-                                <i class="bi bi-cart" aria-hidden="true"></i>
-                                Items
-                            </div>
+                            <div class="stat-icon"><i class="bi bi-basket"></i></div>
                         </div>
                         <div class="stat-content">
                             <h3>{{ cart_count }}</h3>
                             <p>In Your Cart</p>
                         </div>
-                    </article>
-                    
-                    <article class="stat-card">
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-icon" aria-hidden="true">
-                                <i class="bi bi-heart-pulse"></i>
-                            </div>
-                            <div class="stat-trend">
-                                <i class="bi bi-check-circle" aria-hidden="true"></i>
-                                Active
-                            </div>
+                            <div class="stat-icon"><i class="bi bi-heart-pulse"></i></div>
                         </div>
                         <div class="stat-content">
                             <h3>{{ recent_orders|length + upcoming_appointments|length }}</h3>
-                            <p>Total Activities</p>
+                            <p>Total Activity</p>
                         </div>
-                    </article>
-                </section>
+                    </div>
+                </div>
 
-                <!-- Main Dashboard Content -->
+                <!-- Dashboard Grid -->
                 <div class="dashboard-grid">
                     <!-- Recent Orders -->
-                    <section class="dashboard-card">
-                        <header class="card-header">
-                            <h2>Recent Orders</h2>
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span>Recent Orders</span>
                             {% if recent_orders %}
-                            <a href="{{ url_for('orders') }}" class="view-all">
-                                View All <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                            </a>
+                            <a href="{{ url_for('orders') }}" class="view-all">View all</a>
                             {% endif %}
-                        </header>
+                        </div>
                         <div class="card-body">
                             {% if recent_orders %}
-                            <div class="table-container">
-                                <table class="orders-table" aria-label="Recent orders">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Order #</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Amount</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for order in recent_orders[:5] %}
-                                        <tr>
-                                            <td class="order-number">#{{ order.order_number }}</td>
-                                            <td class="order-date">{{ order.created_at|local_strftime('%b %d, %Y') }}</td>
-                                            <td class="order-amount">{{ order.total_amount|currency }}</td>
-                                            <td>
-                                                <span class="status-badge status-{{ order.status }}" aria-label="Status: {{ order.status }}">
-                                                    {{ order.status|title }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn-view">
-                                                    View Details
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
+                            <table class="orders-table">
+                                <thead>
+                                    <tr><th>Order #</th><th>Date</th><th>Amount</th><th>Status</th><th></th></tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders[:5] %}
+                                    <tr>
+                                        <td><span class="order-number">#{{ order.order_number[:8] }}</span></td>
+                                        <td>{{ order.created_at|local_strftime('%b %d') }}</td>
+                                        <td>{{ order.total_amount|currency }}</td>
+                                        <td><span class="status-badge status-{{ order.status }}">{{ order.status|title }}</span></td>
+                                        <td><a href="{{ url_for('order_detail', order_id=order.id) }}" class="btn-view">View</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                             {% else %}
                             <div class="empty-state">
-                                <i class="bi bi-box-seam empty-icon" aria-hidden="true"></i>
-                                <h3>No orders yet</h3>
+                                <i class="bi bi-box-seam"></i>
+                                <h4>No orders yet</h4>
                                 <p>Start shopping to see your orders here</p>
-                                <a href="{{ url_for('products') }}" class="btn-primary">
-                                    <i class="bi bi-capsule" aria-hidden="true"></i>
-                                    Browse Products
-                                </a>
+                                <a href="{{ url_for('products') }}" class="btn-view">Browse Products</a>
                             </div>
                             {% endif %}
                         </div>
-                    </section>
+                    </div>
 
                     <!-- Upcoming Appointments -->
-                    <section class="dashboard-card">
-                        <header class="card-header">
-                            <h2>Upcoming Appointments</h2>
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <span>Upcoming Appointments</span>
                             {% if upcoming_appointments %}
-                            <a href="{{ url_for('appointments') }}" class="view-all">
-                                View All <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                            </a>
+                            <a href="{{ url_for('appointments') }}" class="view-all">View all</a>
                             {% endif %}
-                        </header>
+                        </div>
                         <div class="card-body">
                             {% if upcoming_appointments %}
                             <div class="appointments-list">
-                                {% for appointment in upcoming_appointments[:3] %}
-                                <article class="appointment-card">
+                                {% for apt in upcoming_appointments[:3] %}
+                                <div class="appointment-item">
                                     <div class="appointment-date">
-                                        <div class="date-day">{{ appointment.appointment_date|local_day }}</div>
-                                        <div class="date-month">{{ appointment.appointment_date|local_month }}</div>
+                                        <div class="date-day">{{ apt.appointment_date|local_day }}</div>
+                                        <div class="date-month">{{ apt.appointment_date|local_month }}</div>
                                     </div>
                                     <div class="appointment-details">
-                                        <h3>{{ appointment.practitioner.name }}</h3>
-                                        <p class="appointment-time">
-                                            <i class="bi bi-clock" aria-hidden="true"></i>
-                                            {{ appointment.appointment_date|local_time }}
-                                        </p>
-                                        <span class="appointment-type">{{ appointment.appointment_type|title }}</span>
+                                        <strong>{{ apt.practitioner.name[:20] }}</strong><br>
+                                        <small>{{ apt.appointment_date|local_time }} · {{ apt.appointment_type|title }}</small>
                                     </div>
-                                    <a href="{{ url_for('appointment_detail', appointment_id=appointment.id) }}" class="btn-view">
-                                        Details
-                                    </a>
-                                </article>
+                                    <a href="{{ url_for('appointment_detail', appointment_id=apt.id) }}" class="btn-view">Details</a>
+                                </div>
                                 {% endfor %}
                             </div>
                             {% else %}
                             <div class="empty-state">
-                                <i class="bi bi-calendar-x empty-icon" aria-hidden="true"></i>
-                                <h3>No appointments scheduled</h3>
-                                <p>Book a consultation with our certified practitioners</p>
-                                <a href="{{ url_for('practitioners') }}" class="btn-primary">
-                                    <i class="bi bi-person-badge" aria-hidden="true"></i>
-                                    Book Appointment
-                                </a>
+                                <i class="bi bi-calendar-x"></i>
+                                <h4>No appointments</h4>
+                                <p>Book a consultation with our practitioners</p>
+                                <a href="{{ url_for('practitioners') }}" class="btn-view">Book Now</a>
                             </div>
                             {% endif %}
                         </div>
-                    </section>
+                    </div>
                 </div>
 
                 <!-- Quick Actions -->
-                <section class="quick-actions" aria-labelledby="quick-actions-title">
-                    <header class="section-header">
-                        <h2 id="quick-actions-title">Quick Actions</h2>
-                    </header>
-                    <div class="actions-grid">
-                        <a href="{{ url_for('products') }}" class="action-card">
-                            <div class="action-icon" aria-hidden="true">
-                                <i class="bi bi-clipboard2-pulse-fill"></i>
-                            </div>
-                            <h3>Browse Products</h3>
-                            <p>Explore our collection of herbal remedies and supplements</p>
-                        </a>
-                        
-                        <a href="{{ url_for('practitioners') }}" class="action-card">
-                            <div class="action-icon" aria-hidden="true">
-                                <i class="bi bi-person-badge"></i>
-                            </div>
-                            <h3>Book Consultation</h3>
-                            <p>Schedule an appointment with a certified herbal practitioner</p>
-                        </a>
-                        
-                        <a href="{{ url_for('health_info') }}" class="action-card">
-                            <div class="action-icon" aria-hidden="true">
-                                <i class="bi bi-journal-text"></i>
-                            </div>
-                            <h3>Health Information</h3>
-                            <p>Access herbal remedy guides and wellness information</p>
-                        </a>
-                        
-                        <a href="{{ url_for('orders') }}" class="action-card">
-                            <div class="action-icon" aria-hidden="true">
-                                <i class="bi bi-box-seam"></i>
-                            </div>
-                            <h3>Order History</h3>
-                            <p>View and manage all your previous orders and purchases</p>
-                        </a>
+                <div class="quick-actions">
+                    <div class="card-header">
+                        <span>Quick Actions</span>
                     </div>
-                </section>
+                    <div class="card-body">
+                        <div class="actions-grid">
+                            <a href="{{ url_for('products') }}" class="btn-action"><i class="bi bi-grid"></i> Browse Products</a>
+                            <a href="{{ url_for('practitioners') }}" class="btn-action"><i class="bi bi-person-badge"></i> Book Consultation</a>
+                            <a href="{{ url_for('health_info') }}" class="btn-action"><i class="bi bi-journal-text"></i> Health Info</a>
+                            <a href="{{ url_for('orders') }}" class="btn-action"><i class="bi bi-box-seam"></i> Order History</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Footer -->
-            <footer class="dashboard-footer" aria-label="Dashboard footer">
+            <footer class="footer">
                 <p>&copy; 2024 Shifaa Herbal. All rights reserved.</p>
             </footer>
         </main>
     </div>
 
     <script>
-        // Sidebar toggle with accessibility
+        // Sidebar functions
         const sidebar = document.getElementById('sidebar');
-        const menuToggle = document.getElementById('menu-toggle');
-        const mainContent = document.getElementById('main-content');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
 
         function toggleSidebar() {
-            const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
             sidebar.classList.toggle('active');
-            menuToggle.setAttribute('aria-expanded', !isExpanded);
-            
-            // Update body scroll based on sidebar state
-            if (window.innerWidth <= 992) {
-                document.body.style.overflow = !isExpanded ? 'hidden' : '';
-            }
+            sidebarOverlay.classList.toggle('active');
         }
 
-        menuToggle.addEventListener('click', toggleSidebar);
+        function closeSidebar() {
+            sidebar.classList.remove('active');
+            sidebarOverlay.classList.remove('active');
+        }
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            if (window.innerWidth <= 992 && 
-                sidebar.classList.contains('active') &&
-                !sidebar.contains(event.target) && 
-                !menuToggle.contains(event.target)) {
-                toggleSidebar();
-            }
-        });
+        // User dropdown menu
+        const userMenuBtn = document.getElementById('userMenuBtn');
+        const userDropdown = document.getElementById('userDropdown');
 
-        // Handle escape key to close sidebar
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && sidebar.classList.contains('active')) {
-                toggleSidebar();
-            }
-        });
+        if (userMenuBtn) {
+            userMenuBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userDropdown.classList.toggle('show');
+            });
 
-        // Enhance table row interaction
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add keyboard navigation to table rows
-            const tableRows = document.querySelectorAll('.orders-table tbody tr');
-            tableRows.forEach(row => {
-                row.setAttribute('tabindex', '0');
-                row.addEventListener('keydown', function(event) {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        const link = this.querySelector('a.btn-view');
-                        if (link) link.click();
-                    }
+            document.addEventListener('click', function(e) {
+                if (!userMenuBtn.contains(e.target)) {
+                    userDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // Close sidebar when clicking on a nav link (mobile)
+        if (window.innerWidth <= 768) {
+            document.querySelectorAll('.nav-item').forEach(link => {
+                link.addEventListener('click', () => {
+                    closeSidebar();
                 });
             });
-
-            // Update status badge colors
-            const statusBadges = document.querySelectorAll('.status-badge');
-            statusBadges.forEach(badge => {
-                const status = badge.className.match(/status-(\w+)/)?.[1];
-                if (status) {
-                    badge.setAttribute('aria-label', `Order status: ${status}`);
-                }
-            });
-        });
+        }
 
         // Handle window resize
-        let resizeTimer;
         window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                if (window.innerWidth > 992) {
-                    sidebar.classList.remove('active');
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    document.body.style.overflow = '';
-                }
-            }, 250);
-        });
-
-        // Search functionality
-        const searchInput = document.querySelector('.search-input');
-        if (searchInput) {
-            searchInput.addEventListener('input', function() {
-                // Implement search functionality here
-                console.log('Searching for:', this.value);
-            });
-        }
-
-        // Add loading state simulation
-        function simulateLoading(duration = 1000) {
-            document.body.classList.add('loading');
-            setTimeout(() => {
-                document.body.classList.remove('loading');
-            }, duration);
-        }
-
-        // Handle card clicks
-        document.querySelectorAll('.action-card, .stat-card').forEach(card => {
-            card.addEventListener('click', function() {
-                if (this.href) {
-                    simulateLoading(500);
-                }
-            });
+            if (window.innerWidth > 768) {
+                closeSidebar();
+            }
         });
     </script>
 </body>

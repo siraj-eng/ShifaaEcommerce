@@ -1,88 +1,668 @@
-{% extends "admin/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Order #{{ order.order_number }} | Shifaa Herbal Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}Order #{{ order.order_number }}{% endblock %}
-{% block page_title %}Order #{{ order.order_number }}{% endblock %}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            line-height: 1.4;
+        }
 
-{% block content %}
-<div class="d-flex flex-wrap gap-3 mb-4">
-    <a href="{{ url_for('admin_orders') }}" class="btn-sm-admin"><i class="bi bi-arrow-left"></i> Back to orders</a>
-</div>
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
 
-<div class="row g-4">
-    <div class="col-lg-8">
-        <div class="card-admin">
-            <div class="card-header">Items</div>
-            <div class="card-body p-0">
-                <table class="table-admin">
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-image {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2e7d32;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 0.35rem 0.85rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .user-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+        }
+
+        /* Breadcrumb */
+        .breadcrumb-bar {
+            background: white;
+            padding: 0.5rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+        }
+
+        .breadcrumb-bar a {
+            color: #64748b;
+            text-decoration: none;
+        }
+
+        .breadcrumb-bar a:hover {
+            color: #2e7d32;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem 1.25rem;
+        }
+
+        /* Order Card */
+        .order-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.875rem;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+
+        .order-header {
+            padding: 1.25rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .logo-centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-circle {
+            width: 56px;
+            height: 56px;
+            background: transparent;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-circle img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .business-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            letter-spacing: -0.3px;
+        }
+
+        .order-label {
+            font-size: 0.65rem;
+            color: #64748b;
+            letter-spacing: 0.5px;
+            margin-top: 0.25rem;
+        }
+
+        .order-body {
+            padding: 1.25rem;
+        }
+
+        /* Order Info Row */
+        .order-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            border: 1px solid #eef2f6;
+            border-radius: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .order-number {
+            font-family: monospace;
+            font-weight: 700;
+            color: #1a1a2e;
+            font-size: 0.8rem;
+        }
+
+        .order-date {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #fff3e0; color: #e67e22; }
+        .status-processing { background: #e8f5e9; color: #2e7d32; }
+        .status-shipped { background: #e0f7fa; color: #00838f; }
+        .status-delivered { background: #e0f7fa; color: #00838f; }
+        .status-cancelled { background: #fee2e2; color: #dc2626; }
+
+        /* Items Table */
+        .items-table {
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        .items-table th {
+            text-align: left;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: #64748b;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+        }
+
+        .items-table td {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eef2f6;
+            font-size: 0.75rem;
+        }
+
+        .items-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+
+        .text-end {
+            text-align: right;
+        }
+
+        /* Summary */
+        .summary-section {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            font-size: 0.75rem;
+        }
+
+        .summary-row.total {
+            border-top: 1px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1.25rem 0;
+        }
+
+        .info-item {
+            background: #f8fafc;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid #eef2f6;
+            border-radius: 0.5rem;
+        }
+
+        .info-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 0.2rem;
+        }
+
+        .info-value {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #1a1a2e;
+            word-break: break-word;
+        }
+
+        /* Status Update Form */
+        .status-form {
+            background: #f8fafc;
+            border: 1px solid #eef2f6;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .status-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .btn-update {
+            width: 100%;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .btn-update:hover {
+            background: #1b5e20;
+        }
+
+        /* Order Footer */
+        .order-footer {
+            text-align: center;
+            padding: 1rem;
+            border-top: 1px solid #eef2f6;
+            font-size: 0.6rem;
+            color: #94a3b8;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-decoration: none;
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        /* Toast */
+        .toast-notification {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.2rem;
+            background: #1a1a2e;
+            color: white;
+            padding: 0.5rem 0.9rem;
+            border-radius: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.25s ease;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        /* Print Styles */
+        @media print {
+            .top-nav, .breadcrumb-bar, .action-buttons, .toast-notification, .status-form {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .main-container {
+                padding: 0;
+            }
+
+            .order-card {
+                border: none;
+            }
+
+            .order-header {
+                border-bottom: 1px solid #ccc;
+                padding: 0.75rem;
+            }
+
+            .order-body {
+                padding: 0.75rem;
+            }
+
+            .order-info-row, .info-item {
+                background: none;
+                border: 1px solid #ddd;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .top-nav {
+                padding: 0.5rem 1rem;
+            }
+
+            .user-name, .nav-link span {
+                display: none;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .order-info-row {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .text-end {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="logo-area">
+            <img class="logo-image" src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+            <span class="logo-text">Shifaa Herbal Admin</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}" class="nav-link">
+                <i class="bi bi-speedometer2"></i> <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('admin_orders') }}" class="nav-link">
+                <i class="bi bi-cart-check"></i> <span>Orders</span>
+            </a>
+        </div>
+        
+        <div class="user-info">
+            <span class="user-name">{{ current_user.name if current_user.is_authenticated else 'Admin' }}</span>
+            <div class="user-avatar">
+                <i class="bi bi-person"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-bar">
+        <a href="{{ url_for('admin_dashboard') }}">Dashboard</a>
+        <span>/</span>
+        <a href="{{ url_for('admin_orders') }}">Orders</a>
+        <span>/</span>
+        <span style="color: #2e7d32;">Order #{{ order.order_number }}</span>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <div class="order-card">
+            <!-- Header -->
+            <div class="order-header">
+                <div class="logo-centered">
+                    <div class="logo-circle">
+                        <img src="{{ url_for('static', filename='Screenshot 2026-04-01 182842.png') }}" alt="Shifaa Herbal">
+                    </div>
+                    <div class="business-name">SHIFAA HERBAL REMEDIES</div>
+                    <div class="order-label">ORDER DETAILS</div>
+                </div>
+            </div>
+            
+            <div class="order-body">
+                <!-- Order Info -->
+                <div class="order-info-row">
+                    <div>
+                        <div style="font-size: 0.6rem; color: #64748b;">ORDER NUMBER</div>
+                        <div class="order-number">{{ order.order_number }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.6rem; color: #64748b;">DATE</div>
+                        <div class="order-date">{{ order.created_at|local_strftime('%d %b %Y, %I:%M %p') }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.6rem; color: #64748b;">STATUS</div>
+                        <div class="status-badge status-{{ order.status }}">{{ order.status|upper }}</div>
+                    </div>
+                </div>
+                
+                <!-- Items -->
+                <table class="items-table">
                     <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Subtotal</th>
-                        </tr>
+                        <tr><th>ITEM</th><th style="width: 60px;">QTY</th><th class="text-end" style="width: 100px;">AMOUNT</th></tr>
                     </thead>
                     <tbody>
-                        {% for item in order.items %}
+                        {% for item in order.items.all() %}
                         <tr>
-                            <td><strong>{{ item.product.name }}</strong></td>
-                            <td>{{ item.quantity }}</td>
-                            <td>${{ "%.2f"|format(item.price) }}</td>
-                            <td>${{ "%.2f"|format(item.quantity * item.price) }}</td>
+                            <td><div class="product-name">{{ item.product.name }}</div></td>
+                            <td>{{ item.quantity }}</div>
+                            <td class="text-end">{{ (item.price * item.quantity)|currency }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-            <div class="card-body border-top">
-                <div class="d-flex justify-content-end">
-                    <strong>Total: {{ order.total_amount|currency }}</strong>
+                
+                <!-- Summary -->
+                <div class="summary-section">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>{{ order.total_amount|currency }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>{% if order.shipping_cost %}{{ order.shipping_cost|currency }}{% else %}KES 0{% endif %}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>TOTAL</span>
+                        <span>{{ order.total_amount|currency }}</span>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="card-admin">
-            <div class="card-header">Shipping & delivery</div>
-            <div class="card-body">
-                <p class="mb-1"><strong>Address:</strong></p>
-                <p class="text-muted mb-2">{{ order.shipping_address or '—' }}</p>
-                <p class="mb-0"><strong>Delivery option:</strong> {{ order.delivery_option or '—' }}</p>
-                {% if order.notes %}<p class="mt-2 mb-0"><strong>Notes:</strong> {{ order.notes }}</p>{% endif %}
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="card-admin">
-            <div class="card-header">Customer</div>
-            <div class="card-body">
-                <p class="mb-1"><strong>{{ order.user.name }}</strong></p>
-                <p class="text-muted mb-2">{{ order.user.email }}</p>
-                {% if order.user.phone %}<p class="mb-0">Phone: {{ order.user.phone }}</p>{% endif %}
-            </div>
-        </div>
-        <div class="card-admin">
-            <div class="card-header">Update status</div>
-            <div class="card-body">
-                <form method="post">
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select name="status" class="form-select">
+                
+                <!-- Info Grid -->
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">SHIPPING ADDRESS</div>
+                        <div class="info-value">{{ order.shipping_address or 'Not provided' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">DELIVERY OPTION</div>
+                        <div class="info-value">{{ order.delivery_option|title if order.delivery_option else 'Standard' }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">CUSTOMER</div>
+                        <div class="info-value">{{ order.user.name }}<br><small style="font-size: 0.6rem;">{{ order.user.email }}</small></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">PAYMENT METHOD</div>
+                        <div class="info-value">{{ order.payment_method|title if order.payment_method else 'M-Pesa' }}</div>
+                    </div>
+                </div>
+                
+                <!-- Notes -->
+                {% if order.notes %}
+                <div class="info-item" style="margin-bottom: 1rem;">
+                    <div class="info-label">ORDER NOTES</div>
+                    <div class="info-value">{{ order.notes }}</div>
+                </div>
+                {% endif %}
+                
+                <!-- Status Update -->
+                <div class="status-form">
+                    <form method="post">
+                        <div style="font-size: 0.6rem; color: #64748b; margin-bottom: 0.5rem;">UPDATE STATUS</div>
+                        <select name="status" class="status-select">
                             <option value="pending" {% if order.status == 'pending' %}selected{% endif %}>Pending</option>
                             <option value="processing" {% if order.status == 'processing' %}selected{% endif %}>Processing</option>
                             <option value="shipped" {% if order.status == 'shipped' %}selected{% endif %}>Shipped</option>
                             <option value="delivered" {% if order.status == 'delivered' %}selected{% endif %}>Delivered</option>
                             <option value="cancelled" {% if order.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
                         </select>
-                    </div>
-                    <button type="submit" class="btn-admin w-100"><i class="bi bi-check-lg"></i> Save status</button>
-                </form>
+                        <button type="submit" class="btn-update">
+                            <i class="bi bi-check-lg"></i> Update Status
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Footer -->
+                <div class="order-footer">
+                    Placed {{ order.created_at|local_strftime('%b %d, %Y at %I:%M %p') }}
+                    {% if order.updated_at %}<br>Last updated {{ order.updated_at|local_strftime('%b %d, %Y, %I:%M %p') }}{% endif %}
+                </div>
             </div>
         </div>
-        <div class="card-admin">
-            <div class="card-body">
-                <p class="mb-0 small text-muted">Placed {{ order.created_at|local_strftime('%b %d, %Y at %I:%M %p') }}</p>
-                {% if order.updated_at %}<p class="mb-0 small text-muted">Updated {{ order.updated_at|local_strftime('%b %d, %Y') }}</p>{% endif %}
-            </div>
+        
+        <!-- Actions -->
+        <div class="action-buttons">
+            <button onclick="window.print()" class="btn-outline">
+                <i class="bi bi-printer"></i> Print
+            </button>
+            <a href="{{ url_for('admin_orders') }}" class="btn-outline">
+                <i class="bi bi-arrow-left"></i> Back to Orders
+            </a>
         </div>
     </div>
-</div>
-{% endblock %}
+    
+    <!-- Toast -->
+    <div class="toast-notification" id="toast">
+        <i class="bi bi-check-circle-fill"></i>
+        <span id="toastMsg"></span>
+    </div>
+    
+    <script>
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.style.background = isError ? '#dc2626' : '#1a1a2e';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    showToast('{{ message }}', '{{ category }}' === 'error');
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </script>
+</body>
+</html>
